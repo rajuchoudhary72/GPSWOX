@@ -53,6 +53,7 @@ android {
             enableSplit = false
         }
     }
+    namespace 'com.shazcom.gps.app'
 
     /*splits {
         abi {
