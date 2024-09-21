@@ -1,0 +1,242 @@
+<resources>
+    <string name="app_name">SHAZCOM GPS</string>
+
+    <string name="address_found">Address found</string>
+    <string name="invalid_lat_long_used">Invalid latitude or longitude used</string>
+    <string name="no_address_found">Sorry, no address found</string>
+    <string name="no_geocoder_available">No geocoder available</string>
+    <string name="no_location_data_provided">No location data provided</string>
+    <string name="service_not_available">Sorry, the service is not available</string>
+
+    <string name="permission_denied_explanation">Permission was denied, but is needed for core
+        functionality.</string>
+    <string name="permission_rationale">Location permission is needed for core functionality</string>
+    <string name="sign_in">Sign In</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="no_device_found">No Device Found</string>
+    <string name="stop_duration">Stop Duration -</string>
+    <string name="stop_duration_txt">Stop duration:</string>
+    <string name="search_vehicle">Search Vehicle</string>
+    <string name="sensors">Sensors</string>
+    <string name="fetching_address">Fetching Address</string>
+    <string name="history">History</string>
+    <string name="playback">Playback</string>
+    <string name="events">Events</string>
+    <string name="summary">Summary</string>
+    <string name="show_history">Show History</string>
+    <string name="show_summary">Show Summary</string>
+    <string name="distance_sum">Distance sum:</string>
+    <string name="top_speed">Top speed:</string>
+    <string name="move_duration">Move duration:</string>
+    <string name="fuel_consumption">Fuel consumption:</string>
+    <string name="coolant_temp">Coolant Temp</string>
+    <string name="rpm">RPM</string>
+    <string name="engine_load">Engine Load</string>
+    <string name="air_in_temp">Air In Temp</string>
+    <string name="serviceName"></string>
+    <string name="name">Name</string>
+    <string name="interval">Interval</string>
+    <string name="last_service">Last Service</string>
+    <string name="description">Description</string>
+    <string name="remember_password">Remember Password</string>
+    <string name="forgot_password"><u>Forgot Password</u></string>
+    <string name="txt_forgot_password">Forgot Password</string>
+    <string name="title">Title</string>
+    <string name="format">Format</string>
+    <string name="period">Period</string>
+    <string name="send_to_email">Send to email</string>
+    <string name="devices">Devices</string>
+    <string name="renew_after_expiration">Renew after expiration</string>
+    <string name="units">Units</string>
+    <string name="units_of_distance">Units of distance</string>
+    <string name="units_of_capacity">Units of Capacity</string>
+    <string name="units_of_altitude">Units of Altitude</string>
+    <string name="weekdays">Weekdays</string>
+    <string name="time">Time</string>
+    <string name="daylight_saving_time">Daylight Saving Time</string>
+    <string name="language">Language</string>
+    <string name="groups">Groups</string>
+    <string name="add_driver">Add Driver</string>
+    <string name="objects">Objects</string>
+    <string name="driver">Driver</string>
+    <string name="alerts">Alerts</string>
+    <string name="task">Tasks</string>
+    <string name="main">Main</string>
+    <string name="protocol">Protocol</string>
+    <string name="type">Type</string>
+    <string name="message">Message</string>
+    <string name="send_command">Send Command</string>
+
+    <string-array name="exp_by">
+        <item>Odometer</item>
+        <item>Engine hours</item>
+        <item>Days</item>
+    </string-array>
+
+    <string-array name="report_formats">
+        <item>PDF</item>
+        <item>PDF (Landscape)</item>
+        <item>XLS</item>
+        <item>HTML</item>
+    </string-array>
+
+    <string-array name="report_types">
+        <item>General Information</item>
+        <item>Travel Sheet</item>
+        <item>Travel Sheet Custom</item>
+        <!--        <item>OverSpeed</item> -->
+        <!--        <item>Geofence in/out</item>-->
+        <item>Events</item>
+        <item>Fuel Level</item>
+        <item>Temperature</item>
+        <item>Engine Hours Daily</item>
+        <item>Ignition ON/OFF</item>
+        <item>Expenses</item>
+        <item>Fuel Filling</item>
+        <item>Fuel Theft</item>
+        <item>Work Hours Daily</item>
+    </string-array>
+
+    <string-array name="report_period">
+        <item>Today</item>
+        <item>Yesterday</item>
+        <item>Before 2 days</item>
+        <item>Before 3 days</item>
+        <item>This Week</item>
+        <item>Last Week</item>
+        <item>This Month</item>
+        <item>Last Month</item>
+    </string-array>
+
+
+    <string-array name="priority">
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
+
+    <string-array name="commands">
+        <item>Custom commands</item>
+    </string-array>
+
+    <string-array name="languages">
+        <item>Choose Language</item>
+        <item>English</item>
+        <item>Chinese</item>
+    </string-array>
+
+
+    <string-array name="alertTypes">
+        <item>OverSpeed</item>
+        <item>Idle Duration</item>
+        <item>Ignition Duration</item>
+        <item>Geofence In/out</item>
+        <item>Custom Event</item>
+    </string-array>
+
+
+
+    <string name="msg_subscribed" translatable="false">Subscribed to weather topic</string>
+    <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
+
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <!--
+        This is the name that users will see when interacting with this channel.
+        It should describe the category of notifications that will be sent through this channel
+     -->
+    <!-- [START fcm_default_icon_string] -->
+    <string name="default_notification_channel_name" translatable="false">Weather</string>
+    <!-- [END fcm_default_icon_string] -->
+    <string name="msg_subscribe_failed" translatable="false">Failed to subscribe to weather topic</string>
+    <string name="fcm_message" translatable="false">TrackPro GPS</string>
+    <string name="submit">SUBMIT</string>
+    <string name="password_message">Please enter your email address. We will send you instructions to reset your password.</string>
+    <string name="enter_valid_cred">Enter Valid Credentials</string>
+    <string name="invalid_email_password">Invalid Email or Password</string>
+    <string name="error_valid_email">Please enter valid email address</string>
+    <string name="pass_reset_instruction_message">Password Reset Instruction has been sent to your email</string>
+    <string name="press_back_again">Please click BACK again to exit</string>
+    <string name="logout">Logout</string>
+    <string name="account">Account</string>
+    <string name="setup">Setup</string>
+    <string name="tools">Tools</string>
+    <string name="report">Report</string>
+    <string name="vehicle_status">Vehicle Status</string>
+    <string name="membership">Membership</string>
+    <string name="expiration_by">Expiration by</string>
+    <string name="save">SAVE</string>
+    <string name="geo_fencing">Geofencing</string>
+    <string name="route_length">Route Length</string>
+    <string name="duration">Duration</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="mileage">Mileage</string>
+    <string name="ignition">Ignition</string>
+    <string name="satellite">Satellite</string>
+    <string name="distance">Distance</string>
+    <string name="select_at_least_2_points">Select at least 2 points</string>
+    <string name="driver_name_required">Driver Name (required)</string>
+    <string name="title_required">Title (required)</string>
+    <string name="invoice_number">Invoice Number</string>
+    <string name="comment">Comment</string>
+    <string name="priority">Priority</string>
+    <string name="pickup">Pickup</string>
+    <string name="pickup_address_required">Pickup Address (required)</string>
+    <string name="delivery_address_required">Delivery Address (required)</string>
+    <string name="select_polygon_color">Select Polygon Color</string>
+    <string name="add_geofence">Add Geofence</string>
+    <string name="select_location">Select Location</string>
+    <string name="email_n_a">Email : %s</string>
+    <string name="devices_limit_n_a">Devices limit : %s</string>
+    <string name="plan_n_a">Plan : %s</string>
+    <string name="exp_date_n_a">Expiration Date : %s</string>
+    <string name="generate_report">GENERATE REPORT</string>
+    <string name="pickup_time">Pickup Time</string>
+    <string name="delivery_time">Delivery Time</string>
+    <string name="pickup_location">Pickup Location</string>
+    <string name="delivery_location">Delivery Location</string>
+    <string name="google_map_not_available">Google Map app not available</string>
+    <string name="something_went_wrong">Whoops, looks like something went wrong.</string>
+    <string name="service_add_successfully">Service added successfully</string>
+    <string name="valid_proper_data">Please input proper data</string>
+    <string name="service_delete_success">Service deleted successfully</string>
+    <string name="whoops_no_gprs">Whoops !! No Gprs Connection</string>
+    <string name="command_send_success">Command Send Successfully</string>
+    <string name="no_playback_Data">No playback data available</string>
+    <string name="no_history">No History data available</string>
+    <string name="please_select_device">Please select device</string>
+    <string name="valid_start_end_date">Please select start and end date</string>
+    <string name="no_app_found_to_open">No application found to open file</string>
+    <string name="want_to_delete_service">Do you really want to delete the service</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="want_logout">Want to logout ?</string>
+    <string name="unable_get_location">Unable to get location</string>
+    <string name="schedule_report">Schedule Report</string>
+    <string name="email_is_required_to_schedule_report">(Required to schedule report)</string>
+    <string name="no_history_found">No History found</string>
+    <string name="start_download">Start Downloading..</string>
+    <string name="renew_upgrade">Renew/Upgrade</string>
+    <string name="gprs_command">GPRS Command</string>
+    <string name="name_required">Name (Required)</string>
+    <string name="add_alert">Add Alert</string>
+    <string name="no_geo_fence_data">No Geofence data found</string>
+    <string name="speed">Speed</string>
+    <string name="fill_title_before_proceed">Please fill title before proceed</string>
+    <string name="report_saved">Report schedule successfully</string>
+
+    <string name="all">All</string>
+    <string name="moving">Moving</string>
+    <string name="stop_text">Stop</string>
+    <string name="idle">Idle</string>
+    <string name="offline">Offline</string>
+    <string name="delete_alert">Do you want to delete this Item</string>
+    <string name="proceed">Proceed</string>
+    <string name="maintenance">Maintenance Summary</string>
+    <string name="customerCallStr">Support Number</string>
+    <string name="customerEmailStr">Support Email</string>
+    <string name="no_data_found">No data found</string>
+    <string name="for_multiple_emails_separate">For multiple emails separate them via semicolon ex.: user@example.com;user1@example.com</string>
+    <string name="clear_polygon">Clear Polygon</string>
+</resources>

@@ -1,0 +1,241 @@
+<resources>
+    <string name="app_name">TRACKPRO GPS</string>
+
+    <string name="address_found">找到地址</string>
+    <string name="invalid_lat_long_used">使用了无效的纬度或经度</string>
+    <string name="no_address_found">抱歉，找不到地址</string>
+    <string name="no_geocoder_available">没有可用的地理编码器</string>
+    <string name="no_location_data_provided">没有提供位置数据</string>
+    <string name="service_not_available">抱歉，该服务不可用</string>
+
+    <string name="permission_denied_explanation">权限被拒绝，但是核心功能需要该权限。</string>
+    <string name="permission_rationale">核心功能需要位置许可</string>
+    <string name="sign_in">登入</string>
+    <string name="email">电子邮件</string>
+    <string name="password">密码</string>
+    <string name="login">登录</string>
+    <string name="no_device_found">找不到设备</string>
+    <string name="stop_duration">停止时间-</string>
+    <string name="stop_duration_txt">停止时间：</string>
+    <string name="search_vehicle">搜索车辆</string>
+    <string name="sensors">感测器</string>
+    <string name="fetching_address">取得地址</string>
+    <string name="history">历史</string>
+    <string name="playback">回放</string>
+    <string name="events">大事记</string>
+    <string name="summary">摘要</string>
+    <string name="show_history">显示历史</string>
+    <string name="show_summary">显示摘要</string>
+    <string name="distance_sum">距离总和：</string>
+    <string name="top_speed">最高速度：</string>
+    <string name="move_duration">移动时间：</string>
+    <string name="fuel_consumption">燃油消耗：</string>
+    <string name="coolant_temp">冷却液温度</string>
+    <string name="rpm">转速</string>
+    <string name="engine_load">引擎负荷</string>
+    <string name="air_in_temp">空气温度</string>
+    <string name="serviceName"></string>
+    <string name="name">名称</string>
+    <string name="interval">间隔</string>
+    <string name="last_service">最后服务</string>
+    <string name="description">描述</string>
+    <string name="remember_password">记住密码</string>
+    <string name="forgot_password"><u>忘记密码</u></string>
+    <string name="txt_forgot_password">忘记密码</string>
+    <string name="title">标题</string>
+    <string name="format">格式</string>
+    <string name="period">期</string>
+    <string name="send_to_email">发送到电子邮件</string>
+    <string name="devices">设备</string>
+    <string name="renew_after_expiration">到期后续约</string>
+    <string name="units">单位</string>
+    <string name="units_of_distance">距离单位</string>
+    <string name="units_of_capacity">容量单位</string>
+    <string name="units_of_altitude">高度单位</string>
+    <string name="weekdays">平日</string>
+    <string name="time">时间</string>
+    <string name="daylight_saving_time">夏令时</string>
+    <string name="language">语言</string>
+    <string name="groups">团体</string>
+    <string name="add_driver">添加驱动</string>
+    <string name="objects">对象</string>
+    <string name="driver">司机</string>
+    <string name="alerts">警报</string>
+    <string name="task">任务</string>
+    <string name="main">主要</string>
+    <string name="protocol">协议</string>
+    <string name="type">类型</string>
+    <string name="message">信息</string>
+    <string name="send_command">发送命令</string>
+
+    <string-array name="exp_by">
+        <item>Odometer</item>
+        <item>Engine hours</item>
+        <item>Days</item>
+    </string-array>
+
+    <string-array name="report_formats">
+        <item>PDF</item>
+        <item>PDF (Landscape)</item>
+        <item>XLS</item>
+        <item>HTML</item>
+    </string-array>
+
+    <string-array name="report_types">
+        <item>General Information</item>
+        <item>Travel Sheet</item>
+        <item>Travel Sheet Custom</item>
+        <!--        <item>OverSpeed</item> -->
+        <!--        <item>Geofence in/out</item>-->
+        <item>Events</item>
+        <item>Fuel Level</item>
+        <item>Temperature</item>
+        <item>Engine Hours Daily</item>
+        <item>Ignition ON/OFF</item>
+        <item>Expenses</item>
+        <item>Fuel Filling</item>
+        <item>Fuel Theft</item>
+        <item>Work Hours Daily</item>
+    </string-array>
+
+    <string-array name="report_period">
+        <item>Today</item>
+        <item>Yesterday</item>
+        <item>Before 2 days</item>
+        <item>Before 3 days</item>
+        <item>This Week</item>
+        <item>Last Week</item>
+        <item>This Month</item>
+        <item>Last Month</item>
+    </string-array>
+
+
+    <string-array name="priority">
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
+
+    <string-array name="commands">
+        <item>Custom commands</item>
+    </string-array>
+
+    <string-array name="languages">
+        <item>Choose Language</item>
+        <item>English</item>
+        <item>Chinese</item>
+    </string-array>
+
+
+    <string-array name="alertTypes">
+        <item>OverSpeed</item>
+        <item>Idle Duration</item>
+        <item>Ignition Duration</item>
+        <item>Geofence In/out</item>
+        <item>Custom Event</item>
+    </string-array>
+
+
+
+    <string name="msg_subscribed" translatable="false">Subscribed to weather topic</string>
+    <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
+
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <!--
+        This is the name that users will see when interacting with this channel.
+        It should describe the category of notifications that will be sent through this channel
+     -->
+    <!-- [START fcm_default_icon_string] -->
+    <string name="default_notification_channel_name" translatable="false">Weather</string>
+    <!-- [END fcm_default_icon_string] -->
+    <string name="msg_subscribe_failed" translatable="false">Failed to subscribe to weather topic</string>
+    <string name="fcm_message" translatable="false">TrackPro GPS</string>
+    <string name="submit">提交</string>
+    <string name="password_message">请输入您的电子邮件地址。我们将向您发送指示以重置密码。</string>
+    <string name="enter_valid_cred">输入有效凭证</string>
+    <string name="invalid_email_password">无效的电子邮件或密码</string>
+    <string name="error_valid_email">请输入有效的电子邮件地址</string>
+    <string name="pass_reset_instruction_message">密码重置说明已发送至您的电子邮件</string>
+    <string name="press_back_again">请再次单击“返回”退出</string>
+    <string name="logout">登出</string>
+    <string name="account">帐户</string>
+    <string name="setup">设定</string>
+    <string name="tools">工具类</string>
+    <string name="report">报告</string>
+    <string name="vehicle_status">车辆状态</string>
+    <string name="membership">会员资格</string>
+    <string name="expiration_by">到期日</string>
+    <string name="save">救</string>
+    <string name="geo_fencing">地理围栏</string>
+    <string name="route_length">路线长度</string>
+    <string name="duration">持续时间</string>
+    <string name="start">开始</string>
+    <string name="stop">停止</string>
+    <string name="mileage">里程</string>
+    <string name="ignition">点火</string>
+    <string name="satellite">卫星</string>
+    <string name="distance">距离</string>
+    <string name="select_at_least_2_points">选择至少2点</string>
+    <string name="driver_name_required">驱动程序名称（必填）</string>
+    <string name="title_required">标题（必填）</string>
+    <string name="invoice_number">发票编号</string>
+    <string name="comment">评论</string>
+    <string name="priority">优先</string>
+    <string name="pickup">拾起</string>
+    <string name="pickup_address_required">取件地址（必填）</string>
+    <string name="delivery_address_required">收货地址（必填）</string>
+    <string name="select_polygon_color">选择多边形颜色</string>
+    <string name="add_geofence">添加地理围栏</string>
+    <string name="select_location">选择位置</string>
+    <string name="email_n_a">电子邮件 : %s</string>
+    <string name="devices_limit_n_a">设备限制 : %s</string>
+    <string name="plan_n_a">计划 : %s</string>
+    <string name="exp_date_n_a">截止日期 : %s</string>
+    <string name="generate_report">生成报告</string>
+    <string name="pickup_time">接送时间</string>
+    <string name="delivery_time">交货时间</string>
+    <string name="pickup_location">接人的地方</string>
+    <string name="delivery_location">交货地点</string>
+    <string name="google_map_not_available">Google Map应用程序不可用</string>
+    <string name="something_went_wrong">哎呦，看起来像出事了。</string>
+    <string name="service_add_successfully">服务添加成功</string>
+    <string name="valid_proper_data">请输入正确的数据</string>
+    <string name="service_delete_success">服务已成功删除</string>
+    <string name="whoops_no_gprs">哎呀！没有Gprs连接</string>
+    <string name="command_send_success">命令发送成功</string>
+    <string name="no_playback_Data">没有播放数据</string>
+    <string name="no_history">没有可用的历史记录数据</string>
+    <string name="please_select_device">请选择设备</string>
+    <string name="valid_start_end_date">请选择开始和结束日期</string>
+    <string name="no_app_found_to_open">找不到打开文件的应用程序</string>
+    <string name="want_to_delete_service">您真的要删除服务吗</string>
+    <string name="dismiss">解雇</string>
+    <string name="want_logout">想要注销？</string>
+    <string name="unable_get_location">无法获取位置</string>
+    <string name="schedule_report">进度报告</string>
+    <string name="email_is_required_to_schedule_report">（需要安排报告）</string>
+    <string name="no_history_found">找不到历史记录</string>
+    <string name="start_download">开始下载..</string>
+    <string name="renew_upgrade">续订/升级</string>
+    <string name="gprs_command">GPRS命令</string>
+    <string name="name_required">名称（必填）</string>
+    <string name="add_alert">添加提醒</string>
+    <string name="no_geo_fence_data">找不到地理围栏数据</string>
+    <string name="speed">速度</string>
+    <string name="fill_title_before_proceed">请先填写标题，然后再继续</string>
+    <string name="report_saved">报告时间表成功</string>
+    <string name="all">所有</string>
+    <string name="moving">移动</string>
+    <string name="stop_text">停止</string>
+    <string name="idle">闲</string>
+    <string name="offline">离线</string>
+    <string name="delete_alert">您要删除此项目吗</string>
+    <string name="proceed">继续</string>
+    <string name="maintenance">维护摘要</string>
+    <string name="customerCallStr">支持号码</string>
+    <string name="customerEmailStr">支持电子邮件</string>
+    <string name="no_data_found">进行中</string>
+    <string name="for_multiple_emails_separate">对于多封电子邮件，请通过分号将它们分开：例如：user@example.com; user1@example.com警报和报告</string>
+    <string name="clear_polygon">透明多边形</string>
+
+</resources>

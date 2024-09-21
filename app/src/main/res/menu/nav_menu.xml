@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/grpStatus"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/status"
+            android:title="@string/vehicle_status" />
+    </group>
+
+
+    <group
+        android:id="@+id/grpReport"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/reportsList"
+            android:title="@string/report" />
+    </group>
+
+
+    <group
+        android:id="@+id/grpTools"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/tools"
+            android:title="@string/tools" />
+    </group>
+
+
+    <group
+        android:id="@+id/grpSetup"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/setup"
+            android:title="@string/setup" />
+    </group>
+
+
+    <group
+        android:id="@+id/grpCommand"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/gprsCommand"
+            android:title="@string/send_command" />
+    </group>
+
+    <group
+        android:id="@+id/grpAccount"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/account"
+            android:title="@string/account" />
+    </group>
+
+    <group
+        android:id="@+id/grpMaintenance"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/maintenance"
+            android:title="@string/maintenance" />
+    </group>
+
+
+    <group
+        android:id="@+id/grpCustomerCall"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/customerCall"
+            android:title="@string/customerCallStr" />
+    </group>
+
+
+    <group
+        android:id="@+id/grpCustomerEmail"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/customerEmail"
+            android:title="@string/customerEmailStr" />
+    </group>
+
+    <group
+        android:id="@+id/grpLogout"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/logout"
+            android:title="@string/logout" />
+    </group>
+
+
+</menu>

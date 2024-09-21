@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/status">
+
+
+    <fragment
+        android:id="@+id/status"
+        android:name="com.shazcom.gps.app.ui.fragments.GetDevice"
+        android:label="@string/vehicle_status"
+        tools:layout="@layout/activity_device" />
+
+
+    <fragment
+        android:id="@+id/reportsList"
+        android:name="com.shazcom.gps.app.ui.fragments.ReportList"
+        android:label="@string/report"
+        tools:layout="@layout/fragment_report_list">
+
+        <action
+            android:id="@+id/action_reports_to_report"
+            app:destination="@id/reports" />
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/reports"
+        android:name="com.shazcom.gps.app.ui.fragments.Reports"
+        android:label="@string/report"
+        tools:layout="@layout/fragment_report" />
+
+    <fragment
+        android:id="@+id/tools"
+        android:name="com.shazcom.gps.app.ui.fragments.ToolPage"
+        android:label="@string/tools"
+        tools:layout="@layout/fragment_tool_page">
+
+        <action
+            android:id="@+id/action_tools_to_alerts"
+            app:destination="@id/alerts" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/alerts"
+        android:name="com.shazcom.gps.app.ui.fragments.AlertPage"
+        android:label="@string/alerts"
+        tools:layout="@layout/fragment_alert_page" />
+
+    <fragment
+        android:id="@+id/setup"
+        android:name="com.shazcom.gps.app.ui.fragments.SetUpPage"
+        android:label="@string/setup"
+        tools:layout="@layout/fragment_setup_page">
+
+        <action
+            android:id="@+id/action_setup_to_groups"
+            app:destination="@id/groups" />
+
+        <action
+            android:id="@+id/action_setup_to_driver"
+            app:destination="@id/drivers" />
+
+        <action
+            android:id="@+id/action_setup_to_events"
+            app:destination="@id/customEvents" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/groups"
+        android:name="com.shazcom.gps.app.ui.fragments.GroupPage"
+        android:label="@string/groups"
+        tools:layout="@layout/fragment_group_page" />
+
+    <fragment
+        android:id="@+id/drivers"
+        android:name="com.shazcom.gps.app.ui.fragments.DriverPage"
+        android:label="@string/driver"
+        tools:layout="@layout/fragment_driver_page" />
+
+    <fragment
+        android:id="@+id/customEvents"
+        android:name="com.shazcom.gps.app.ui.fragments.CustomEventPage"
+        android:label="@string/events"
+        tools:layout="@layout/fragment_custom_event_page" />
+
+
+    <fragment
+        android:id="@+id/account"
+        android:name="com.shazcom.gps.app.ui.fragments.Account"
+        android:label="@string/membership"
+        tools:layout="@layout/fragment_account" />
+
+    <fragment
+    android:id="@+id/maintenance"
+    android:name="com.shazcom.gps.app.ui.fragments.Maintenance"
+    android:label="@string/maintenance"
+    tools:layout="@layout/fragment_maintenance" />
+
+
+</navigation>

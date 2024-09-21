@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="10dp"
+    app:cardMaxElevation="3dp"
+    app:contentPadding="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:id="@+id/rightLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/headerTxt"
+            android:layout_alignBottom="@id/headerTxt"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/headerTxt"
+                android:layout_margin="10dp"
+                android:gravity="center_vertical"
+                android:lineSpacingExtra="5sp"
+                android:maxLines="1"
+                android:paddingLeft="20dp"
+                android:text="0 kph"
+                android:textColor="#404040"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_margin="10dp"
+                android:src="@android:drawable/presence_online" />
+
+
+            <ImageView
+                android:id="@+id/dotColor"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_margin="10dp"
+                android:visibility="gone"
+                android:src="@android:drawable/presence_online" />
+
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/headerTxt"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_vertical"
+            android:lineSpacingExtra="5sp"
+            android:maxLines="1"
+            android:layout_toLeftOf="@id/rightLayout"
+            android:paddingLeft="20dp"
+            android:text="@string/app_name"
+            android:textColor="#404040"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/dateTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/headerTxt"
+            android:gravity="center_vertical"
+            android:lineSpacingExtra="5sp"
+            android:maxLines="1"
+            android:paddingLeft="20dp"
+            android:text="@string/app_name"
+            android:textColor="#95404040"
+            android:textSize="14sp" />
+
+
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dateTxt"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:lineSpacingExtra="5sp"
+            android:maxLines="1"
+            android:paddingLeft="20dp"
+            android:text="@string/app_name"
+            android:textColor="#404040"
+            android:textSize="13sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/address"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:lineSpacingExtra="5sp"
+            android:maxLines="1"
+            android:paddingLeft="20dp"
+            android:text="@string/stop_duration"
+            android:textColor="#404040"
+            android:textSize="14sp" />
+
+
+
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>
+

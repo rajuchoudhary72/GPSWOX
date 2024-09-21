@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    app:cardBackgroundColor="@color/row_header"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="1dp"
+    app:cardMaxElevation="1dp"
+    app:cardUseCompatPadding="true"
+    app:contentPadding="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/routeImage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/start_flag" />
+
+        <TextView
+            android:id="@+id/timeTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/routeImage"
+            android:fontFamily="sans-serif-medium"
+            android:text="12-03-2020 04:04:48 PM"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/eventName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/timeTxt"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/routeImage"
+            android:paddingTop="3dp"
+            android:text="Duration : 24min 16s"
+            android:textSize="13sp" />
+
+
+        <TextView
+            android:id="@+id/eventTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_margin="10dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="START"
+            android:textColor="@color/event_name"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/eventTxt"
+            android:layout_alignStart="@id/timeTxt"
+            android:layout_marginTop="3sp"
+            android:lineSpacingExtra="5sp"
+            android:paddingTop="3dp"
+            android:text="Fetching address ..."
+            android:textColor="@color/text_color"
+            android:textSize="13sp"
+            android:visibility="gone" />
+
+
+        <LinearLayout
+            android:id="@+id/driveLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/eventTxt"
+            android:layout_alignStart="@id/timeTxt"
+            android:layout_marginTop="5sp"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:lineSpacingExtra="5sp"
+                android:paddingTop="3dp"
+                android:text="Distance: "
+                android:textColor="@color/text_color"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="5sp"
+                android:paddingTop="3dp"
+                android:text="3.74 km"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:lineSpacingExtra="5sp"
+                android:paddingTop="3dp"
+                android:text="Top speed"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/text_color"
+                android:textSize="12sp" />
+
+
+            <TextView
+                android:id="@+id/topSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:lineSpacingExtra="5sp"
+                android:paddingTop="3dp"
+                android:text="59 kph"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>

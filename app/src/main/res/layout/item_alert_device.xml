@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.AppCompatCheckBox xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:id="@+id/checkedItem"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:buttonTint="@color/colorPrimary"
+    android:gravity="left|center_vertical"
+    android:maxLines="1"
+    android:textSize="13sp"
+    android:padding="5sp"
+    android:text="@string/app_name" />

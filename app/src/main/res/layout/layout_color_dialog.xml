@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="20dp"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:id="@+id/colorPane"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/colorPrimaryDark"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:orientation="vertical">
+
+
+        <com.shazcom.gps.app.utils.SeekbarHint
+            android:id="@+id/colorRed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="255"
+            android:paddingTop="20dp"
+            android:progress="155"
+            android:progressTint="#FF0000"
+            android:thumb="@drawable/thumb"
+            android:thumbTint="#FF0000"
+            app:hint_text_color="#FF0000"
+            app:hint_text_size="15sp" />
+        />
+
+        <com.shazcom.gps.app.utils.SeekbarHint
+            android:id="@+id/colorBlue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="255"
+            android:paddingTop="20dp"
+            android:progress="155"
+            android:progressTint="#008000"
+            android:thumb="@drawable/thumb"
+            android:thumbTint="#008000"
+            app:hint_text_color="#008000"
+            app:hint_text_size="15sp" />
+        />
+
+
+        <com.shazcom.gps.app.utils.SeekbarHint
+            android:id="@+id/colorGreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="255"
+            android:paddingTop="20dp"
+            android:progress="155"
+            android:progressTint="#000080"
+            android:thumb="@drawable/thumb"
+            android:thumbTint="#000080"
+            app:hint_text_color="#000080"
+            app:hint_text_size="15sp" />
+        />
+
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical">
+
+
+        <TextView
+            android:id="@+id/hashSign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:text="#"
+            android:textColor="@color/black"
+            android:textSize="17sp" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/colorCode"
+            android:layout_width="150dp"
+            android:layout_height="45dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/hashSign"
+            android:editable="false"
+            android:text="@string/app_name"
+            android:textAppearance="?android:attr/textAppearanceButton" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/selectBtn"
+            android:layout_width="120dp"
+            android:layout_height="45dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:background="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimary"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="SELECT"
+            android:textAppearance="?android:attr/textAppearanceButton" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

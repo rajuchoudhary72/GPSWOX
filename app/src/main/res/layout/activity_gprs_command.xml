@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
+        app:subtitleTextAppearance="@style/ToolbarSubTitle"
+        app:subtitleTextColor="#FFFFFF"
+        app:title="@string/send_command"
+        app:titleTextColor="#FFFFFF" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+
+        <RadioButton
+            android:id="@+id/gprsBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/tab_button_selector"
+            android:clickable="true"
+            android:gravity="center"
+            android:maxLines="1"
+            android:button="@null"
+            android:paddingLeft="25dp"
+            android:paddingRight="20dp"
+            android:text="GPRS"
+            android:textColor="@color/black"
+            android:textSize="17sp"
+            android:checked="true"
+            android:textStyle="bold" />
+
+
+        <RadioButton
+            android:id="@+id/smsBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:buttonTint="@color/black"
+            android:clickable="true"
+            android:gravity="center"
+            android:maxLines="1"
+            android:button="@null"
+            android:background="@drawable/tab_button_selector"
+            android:paddingLeft="25dp"
+            android:paddingRight="20dp"
+            android:text="SMS"
+            android:textColor="@color/black"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+
+    <ViewSwitcher
+        android:id="@+id/viewSwitcher"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="20dp"
+                android:buttonTint="@color/black"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="25dp"
+                android:paddingRight="20dp"
+                android:text="@string/devices"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/edit_background"
+                android:backgroundTint="@color/row_header">
+
+                <Spinner
+                    android:id="@+id/deviceSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/black"
+                    android:cursorVisible="true"
+                    android:fontFamily="sans-serif"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:spinnerMode="dropdown"
+                    android:textColor="#000000"
+                    android:textCursorDrawable="@null"
+                    android:textSize="16dp" />
+
+            </RelativeLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="20dp"
+                android:buttonTint="@color/black"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="25dp"
+                android:paddingRight="20dp"
+                android:text="@string/type"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/edit_background"
+                android:backgroundTint="@color/row_header">
+
+                <Spinner
+                    android:id="@+id/commandSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/black"
+                    android:cursorVisible="true"
+                    android:fontFamily="sans-serif"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:spinnerMode="dropdown"
+                    android:textColor="#000000"
+                    android:textCursorDrawable="@null"
+                    android:textSize="16dp" />
+
+            </RelativeLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/messageInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/closeBtn"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:backgroundTint="@color/white"
+                android:hint="@string/message"
+                android:textColorHint="@color/black"
+                app:hintEnabled="true"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/messageTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:backgroundTint="@color/white"
+                    android:maxLines="5"
+                    android:textColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_margin="20dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/sendCommandBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="@string/send_command"
+                    android:textSize="17sp" />
+
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_centerInParent="true"
+                    android:visibility="invisible" />
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="20dp"
+                android:buttonTint="@color/black"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="25dp"
+                android:paddingRight="20dp"
+                android:text="@string/devices"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/edit_background"
+                android:backgroundTint="@color/row_header">
+
+                <Spinner
+                    android:id="@+id/deviceSpinnerSMS"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/black"
+                    android:cursorVisible="true"
+                    android:fontFamily="sans-serif"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:spinnerMode="dropdown"
+                    android:textColor="#000000"
+                    android:textCursorDrawable="@null"
+                    android:textSize="16dp" />
+
+            </RelativeLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="20dp"
+                android:buttonTint="@color/black"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="25dp"
+                android:paddingRight="20dp"
+                android:text="@string/type"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/edit_background"
+                android:backgroundTint="@color/row_header">
+
+                <Spinner
+                    android:id="@+id/templateSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/black"
+                    android:cursorVisible="true"
+                    android:fontFamily="sans-serif"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:spinnerMode="dropdown"
+                    android:textColor="#000000"
+                    android:textCursorDrawable="@null"
+                    android:textSize="16dp" />
+
+            </RelativeLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/messageInputSMS"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/closeBtn"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:backgroundTint="@color/white"
+                android:hint="@string/message"
+                android:textColorHint="@color/black"
+                app:hintEnabled="true"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/messageTxtSMS"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:backgroundTint="@color/white"
+                    android:maxLines="5"
+                    android:textColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_margin="20dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/sendCommandBtnSMS"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="@string/send_command"
+                    android:textSize="17sp" />
+
+
+                <ProgressBar
+                    android:id="@+id/progressBarSMS"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_centerInParent="true"
+                    android:visibility="invisible" />
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+
+
+
+    </ViewSwitcher>
+
+
+</LinearLayout>

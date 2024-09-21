@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ffa500</color>
+    <color name="colorPrimaryDark">#ffa500</color>
+    <color name="colorAccent">#ffa500</color>
+    <color name="row_header">#F9F9F9</color>
+    <color name="text_color">#777777</color>
+    <color name="event_name">#1C99BD</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="btn_color">#D9D9D9</color>
+    <color name="app_logo_color">#001145</color>
+
+    <color name="color_green">#5CB85C</color>
+    <color name="color_orange">#F0AD4E</color>
+    <color name="color_danger">#B94743</color>
+
+</resources>

@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5sp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/closeBtn"
+                style="@style/Widget.MaterialComponents.Button.Icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:elevation="0dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:backgroundTint="@color/white"
+                app:cornerRadius="25dp"
+                app:elevation="0dp"
+                app:icon="@android:drawable/ic_menu_close_clear_cancel"
+                app:iconSize="27dp"
+                app:iconTint="@color/black" />
+
+            <RelativeLayout
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentRight="true"
+                android:layout_margin="10dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/saveBtn"
+                    style="@style/Widget.MaterialComponents.Button.Icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:elevation="0dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:backgroundTint="@color/white"
+                    app:cornerRadius="25dp"
+                    app:elevation="0dp"
+                    app:icon="@android:drawable/ic_menu_save"
+                    app:iconSize="27dp"
+                    app:iconTint="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerInParent="true"
+                    android:indeterminateTint="@color/colorPrimaryDark"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="#F0EFF5"
+                android:clickable="true"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="@string/main"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+
+                android:buttonTint="@color/black"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="25dp"
+                android:paddingRight="20dp"
+                android:text="@string/devices"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/edit_background"
+                android:backgroundTint="@color/row_header">
+
+                <Spinner
+                    android:id="@+id/deviceSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/black"
+                    android:cursorVisible="true"
+                    android:fontFamily="sans-serif"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:spinnerMode="dropdown"
+                    android:textColor="#000000"
+                    android:textCursorDrawable="@null"
+                    android:textSize="16dp" />
+
+            </RelativeLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/titleInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/closeBtn"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:backgroundTint="@color/white"
+                android:hint="@string/title_required"
+                android:textColorHint="@color/black"
+                app:hintEnabled="true"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:textColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/invoiceInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/closeBtn"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:backgroundTint="@color/white"
+                android:hint="@string/invoice_number"
+                android:textColorHint="@color/black"
+                app:hintEnabled="true"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/invoice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:textColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/commentInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/closeBtn"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:backgroundTint="@color/white"
+                android:hint="@string/comment"
+                android:textColorHint="@color/black"
+                app:hintEnabled="true"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:backgroundTint="@color/white"
+                    android:inputType="textImeMultiLine|textNoSuggestions"
+                    android:maxLines="3"
+                    android:textColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:buttonTint="@color/black"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="25dp"
+                android:paddingRight="20dp"
+                android:text="@string/priority"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/edit_background"
+                android:backgroundTint="@color/row_header">
+
+                <Spinner
+                    android:id="@+id/priority"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/black"
+                    android:cursorVisible="true"
+                    android:entries="@array/priority"
+                    android:fontFamily="sans-serif"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:spinnerMode="dropdown"
+                    android:textColor="#000000"
+                    android:textCursorDrawable="@null"
+                    android:textSize="16dp" />
+
+            </RelativeLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:background="#F0EFF5"
+                android:clickable="true"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="@string/pickup"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+
+            <TextView
+                android:id="@+id/pickupAddress"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_below="@id/nameInput"
+                android:layout_margin="10dp"
+                android:background="@color/row_header"
+                android:clickable="true"
+                android:drawableRight="@drawable/ic_right_arrow"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="15dp"
+                android:paddingRight="20dp"
+                android:text="@string/pickup_address_required"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/pickFrom"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_below="@id/nameInput"
+                android:layout_margin="10dp"
+                android:background="@color/row_header"
+                android:clickable="true"
+                android:drawableRight="@drawable/ic_right_arrow"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="15dp"
+                android:paddingRight="20dp"
+                android:text="From  (required)"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/pickTo"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_below="@id/nameInput"
+                android:layout_margin="10dp"
+                android:background="@color/row_header"
+                android:clickable="true"
+                android:drawableRight="@drawable/ic_right_arrow"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="15dp"
+                android:paddingRight="20dp"
+                android:text="To  (required)"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:background="#F0EFF5"
+                android:clickable="true"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="Deliver"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+
+            <TextView
+                android:id="@+id/deliverAddress"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_below="@id/nameInput"
+                android:layout_margin="10dp"
+                android:background="@color/row_header"
+                android:clickable="true"
+                android:drawableRight="@drawable/ic_right_arrow"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="15dp"
+                android:paddingRight="20dp"
+                android:text="@string/delivery_address_required"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/delFrom"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_below="@id/nameInput"
+                android:layout_margin="10dp"
+                android:background="@color/row_header"
+                android:clickable="true"
+                android:drawableRight="@drawable/ic_right_arrow"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="15dp"
+                android:paddingRight="20dp"
+                android:text="From  (required)"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/delTo"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_below="@id/nameInput"
+                android:layout_margin="10dp"
+                android:background="@color/row_header"
+                android:clickable="true"
+                android:drawableRight="@drawable/ic_right_arrow"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingLeft="15dp"
+                android:paddingRight="20dp"
+                android:text="To  (required)"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
