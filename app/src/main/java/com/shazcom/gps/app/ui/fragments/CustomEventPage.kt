@@ -12,20 +12,21 @@ import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.ToolsRepository
 import com.shazcom.gps.app.data.response.CustomEventResponse
+import com.shazcom.gps.app.databinding.FragmentCustomEventPageBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseFragment
 import com.shazcom.gps.app.ui.activities.Dashboard
 import com.shazcom.gps.app.ui.adapter.CustomEventAdapter
 import com.shazcom.gps.app.ui.dialogs.AddEventDialog
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
-import kotlinx.android.synthetic.main.empty_layout.*
-import kotlinx.android.synthetic.main.fragment_custom_event_page.*
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
 
 class CustomEventPage : BaseFragment(), KodeinAware {
 
+    private lateinit var binding: FragmentCustomEventPageBinding
     override val kodein by closestKodein()
     private val localDB: LocalDB by instance()
     private val repository: ToolsRepository by instance()
@@ -36,7 +37,8 @@ class CustomEventPage : BaseFragment(), KodeinAware {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_custom_event_page, container, false)
+        binding = FragmentCustomEventPageBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,7 +54,7 @@ class CustomEventPage : BaseFragment(), KodeinAware {
         toolsViewModel?.toolsRepository = repository
         loadCustomEvents()
 
-        addEvent.setOnClickListener {
+        binding.addEvent.setOnClickListener {
             val addEventDialog = AddEventDialog(this)
             addEventDialog.show(childFragmentManager, AddEventDialog::class.java.name)
         }
@@ -63,16 +65,18 @@ class CustomEventPage : BaseFragment(), KodeinAware {
             ?.observe(requireActivity(), Observer { resources ->
                 when (resources.status) {
                     Status.SUCCESS -> {
-                        progressBar.visibility = View.INVISIBLE
+                        binding.progressBar.visibility = View.INVISIBLE
                         processData(resources.data)
                     }
+
                     Status.ERROR -> {
-                        progressBar.visibility = View.INVISIBLE
-                        emptyText.visibility = View.VISIBLE
-                        emptyText.text = "No Driver Found"
+                        binding.progressBar.visibility = View.INVISIBLE
+                        binding.inc.emptyText.visibility = View.VISIBLE
+                        binding.inc.emptyText.text = "No Driver Found"
                     }
+
                     Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.VISIBLE
                     }
                 }
             })
@@ -90,7 +94,7 @@ class CustomEventPage : BaseFragment(), KodeinAware {
 
 
     private fun processData(data: CustomEventResponse?) {
-        eventList.apply {
+        binding.eventList.apply {
             layoutManager = LinearLayoutManager(this@CustomEventPage.context)
             adapter = CustomEventAdapter(data?.items?.events?.data!!)
         }

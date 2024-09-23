@@ -16,17 +16,19 @@ import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.ToolsRepository
 import com.shazcom.gps.app.data.response.ReportData
 import com.shazcom.gps.app.data.response.ReportList
+import com.shazcom.gps.app.databinding.FragmentReportListBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseFragment
 import com.shazcom.gps.app.ui.adapter.ReportListAdapter
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
-import kotlinx.android.synthetic.main.fragment_report_list.*
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
 
 class ReportList : BaseFragment(), KodeinAware {
 
+    private lateinit var binding: FragmentReportListBinding
     override val kodein by closestKodein()
     private val localDB: LocalDB by instance<LocalDB>()
     private val repository: ToolsRepository by instance<ToolsRepository>()
@@ -37,7 +39,8 @@ class ReportList : BaseFragment(), KodeinAware {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_report_list, container, false)
+         binding=FragmentReportListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,17 +50,17 @@ class ReportList : BaseFragment(), KodeinAware {
         toolsViewModel?.toolsRepository = repository
         loadReports()
 
-        reportList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding. reportList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0 && addReport.isShown) {
-                    addReport.visibility = View.INVISIBLE
-                } else if (dy <= 0 && !addReport.isShown) {
-                    addReport.show()
+                if (dy > 0 && binding.addReport.isShown) {
+                    binding. addReport.visibility = View.INVISIBLE
+                } else if (dy <= 0 && !binding.addReport.isShown) {
+                    binding.addReport.show()
                 }
             }
         })
 
-        addReport.setOnClickListener {
+        binding. addReport.setOnClickListener {
             findNavController().navigate(R.id.action_reports_to_report)
         }
     }
@@ -68,14 +71,14 @@ class ReportList : BaseFragment(), KodeinAware {
                 if(!isVisible) { return@Observer }
                 when (resources.status) {
                     Status.SUCCESS -> {
-                        progressBar.visibility = View.INVISIBLE
+                        binding.  progressBar.visibility = View.INVISIBLE
                         processData(resources.data?.items)
                     }
                     Status.ERROR -> {
-                        progressBar.visibility = View.INVISIBLE
+                        binding. progressBar.visibility = View.INVISIBLE
                     }
                     Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
+                        binding. progressBar.visibility = View.VISIBLE
                     }
                 }
             })
@@ -83,11 +86,11 @@ class ReportList : BaseFragment(), KodeinAware {
 
     private fun processData(items: ReportList?) {
         items?.let {
-            reportList.apply {
+            binding. reportList.apply {
                 layoutManager = LinearLayoutManager(requireContext())
                 adapter =
                     ReportListAdapter(
-                        items?.reports?.data,
+                        items.reports.data,
                         { reportData -> editItem(reportData) },
                         { reportData ->
                             deleteItem(reportData)
@@ -125,10 +128,10 @@ class ReportList : BaseFragment(), KodeinAware {
             ?.observe(requireActivity(), Observer { resources ->
                 when (resources.status) {
                     Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
+                        binding.  progressBar.visibility = View.VISIBLE
                     }
                     Status.ERROR -> {
-                        progressBar.visibility = View.INVISIBLE
+                        binding.progressBar.visibility = View.INVISIBLE
                         Toast.makeText(
                             requireContext(),
                             getString(R.string.something_went_wrong),
@@ -136,7 +139,7 @@ class ReportList : BaseFragment(), KodeinAware {
                         ).show()
                     }
                     Status.SUCCESS -> {
-                        progressBar.visibility = View.INVISIBLE
+                        binding. progressBar.visibility = View.INVISIBLE
                         if (resources?.data?.status == 1) {
                             loadReports()
                             Toast.makeText(

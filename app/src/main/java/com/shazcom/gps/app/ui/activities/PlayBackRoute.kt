@@ -34,11 +34,10 @@ import com.google.android.libraries.maps.OnMapReadyCallback
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.*
 import com.google.android.libraries.maps.model.CameraPosition
+import com.shazcom.gps.app.databinding.ActivityPlaybackBinding
 import com.shazcom.gps.app.utils.getMapTypes
 import com.shazcom.gps.app.utils.getNewTimeFormat
-import kotlinx.android.synthetic.main.activity_playback.*
-import kotlinx.android.synthetic.main.activity_playback.playBtn
-import kotlinx.android.synthetic.main.bottom_sheet_buttons.progressBar
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
@@ -51,6 +50,7 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
     OnMapReadyCallback, GoogleMap.OnCameraMoveListener {
 
 
+    private lateinit var binding: ActivityPlaybackBinding
     private var distanceSum: Double? = 0.0
     private var playPauseFlag: Boolean = false
     private var playBackSpeed: Long = 1800L
@@ -77,79 +77,80 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_playback)
+        binding = ActivityPlaybackBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        with(binding) {
+            deviceId = intent.getIntExtra("deviceId", 0)
+            deviceName = intent.getStringExtra("deviceName")
 
-        deviceId = intent.getIntExtra("deviceId", 0)
-        deviceName = intent.getStringExtra("deviceName")
+            toolBar.title = deviceName!!
 
-        toolBar.title = deviceName!!
+            startDateTime.text = "${getCurrentDay()}"
+            endDateTime.text = "${nextDay()}"
 
-        startDateTime.text = "${getCurrentDay()}"
-        endDateTime.text = "${nextDay()}"
+            commonViewModel = ViewModelProvider(this@PlayBackRoute).get(CommonViewModel::class.java)
+            commonViewModel?.commonViewRepository = repository
 
-        commonViewModel = ViewModelProvider(this).get(CommonViewModel::class.java)
-        commonViewModel?.commonViewRepository = repository
-
-        val spinnerAdapter: ArrayAdapter<*> =
-            ArrayAdapter<Any?>(this, android.R.layout.simple_spinner_item, playSpeedItems)
-        spinnerAdapter.setDropDownViewResource(R.layout.spinner_item)
-        playSpeedDrop.onItemSelectedListener = this
-        playSpeedDrop.adapter = spinnerAdapter
-
-
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(this)
+            val spinnerAdapter: ArrayAdapter<*> =
+                ArrayAdapter<Any?>(this@PlayBackRoute, android.R.layout.simple_spinner_item, playSpeedItems)
+            spinnerAdapter.setDropDownViewResource(R.layout.spinner_item)
+            playSpeedDrop.onItemSelectedListener = this@PlayBackRoute
+            playSpeedDrop.adapter = spinnerAdapter
 
 
-        toolBar.setNavigationOnClickListener { finish() }
+            val mapFragment = supportFragmentManager
+                .findFragmentById(R.id.map) as SupportMapFragment?
+            mapFragment?.getMapAsync(this@PlayBackRoute)
 
-        playSpeedBtn.setOnClickListener {
-            playSpeedDrop.performClick()
-        }
 
-        playBtn.setOnClickListener {
-            if (!playPauseFlag) {
-                playPauseFlag = true
-                playBtn.setImageResource(R.drawable.pause)
-                playRoute()
-            } else {
-                playBtn.setImageResource(R.drawable.playback)
-                playPauseFlag = false
+            toolBar.setNavigationOnClickListener { finish() }
+
+            playSpeedBtn.setOnClickListener {
+                playSpeedDrop.performClick()
+            }
+
+            playBtn.setOnClickListener {
+                if (!playPauseFlag) {
+                    playPauseFlag = true
+                    playBtn.setImageResource(R.drawable.pause)
+                    playRoute()
+                } else {
+                    playBtn.setImageResource(R.drawable.playback)
+                    playPauseFlag = false
+                }
+            }
+
+            startDateTime.setOnClickListener {
+                if (startDateTime.isPressed) {
+                    pickDate1()
+                }
+            }
+
+            endDateTime.setOnClickListener {
+                if (endDateTime.isPressed) {
+                    pickDate2()
+                }
+            }
+
+            routeBtn.setOnClickListener {
+                loadHistory()
+            }
+
+
+            mapType.setOnClickListener {
+                if (mapTypeLayout.isVisible) {
+                    mapTypeLayout.visibility = View.GONE
+                } else {
+                    mapTypeLayout.visibility = View.VISIBLE
+                }
             }
         }
-
-        startDateTime.setOnClickListener {
-            if (startDateTime.isPressed) {
-                pickDate1()
-            }
-        }
-
-        endDateTime.setOnClickListener {
-            if (endDateTime.isPressed) {
-                pickDate2()
-            }
-        }
-
-        routeBtn.setOnClickListener {
-            loadHistory()
-        }
-
-
-        mapType.setOnClickListener {
-            if (mapTypeLayout.isVisible) {
-                mapTypeLayout.visibility = View.GONE
-            } else {
-                mapTypeLayout.visibility = View.VISIBLE
-            }
-        }
-
         initClicks()
         loadHistory()
 
     }
 
-    private fun initClicks() {
+    private fun initClicks()=with(binding) {
 
         mapNormal.setOnClickListener {
             mMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
@@ -183,7 +184,7 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
         }
     }
 
-    private fun loadHistory() {
+    private fun loadHistory()= with(binding) {
 
         itemPos = 0
         playPauseFlag = false
@@ -207,12 +208,13 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
             toDate.replace(" ", ""),
             getNewTimeFormat(toTime)
         )
-            ?.observe(this, Observer { resources ->
+            ?.observe(this@PlayBackRoute, Observer { resources ->
                 when (resources.status) {
                     Status.SUCCESS -> {
                         processData(resources.data!!)
                         progressBar.visibility = View.INVISIBLE
                     }
+
                     Status.LOADING -> {
                         progressBar.visibility = View.VISIBLE
                         itemList.clear()
@@ -221,10 +223,11 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
                             it?.clear()
                         }
                     }
+
                     Status.ERROR -> {
                         progressBar.visibility = View.INVISIBLE
                         Toast.makeText(
-                            this,
+                            this@PlayBackRoute,
                             getString(R.string.no_playback_Data),
                             Toast.LENGTH_SHORT
                         )
@@ -244,7 +247,7 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
         if (data.items.isNotEmpty()) {
             data.items.forEach { itemInner ->
                 itemInner.items.forEach { routeItem ->
-                    if(routeItem.id != null) {
+                    if (routeItem.id != null) {
                         itemList.add(routeItem)
                     }
 
@@ -300,23 +303,28 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        this.playSpeedBtn.text = playSpeedItems[position]
+        this.binding.playSpeedBtn.text = playSpeedItems[position]
         when (position) {
             0 -> {
                 playBackSpeed = 1500L
             }
+
             1 -> {
                 playBackSpeed = 1300L
             }
+
             2 -> {
                 playBackSpeed = 1100L
             }
+
             3 -> {
                 playBackSpeed = 900L
             }
+
             4 -> {
                 playBackSpeed = 700L
             }
+
             5 -> {
                 playBackSpeed = 500L
             }
@@ -390,7 +398,7 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
     private fun resetPlayer() {
         itemPos = 0
         Log.e("resetPlayer", "$itemPos")
-        playBtn.setImageResource(R.drawable.playback)
+        binding.playBtn.setImageResource(R.drawable.playback)
         playPauseFlag = false
     }
 
@@ -406,11 +414,11 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
 
             itemList[itemPos]?.let {
                 //Log.e("Item logged", "${it}")
-                speedLayout.visibility = View.VISIBLE
-                time.text = itemList[itemPos].time
-                speed.text = "${df.format(itemList[itemPos].speed)} km/h"
+                binding. speedLayout.visibility = View.VISIBLE
+                binding. time.text = itemList[itemPos].time
+                binding.  speed.text = "${df.format(itemList[itemPos].speed)} km/h"
                 distanceSum = distanceSum?.plus(itemList[itemPos].distance!!)
-                distance.text = "${df.format(distanceSum)} km"
+                binding.  distance.text = "${df.format(distanceSum)} km"
             }
         }
 
@@ -472,7 +480,7 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
                         val pickedDateTime = Calendar.getInstance()
                         pickedDateTime.set(year, month, day, hour, minute)
                         val df = SimpleDateFormat("yyyy-MM-dd\nhh:mm a")
-                        startDateTime.text =
+                        binding. startDateTime.text =
                             df.format(pickedDateTime.timeInMillis).replace("PG", "AM")
                                 .replace("PTG", "PM")
                     },
@@ -504,7 +512,7 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
                         val pickedDateTime = Calendar.getInstance()
                         pickedDateTime.set(year, month, day, hour, minute)
                         val df = SimpleDateFormat("yyyy-MM-dd\nhh:mm a")
-                        endDateTime.setText(
+                        binding. endDateTime.setText(
                             df.format(pickedDateTime.timeInMillis).replace("PG", "AM")
                                 .replace("PTG", "PM")
                         )
@@ -524,7 +532,7 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
         currentZoom = mMap?.cameraPosition?.zoom!!
     }
 
-    private fun selectedMap(mapType: Int) {
+    private fun selectedMap(mapType: Int)=with(binding) {
         when (mapType) {
 
             1 -> {

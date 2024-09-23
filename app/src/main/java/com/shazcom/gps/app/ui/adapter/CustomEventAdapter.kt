@@ -6,22 +6,24 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.CustomEventData
-import kotlinx.android.synthetic.main.item_group.view.*
+import com.shazcom.gps.app.databinding.ItemAlertDeviceBinding
+import com.shazcom.gps.app.databinding.ItemGroupBinding
+
 
 class CustomEventAdapter(private val events: List<CustomEventData>) :
     RecyclerView.Adapter<CustomEventAdapter.DriverViewHolder>() {
 
     class DriverViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val name = view.groupName
+        val name = ItemGroupBinding.bind(view).groupName
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DriverViewHolder {
+
+        val item =
+            ItemGroupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+
         return DriverViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_group,
-                parent,
-                false
-            )
+            item.rootView
         )
     }
 

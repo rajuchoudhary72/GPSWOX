@@ -13,20 +13,21 @@ import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.ToolsRepository
 import com.shazcom.gps.app.data.response.MapIcons
 import com.shazcom.gps.app.data.response.UserPoiResponse
+import com.shazcom.gps.app.databinding.ActivityPoiBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseActivity
 import com.shazcom.gps.app.ui.adapter.UserPoiAdapter
 import com.shazcom.gps.app.ui.dialogs.POIDialog
 import com.shazcom.gps.app.ui.dialogs.PoiMapDialog
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
-import kotlinx.android.synthetic.main.activity_poi.*
-import kotlinx.android.synthetic.main.empty_layout.*
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
 class POI : BaseActivity(), KodeinAware {
 
+    private lateinit var binding: ActivityPoiBinding
     override val kodein by kodein()
     private val localDB: LocalDB by instance<LocalDB>()
     private val repository: ToolsRepository by instance<ToolsRepository>()
@@ -34,27 +35,28 @@ class POI : BaseActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_poi)
+        binding= ActivityPoiBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        toolBar.setNavigationOnClickListener { finish() }
+        binding.toolBar.setNavigationOnClickListener { finish() }
 
         toolsViewModel = ViewModelProvider(this).get(ToolsViewModel::class.java)
         toolsViewModel?.toolsRepository = repository
         loadPoiMarker()
 
-        addPoi.setOnClickListener {
+        binding. addPoi.setOnClickListener {
             val poiDialog = POIDialog(this)
             poiDialog.isCancelable = false
             poiDialog.show(supportFragmentManager, POIDialog::class.java.name)
         }
 
-        poiList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding. poiList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0 && addPoi.isShown) {
-                    addPoi.visibility = View.INVISIBLE
-                }else if(dy <= 0 && !addPoi.isShown) {
-                    addPoi.show()
+                if (dy > 0 && binding.addPoi.isShown) {
+                    binding.addPoi.visibility = View.INVISIBLE
+                }else if(dy <= 0 && !binding.addPoi.isShown) {
+                    binding. addPoi.show()
                 }
             }
 
@@ -66,27 +68,27 @@ class POI : BaseActivity(), KodeinAware {
             ?.observe(this@POI, Observer { resources ->
                 when (resources.status) {
                     Status.SUCCESS -> {
-                        progressBar.visibility = View.INVISIBLE
-                        emptyText.visibility = View.INVISIBLE
+                        binding. progressBar.visibility = View.INVISIBLE
+                        binding.inc.  emptyText.visibility = View.INVISIBLE
                         processData(resources.data!!)
                     }
 
                     Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
-                        emptyText.visibility = View.INVISIBLE
+                        binding. progressBar.visibility = View.VISIBLE
+                        binding.inc.emptyText.visibility = View.INVISIBLE
                     }
 
                     Status.ERROR -> {
-                        progressBar.visibility = View.INVISIBLE
-                        emptyText.visibility = View.VISIBLE
-                        emptyText.text = "No POI Found"
+                        binding. progressBar.visibility = View.INVISIBLE
+                        binding.inc.emptyText.visibility = View.VISIBLE
+                        binding.inc. emptyText.text = "No POI Found"
                     }
                 }
             })
     }
 
     private fun processData(data: UserPoiResponse) {
-        poiList.apply {
+        binding.   poiList.apply {
             layoutManager = LinearLayoutManager(this@POI)
             adapter = UserPoiAdapter(
                 data.items.mapIcons,
@@ -130,10 +132,10 @@ class POI : BaseActivity(), KodeinAware {
             ?.observe(this, Observer { resources ->
                 when (resources.status) {
                     Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.VISIBLE
                     }
                     Status.ERROR -> {
-                        progressBar.visibility = View.INVISIBLE
+                        binding.progressBar.visibility = View.INVISIBLE
                         Toast.makeText(
                             this@POI,
                             getString(R.string.something_went_wrong),
@@ -141,7 +143,7 @@ class POI : BaseActivity(), KodeinAware {
                         ).show()
                     }
                     Status.SUCCESS -> {
-                        progressBar.visibility = View.INVISIBLE
+                        binding.  progressBar.visibility = View.INVISIBLE
                         if (resources.data?.status == 1) {
                             Toast.makeText(
                                 this@POI,

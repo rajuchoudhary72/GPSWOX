@@ -23,10 +23,12 @@ import com.shazcom.gps.app.data.repository.ToolsRepository
 import com.shazcom.gps.app.data.response.BaseResponse
 import com.shazcom.gps.app.data.response.Items
 import com.shazcom.gps.app.data.vo.MapData
+import com.shazcom.gps.app.databinding.AddTaskBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.activities.TaskPage
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
-import kotlinx.android.synthetic.main.add_task.*
+import kotlinx.coroutines.flow.combine
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
@@ -36,6 +38,7 @@ import java.util.*
 
 class AddTaskDialog(private val taskPage: TaskPage) : DialogFragment(), KodeinAware {
 
+    private lateinit var binding: AddTaskBinding
     override val kodein by closestKodein()
     private val localDB: LocalDB by instance()
     private val repository: ToolsRepository by instance()
@@ -76,27 +79,27 @@ class AddTaskDialog(private val taskPage: TaskPage) : DialogFragment(), KodeinAw
             setDevices(listItem)
         }
 
-        pickupAddress.setOnClickListener {
+        binding.pickupAddress.setOnClickListener {
             locationPickerDialog = LocationPickerDialog(true, this)
             locationPickerDialog?.show(childFragmentManager, LocationPickerDialog::class.java.name)
         }
 
-        deliverAddress.setOnClickListener {
+        binding.deliverAddress.setOnClickListener {
             locationPickerDialog = LocationPickerDialog(false, this)
             locationPickerDialog?.show(childFragmentManager, LocationPickerDialog::class.java.name)
         }
 
 
-        closeBtn.setOnClickListener {
+        binding.closeBtn.setOnClickListener {
             dismiss()
         }
 
-        saveBtn.setOnClickListener {
+        binding.saveBtn.setOnClickListener {
             toolsViewModel?.addTask(
                 "en", localDB.getToken()!!,
                 device,
-                title.text.toString(),
-                comment.text.toString(),
+                binding. title.text.toString(),
+                binding.  comment.text.toString(),
                 priority,
                 1,
                 pickUpAddress,
@@ -112,12 +115,12 @@ class AddTaskDialog(private val taskPage: TaskPage) : DialogFragment(), KodeinAw
             )?.observe(requireActivity(), Observer { resources ->
                 when (resources.status) {
                     Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
-                        saveBtn.visibility = View.INVISIBLE
+                        binding.  progressBar.visibility = View.VISIBLE
+                        binding.  saveBtn.visibility = View.INVISIBLE
                     }
                     Status.ERROR -> {
-                        progressBar.visibility = View.INVISIBLE
-                        saveBtn.visibility = View.VISIBLE
+                        binding. progressBar.visibility = View.INVISIBLE
+                        binding. saveBtn.visibility = View.VISIBLE
                         Toast.makeText(
                             this@AddTaskDialog.context,
                             getString(R.string.valid_proper_data),
@@ -125,18 +128,18 @@ class AddTaskDialog(private val taskPage: TaskPage) : DialogFragment(), KodeinAw
                         ).show()
                     }
                     Status.SUCCESS -> {
-                        progressBar.visibility = View.INVISIBLE
-                        saveBtn.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.INVISIBLE
+                        binding. saveBtn.visibility = View.VISIBLE
                         processData(resources.data!!)
                     }
                 }
             })
         }
 
-        pickFrom.setOnClickListener { pickDateAndTime("pick_from") }
-        pickTo.setOnClickListener { pickDateAndTime("pick_to") }
-        delFrom.setOnClickListener { pickDateAndTime("del_from") }
-        delTo.setOnClickListener { pickDateAndTime("del_to") }
+        binding. pickFrom.setOnClickListener { pickDateAndTime("pick_from") }
+        binding. pickTo.setOnClickListener { pickDateAndTime("pick_to") }
+        binding.delFrom.setOnClickListener { pickDateAndTime("del_from") }
+        binding. delTo.setOnClickListener { pickDateAndTime("del_to") }
     }
 
     private fun setDevices(list: List<Items>) {
@@ -146,9 +149,9 @@ class AddTaskDialog(private val taskPage: TaskPage) : DialogFragment(), KodeinAw
             list
         )
         deviceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        deviceSpinner.adapter = deviceAdapter
+        binding.deviceSpinner.adapter = deviceAdapter
 
-        deviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.deviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
@@ -206,7 +209,8 @@ class AddTaskDialog(private val taskPage: TaskPage) : DialogFragment(), KodeinAw
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.add_task, container, false)
+        binding=AddTaskBinding.inflate(inflater,container, false)
+        return binding.root
     }
 
     fun saveMapData(mapData: MapData) {
@@ -215,14 +219,14 @@ class AddTaskDialog(private val taskPage: TaskPage) : DialogFragment(), KodeinAw
             pickUpLat = mapData.lat
             pickUpLng = mapData.lng
 
-            pickupAddress.text = pickUpAddress
+            binding. pickupAddress.text = pickUpAddress
 
         } else {
             deliveryAddress = mapData.address
             deliveryLat = mapData.lat
             deliveryLng = mapData.lng
 
-            deliverAddress.text = deliveryAddress
+            binding. deliverAddress.text = deliveryAddress
         }
     }
 
@@ -262,19 +266,19 @@ class AddTaskDialog(private val taskPage: TaskPage) : DialogFragment(), KodeinAw
     private fun setDateAndTime(tag: String, format: String) {
         when (tag) {
             "pick_from" -> {
-                pickFrom.text = format
+                binding.  pickFrom.text = format
                 pickupTimeFrom = format
             }
             "pick_to" -> {
-                pickTo.text = format
+                binding. pickTo.text = format
                 pickupTimeTo = format
             }
             "del_from" -> {
-                delFrom.text = format
+                binding. delFrom.text = format
                 deliveryTimeFrom = format
             }
             "del_to" -> {
-                delTo.text = format
+                binding. delTo.text = format
                 deliveryTimeTo = format
             }
         }

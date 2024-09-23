@@ -24,7 +24,8 @@ import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.LatLngBounds
 import com.google.android.libraries.maps.model.MarkerOptions
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.dialog_show_geofence.*
+import com.shazcom.gps.app.databinding.DialogShowGeofenceBinding
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,6 +36,7 @@ import java.net.URL
 class PoiMapDialog(private val mapIcons: MapIcons) :
     DialogFragment(),
     OnMapReadyCallback {
+    private lateinit var binding: DialogShowGeofenceBinding
     private var mMap: GoogleMap? = null
 
 
@@ -43,11 +45,12 @@ class PoiMapDialog(private val mapIcons: MapIcons) :
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_show_geofence, container, false)
+     binding=    DialogShowGeofenceBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = Dialog(activity!!, R.style.customDialogTheme)
+        val dialog = Dialog(requireActivity(), R.style.customDialogTheme)
         dialog.setContentView(R.layout.dialog_show_geofence)
         return dialog
     }
@@ -61,7 +64,7 @@ class PoiMapDialog(private val mapIcons: MapIcons) :
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 dialog?.window?.statusBarColor =
-                    ContextCompat.getColor(context!!, R.color.colorPrimaryDark)
+                    ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark)
             }
         }
     }
@@ -80,7 +83,7 @@ class PoiMapDialog(private val mapIcons: MapIcons) :
             }
         }
 
-        closeBtn.setOnClickListener {
+        binding.closeBtn.setOnClickListener {
             dismiss()
         }
     }

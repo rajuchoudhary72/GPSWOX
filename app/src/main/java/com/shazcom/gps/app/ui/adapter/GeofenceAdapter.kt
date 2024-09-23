@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.GeoFenceData
-import kotlinx.android.synthetic.main.item_geo_fence.view.*
+import com.shazcom.gps.app.databinding.ItemGeoFenceBinding
 
 
 class GeofenceAdapter(
@@ -18,11 +18,11 @@ class GeofenceAdapter(
     RecyclerView.Adapter<GeofenceAdapter.PoiIconViewHolder>() {
 
     class PoiIconViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val name = view.name!!
-        val description = view.description!!
-        val btnLayout = view.btnLayout!!
-        val editBtn = view.editBtn!!
-        val deleteBtn = view.deleteBtn!!
+        val name =ItemGeoFenceBinding.bind( view).name!!
+        val description = ItemGeoFenceBinding.bind( view).description!!
+        val btnLayout = ItemGeoFenceBinding.bind( view).btnLayout!!
+        val editBtn = ItemGeoFenceBinding.bind( view).editBtn!!
+        val deleteBtn = ItemGeoFenceBinding.bind( view).deleteBtn!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PoiIconViewHolder {

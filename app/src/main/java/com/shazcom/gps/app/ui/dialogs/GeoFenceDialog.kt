@@ -16,7 +16,8 @@ import com.shazcom.gps.app.ui.activities.GeoFencing
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.shazcom.gps.app.data.response.GeoFenceData
-import kotlinx.android.synthetic.main.dialog_geofence.*
+import com.shazcom.gps.app.databinding.DialogGeofenceBinding
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
@@ -24,6 +25,7 @@ import org.kodein.di.generic.instance
 class GeoFenceDialog(private val geoFencing: GeoFencing) : BottomSheetDialogFragment(),
     KodeinAware {
 
+    private lateinit var binding: DialogGeofenceBinding
     override val kodein by closestKodein()
     private val localDB: LocalDB by instance<LocalDB>()
     private val repository: ToolsRepository by instance<ToolsRepository>()
@@ -38,7 +40,8 @@ class GeoFenceDialog(private val geoFencing: GeoFencing) : BottomSheetDialogFrag
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_geofence, container, false)
+        binding = DialogGeofenceBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,38 +49,39 @@ class GeoFenceDialog(private val geoFencing: GeoFencing) : BottomSheetDialogFrag
 
         toolsViewModel = ViewModelProvider(this).get(ToolsViewModel::class.java)
         toolsViewModel?.toolsRepository = repository
-
-        closeBtn.setOnClickListener {
-            dismiss()
-        }
-
-        addPolygonColor.setOnClickListener {
-            val colorDialog = ColorDialog(this)
-            colorDialog.show(childFragmentManager, ColorDialog::class.java.name)
-        }
-
-        addGeoFence.setOnClickListener {
-            val geoFenceMapDialog = GeoFenceMapDialog(polygonColor, this)
-            geoFenceMapDialog.updatePolyGon(geoFenceDataMain?.coordinates ?: "")
-            geoFenceMapDialog.show(childFragmentManager, GeoFenceMapDialog::class.java.name)
-        }
-
-        saveBtn.setOnClickListener {
-            geoFenceDataMain?.let {
-                updateGeofence(it.id)
-            } ?: run {
-                saveGeoFence()
+        with(binding) {
+            closeBtn.setOnClickListener {
+                dismiss()
             }
-        }
 
-        geoFenceDataMain?.let {
-            addPolygonColor(it.polygon_color)
-            addGeoFence(it.coordinates)
-            name.setText(it.name)
+            addPolygonColor.setOnClickListener {
+                val colorDialog = ColorDialog(this@GeoFenceDialog)
+                colorDialog.show(childFragmentManager, ColorDialog::class.java.name)
+            }
+
+            addGeoFence.setOnClickListener {
+                val geoFenceMapDialog = GeoFenceMapDialog(polygonColor, this@GeoFenceDialog)
+                geoFenceMapDialog.updatePolyGon(geoFenceDataMain?.coordinates ?: "")
+                geoFenceMapDialog.show(childFragmentManager, GeoFenceMapDialog::class.java.name)
+            }
+
+            saveBtn.setOnClickListener {
+                geoFenceDataMain?.let {
+                    updateGeofence(it.id)
+                } ?: run {
+                    saveGeoFence()
+                }
+            }
+
+            geoFenceDataMain?.let {
+                addPolygonColor(it.polygon_color)
+                addGeoFence(it.coordinates)
+                name.setText(it.name)
+            }
         }
     }
 
-    private fun saveGeoFence() {
+    private fun saveGeoFence()= with(binding) {
 
         if (polygonColor.length > 6) {
             polygonColor = polygonColor.substring(2, 8)
@@ -117,13 +121,13 @@ class GeoFenceDialog(private val geoFencing: GeoFencing) : BottomSheetDialogFrag
         })
     }
 
-    private fun updateGeofence(id: Int) {
+    private fun updateGeofence(id: Int)= with(binding) {
 
         if (polygonColor.length > 6 && polygonColor.length != 7) {
             polygonColor = polygonColor.substring(2, 8)
         }
 
-        if(!polygonColor.startsWith("#")) {
+        if (!polygonColor.startsWith("#")) {
             polygonColor = "#${polygonColor}"
         }
 
@@ -162,7 +166,7 @@ class GeoFenceDialog(private val geoFencing: GeoFencing) : BottomSheetDialogFrag
         })
     }
 
-    fun addPolygonColor(color: String) {
+    fun addPolygonColor(color: String) = with(binding){
         polygonColor = color
         if (color.startsWith("#")) {
             selectedColor.setBackgroundColor(Color.parseColor("${color}"))
@@ -175,7 +179,7 @@ class GeoFenceDialog(private val geoFencing: GeoFencing) : BottomSheetDialogFrag
 
     fun addGeoFence(geofence: String) {
         locationStr = geofence
-        addGeoFence.text = "Geofence Selected"
+        binding.addGeoFence.text = "Geofence Selected"
     }
 
     fun setGeoFenceData(geoFenceData: GeoFenceData) {

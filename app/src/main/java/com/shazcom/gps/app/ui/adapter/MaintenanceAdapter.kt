@@ -10,8 +10,9 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.Services
+import com.shazcom.gps.app.databinding.ItemMaintenanceBinding
 import com.shazcom.gps.app.utils.differenceInDay
-import kotlinx.android.synthetic.main.item_maintenance.view.*
+
 
 
 class MaintenanceAdapter(
@@ -31,13 +32,15 @@ class MaintenanceAdapter(
     }
 
     class MaintenanceViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val serviceName = view.serviceName!!
-        val serviceDue = view.timeLeft!!
-        val deviceName = view.deviceName!!
-        var progressBar = view.progress_limit!!
+
+        val serviceName = ItemMaintenanceBinding.bind(view).serviceName!!
+        val serviceDue = ItemMaintenanceBinding.bind(view).timeLeft!!
+        val deviceName = ItemMaintenanceBinding.bind(view).deviceName!!
+        var progressBar = ItemMaintenanceBinding.bind(view).progressLimit!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MaintenanceViewHolder {
+
         return MaintenanceViewHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.item_maintenance,

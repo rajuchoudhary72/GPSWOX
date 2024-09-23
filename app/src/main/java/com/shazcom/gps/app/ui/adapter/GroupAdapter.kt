@@ -6,13 +6,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.Groups
-import kotlinx.android.synthetic.main.item_group.view.*
+import com.shazcom.gps.app.databinding.ItemGroupBinding
+
 
 class GroupAdapter(private val groups: List<Groups>) :
     RecyclerView.Adapter<GroupAdapter.GroupViewHolder>() {
 
     class GroupViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val name = view.groupName
+        val name = ItemGroupBinding.bind(view).groupName
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {

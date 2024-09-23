@@ -13,20 +13,21 @@ import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.ToolsRepository
 import com.shazcom.gps.app.data.response.GeoFenceData
 import com.shazcom.gps.app.data.response.GeoFenceResponse
+import com.shazcom.gps.app.databinding.ActivityGeofenceBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseActivity
 import com.shazcom.gps.app.ui.adapter.GeofenceAdapter
 import com.shazcom.gps.app.ui.dialogs.GeoFenceDialog
 import com.shazcom.gps.app.ui.dialogs.ShowGeoFenceMap
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
-import kotlinx.android.synthetic.main.activity_geofence.*
-import kotlinx.android.synthetic.main.empty_adapter_layout.*
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
 class GeoFencing : BaseActivity(), KodeinAware {
 
+    private lateinit var binding: ActivityGeofenceBinding
     override val kodein by kodein()
     private val localDB: LocalDB by instance<LocalDB>()
     private val repository: ToolsRepository by instance<ToolsRepository>()
@@ -34,26 +35,27 @@ class GeoFencing : BaseActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_geofence)
+       binding= ActivityGeofenceBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        toolBar.setNavigationOnClickListener { finish() }
+        binding.toolBar.setNavigationOnClickListener { finish() }
 
         toolsViewModel = ViewModelProvider(this).get(ToolsViewModel::class.java)
         toolsViewModel?.toolsRepository = repository
         loadGeofence()
 
-        addGeo.setOnClickListener {
+        binding. addGeo.setOnClickListener {
             val geoFenceDialog = GeoFenceDialog(this)
             geoFenceDialog.show(supportFragmentManager, GeoFenceDialog::class.java.name)
         }
 
-        geoList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding. geoList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0 && addGeo.isShown) {
-                    addGeo.visibility = View.INVISIBLE
-                }else if(dy <= 0 && !addGeo.isShown) {
-                    addGeo.show()
+                if (dy > 0 &&   binding.addGeo.isShown) {
+                    binding.addGeo.visibility = View.INVISIBLE
+                }else if(dy <= 0 && !  binding.addGeo.isShown) {
+                    binding.addGeo.show()
                 }
             }
 
@@ -65,20 +67,20 @@ class GeoFencing : BaseActivity(), KodeinAware {
             ?.observe(this, Observer { resources ->
                 when (resources.status) {
                     Status.SUCCESS -> {
-                        progressBar.visibility = View.INVISIBLE
-                        emptyText.visibility = View.INVISIBLE
+                        binding.progressBar.visibility = View.INVISIBLE
+                        binding.inc.emptyText.visibility = View.INVISIBLE
                         processData(resources.data!!)
                     }
 
                     Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
-                        emptyText.visibility = View.INVISIBLE
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.inc.emptyText.visibility = View.INVISIBLE
                     }
 
                     Status.ERROR -> {
-                        progressBar.visibility = View.INVISIBLE
-                        emptyText.visibility = View.VISIBLE
-                        emptyText.text = "No geofence data Found"
+                        binding.progressBar.visibility = View.INVISIBLE
+                        binding.inc. emptyText.visibility = View.VISIBLE
+                        binding.inc.emptyText.text = "No geofence data Found"
                     }
                 }
             })
@@ -87,8 +89,8 @@ class GeoFencing : BaseActivity(), KodeinAware {
     private fun processData(data: GeoFenceResponse) {
         data.let {
 
-            if (data.items.geofences?.isNotEmpty()) {
-                geoList.apply {
+            if (data.items.geofences.isNotEmpty()) {
+                binding. geoList.apply {
                     layoutManager = LinearLayoutManager(this@GeoFencing)
                     adapter =
                         GeofenceAdapter(
@@ -98,14 +100,14 @@ class GeoFencing : BaseActivity(), KodeinAware {
                             { geoFenceData -> editItemClick(geoFenceData) })
                 }
             } else {
-                progressBar.visibility = View.INVISIBLE
-                emptyText.visibility = View.VISIBLE
-                emptyText.text = getString(R.string.no_geo_fence_data)
+                binding.progressBar.visibility = View.INVISIBLE
+                binding.inc.emptyText.visibility = View.VISIBLE
+                binding.inc. emptyText.text = getString(R.string.no_geo_fence_data)
             }
         } ?: run {
-            progressBar.visibility = View.INVISIBLE
-            emptyText.visibility = View.VISIBLE
-            emptyText.text = getString(R.string.no_geo_fence_data)
+            binding.progressBar.visibility = View.INVISIBLE
+            binding.inc. emptyText.visibility = View.VISIBLE
+            binding.inc.emptyText.text = getString(R.string.no_geo_fence_data)
         }
     }
 
@@ -142,10 +144,10 @@ class GeoFencing : BaseActivity(), KodeinAware {
             ?.observe(this, Observer { resources ->
                 when (resources.status) {
                     Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.VISIBLE
                     }
                     Status.ERROR -> {
-                        progressBar.visibility = View.INVISIBLE
+                        binding. progressBar.visibility = View.INVISIBLE
                         Toast.makeText(
                             this@GeoFencing,
                             getString(R.string.something_went_wrong),
@@ -153,7 +155,7 @@ class GeoFencing : BaseActivity(), KodeinAware {
                         ).show()
                     }
                     Status.SUCCESS -> {
-                        progressBar.visibility = View.INVISIBLE
+                        binding.progressBar.visibility = View.INVISIBLE
                         if (resources.data?.status == 1) {
                             Toast.makeText(
                                 this@GeoFencing,

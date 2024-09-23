@@ -16,7 +16,8 @@ import com.shazcom.gps.app.ui.activities.POI
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.shazcom.gps.app.data.response.MapIcons
-import kotlinx.android.synthetic.main.dialog_poi.*
+import com.shazcom.gps.app.databinding.DialogPoiBinding
+
 
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
@@ -24,6 +25,7 @@ import org.kodein.di.generic.instance
 
 class POIDialog(private val poiActivity: POI) : BottomSheetDialogFragment(), KodeinAware {
 
+    private lateinit var binding: DialogPoiBinding
     override val kodein by closestKodein()
     private val localDB: LocalDB by instance<LocalDB>()
     private val repository: ToolsRepository by instance<ToolsRepository>()
@@ -37,7 +39,8 @@ class POIDialog(private val poiActivity: POI) : BottomSheetDialogFragment(), Kod
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_poi, container, false)
+       binding=  DialogPoiBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,16 +49,16 @@ class POIDialog(private val poiActivity: POI) : BottomSheetDialogFragment(), Kod
         toolsViewModel = ViewModelProvider(this).get(ToolsViewModel::class.java)
         toolsViewModel?.toolsRepository = repository
 
-        closeBtn.setOnClickListener {
+        binding.closeBtn.setOnClickListener {
             dismiss()
         }
 
-        iconPoi.setOnClickListener {
+        binding.   iconPoi.setOnClickListener {
             val poiIconDialogFragment = PoiIconDialog(this)
             poiIconDialogFragment.show(childFragmentManager, PoiIconDialog::class.java.name)
         }
 
-        poiLocation.setOnClickListener {
+        binding.   poiLocation.setOnClickListener {
             val poiMapDialog = MapDialog(this)
             mapIconMain?.let { mapIcon ->
                 poiMapDialog.setPoi(mapIcon)
@@ -63,7 +66,7 @@ class POIDialog(private val poiActivity: POI) : BottomSheetDialogFragment(), Kod
             poiMapDialog.show(childFragmentManager, MapDialog::class.java.name)
         }
 
-        saveBtn.setOnClickListener {
+        binding. saveBtn.setOnClickListener {
             mapIconMain?.let {
                 updatePoiMarker(it.id)
             }?: kotlin.run {
@@ -74,8 +77,8 @@ class POIDialog(private val poiActivity: POI) : BottomSheetDialogFragment(), Kod
         mapIconMain?.let {
             setIconItems(it.map_icon_id)
             setPoiMapMarker(it.coordinates)
-            name.setText(it.name)
-            description.setText(it.description)
+            binding.   name.setText(it.name)
+            binding.   description.setText(it.description)
         }
     }
 
@@ -83,27 +86,27 @@ class POIDialog(private val poiActivity: POI) : BottomSheetDialogFragment(), Kod
         toolsViewModel?.savePOIMarker(
             "en",
             localDB.getToken()!!,
-            name.text.toString(),
-            description.text.toString(),
+            binding.  name.text.toString(),
+            binding.  description.text.toString(),
             mapIconId,
             locationStr
         )?.observe(requireActivity(), Observer { resources ->
             when (resources.status) {
                 Status.SUCCESS -> {
-                    progressBar.visibility = View.GONE
-                    saveBtn.visibility = View.VISIBLE
+                    binding.       progressBar.visibility = View.GONE
+                    binding.    saveBtn.visibility = View.VISIBLE
                     poiActivity.loadPoiMarker()
                     dismiss()
                 }
 
                 Status.LOADING -> {
-                    progressBar.visibility = View.VISIBLE
-                    saveBtn.visibility = View.INVISIBLE
+                    binding. progressBar.visibility = View.VISIBLE
+                    binding. saveBtn.visibility = View.INVISIBLE
                 }
 
                 Status.ERROR -> {
-                    progressBar.visibility = View.GONE
-                    saveBtn.visibility = View.VISIBLE
+                    binding. progressBar.visibility = View.GONE
+                    binding.  saveBtn.visibility = View.VISIBLE
                     Toast.makeText(
                         requireContext(),
                         getString(R.string.valid_proper_data),
@@ -120,27 +123,27 @@ class POIDialog(private val poiActivity: POI) : BottomSheetDialogFragment(), Kod
             "en",
             localDB.getToken()!!,
             id,
-            name.text.toString(),
-            description.text.toString(),
+            binding.  name.text.toString(),
+            binding.  description.text.toString(),
             mapIconId,
             locationStr
         )?.observe(requireActivity(), Observer { resources ->
             when (resources.status) {
                 Status.SUCCESS -> {
-                    progressBar.visibility = View.GONE
-                    saveBtn.visibility = View.VISIBLE
+                    binding.      progressBar.visibility = View.GONE
+                    binding.     saveBtn.visibility = View.VISIBLE
                     poiActivity.loadPoiMarker()
                     dismiss()
                 }
 
                 Status.LOADING -> {
-                    progressBar.visibility = View.VISIBLE
-                    saveBtn.visibility = View.INVISIBLE
+                    binding.   progressBar.visibility = View.VISIBLE
+                    binding.    saveBtn.visibility = View.INVISIBLE
                 }
 
                 Status.ERROR -> {
-                    progressBar.visibility = View.GONE
-                    saveBtn.visibility = View.VISIBLE
+                    binding.  progressBar.visibility = View.GONE
+                    binding.  saveBtn.visibility = View.VISIBLE
                     Toast.makeText(
                         requireContext(),
                         getString(R.string.valid_proper_data),
@@ -154,17 +157,17 @@ class POIDialog(private val poiActivity: POI) : BottomSheetDialogFragment(), Kod
 
     fun setIconItems(iconItems: IconItems) {
         mapIconId = iconItems.id
-        iconPoi.text = "Icon Selected"
+        binding.  iconPoi.text = "Icon Selected"
     }
 
     private fun setIconItems(iconItemId : Int) {
         mapIconId = iconItemId
-        iconPoi.text = "Icon Selected"
+        binding. iconPoi.text = "Icon Selected"
     }
 
     fun setPoiMapMarker(mapMaker: String) {
         locationStr = mapMaker
-        poiLocation.text = "Location Selected"
+        binding. poiLocation.text = "Location Selected"
     }
 
     fun setMapIcon(mapIcon: MapIcons) {

@@ -9,10 +9,12 @@ import com.shazcom.gps.app.ui.BaseFragment
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.OnMapReadyCallback
 import com.google.android.libraries.maps.SupportMapFragment
-import kotlinx.android.synthetic.main.activity_history.*
+import com.shazcom.gps.app.databinding.ActivityHistoryBinding
+
 
 class   HistoryPage : BaseFragment(), OnMapReadyCallback {
 
+    private lateinit var binding: ActivityHistoryBinding
     private var mMap: GoogleMap? = null
 
     override fun onCreateView(
@@ -20,7 +22,8 @@ class   HistoryPage : BaseFragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.activity_history, container, false)
+       binding= ActivityHistoryBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -32,7 +35,7 @@ class   HistoryPage : BaseFragment(), OnMapReadyCallback {
 
         setUpPanel()
 
-        openPanel.setOnClickListener {
+        binding. openPanel.setOnClickListener {
 
         }
     }

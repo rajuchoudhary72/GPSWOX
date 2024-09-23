@@ -9,20 +9,21 @@ import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.ToolsRepository
 import com.shazcom.gps.app.data.response.TaskListResponse
+import com.shazcom.gps.app.databinding.TaskListBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseActivity
 import com.shazcom.gps.app.ui.adapter.TaskAdapter
 import com.shazcom.gps.app.ui.dialogs.AddTaskDialog
 import com.shazcom.gps.app.ui.dialogs.LocationPickerDialog
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
-import kotlinx.android.synthetic.main.empty_layout.*
-import kotlinx.android.synthetic.main.task_list.*
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
 class TaskPage : BaseActivity(), KodeinAware {
 
+    private lateinit var binding: TaskListBinding
     override val kodein by kodein()
     private val localDB: LocalDB by instance<LocalDB>()
     private val repository: ToolsRepository by instance<ToolsRepository>()
@@ -30,15 +31,16 @@ class TaskPage : BaseActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.task_list)
+        binding=TaskListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        toolBar.setNavigationOnClickListener { finish() }
+        binding.toolBar.setNavigationOnClickListener { finish() }
 
         toolsViewModel = ViewModelProvider(this).get(ToolsViewModel::class.java)
         toolsViewModel?.toolsRepository = repository
         loadTaskList()
 
-        addTask.setOnClickListener {
+        binding.addTask.setOnClickListener {
             val addTaskDialog = AddTaskDialog(this)
             addTaskDialog.show(supportFragmentManager, AddTaskDialog::class.java.name)
         }
@@ -50,16 +52,16 @@ class TaskPage : BaseActivity(), KodeinAware {
             when (resources.status) {
                 Status.SUCCESS -> {
                     processData(resources.data!!)
-                    progressBar.visibility = View.INVISIBLE
-                    emptyText.visibility = View.INVISIBLE
+                    binding.progressBar.visibility = View.INVISIBLE
+                    binding.inc.emptyText.visibility = View.INVISIBLE
                 }
                 Status.ERROR -> {
-                    progressBar.visibility = View.INVISIBLE
-                    emptyText.visibility = View.VISIBLE
+                    binding. progressBar.visibility = View.INVISIBLE
+                    binding.inc. emptyText.visibility = View.VISIBLE
                 }
                 Status.LOADING -> {
-                    progressBar.visibility = View.VISIBLE
-                    emptyText.visibility = View.INVISIBLE
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.inc. emptyText.visibility = View.INVISIBLE
                 }
             }
         })
@@ -67,7 +69,7 @@ class TaskPage : BaseActivity(), KodeinAware {
 
     private fun processData(data: TaskListResponse) {
         data?.items?.let {
-            taskList.apply {
+            binding. taskList.apply {
                 layoutManager = LinearLayoutManager(this@TaskPage)
                 adapter = TaskAdapter(it.data)
             }

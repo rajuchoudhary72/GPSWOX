@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.core.view.isVisible
@@ -23,21 +24,21 @@ import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.CommonViewRepository
 import com.shazcom.gps.app.data.response.DeviceData
 import com.shazcom.gps.app.data.response.Items
+import com.shazcom.gps.app.databinding.ActivityDeviceBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseFragment
 import com.shazcom.gps.app.ui.activities.Dashboard
 import com.shazcom.gps.app.ui.activities.DeviceMapCluster
 import com.shazcom.gps.app.ui.adapter.DeviceAdapter
 import com.shazcom.gps.app.ui.viewmodal.CommonViewModel
-import kotlinx.android.synthetic.main.activity_dashboard.*
-import kotlinx.android.synthetic.main.activity_device.*
-import kotlinx.android.synthetic.main.empty_layout.*
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
 
 class GetDevice : BaseFragment(), KodeinAware, TextWatcher {
 
+    private lateinit var binding: ActivityDeviceBinding
     private var deviceAdapter: DeviceAdapter? = null
     override val kodein by closestKodein()
     private val localDB: LocalDB by instance<LocalDB>()
@@ -52,7 +53,8 @@ class GetDevice : BaseFragment(), KodeinAware, TextWatcher {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.activity_device, container, false)
+        binding = ActivityDeviceBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
 
@@ -77,90 +79,91 @@ class GetDevice : BaseFragment(), KodeinAware, TextWatcher {
         app = requireActivity()?.application as GPSWoxApp
         commonViewModel = ViewModelProvider(this).get(CommonViewModel::class.java)
         commonViewModel?.commonViewRepository = repository
+        with(binding) {
+            swipeRefreshLayout.setOnRefreshListener {
+                loadData()
+            }
 
-        swipe_refresh_layout.setOnRefreshListener {
+            requireActivity().findViewById<ImageView>(R.id.search_icon)?.setOnClickListener {
+                if (searchEdt.isVisible) {
+                    searchEdt.setText("")
+                    searchEdt.visibility = View.GONE
+                    topIndication.visibility = View.VISIBLE
+                    radioGroup.visibility = View.VISIBLE
+                    topTxtLayout.visibility = View.VISIBLE
+                } else {
+                    searchEdt.setText("")
+                    searchEdt.visibility = View.VISIBLE
+                    topIndication.visibility = View.GONE
+                    radioGroup.visibility = View.GONE
+                    topTxtLayout.visibility = View.GONE
+                }
+            }
+
+            searchEdt.addTextChangedListener(this@GetDevice)
             loadData()
-        }
 
-        activity?.search_icon?.setOnClickListener {
-            if (searchEdt.isVisible) {
-                searchEdt.setText("")
-                searchEdt.visibility = View.GONE
-                topIndication.visibility = View.VISIBLE
-                radioGroup.visibility = View.VISIBLE
-                topTxtLayout.visibility = View.VISIBLE
-            } else {
-                searchEdt.setText("")
-                searchEdt.visibility = View.VISIBLE
-                topIndication.visibility = View.GONE
-                radioGroup.visibility = View.GONE
-                topTxtLayout.visibility = View.GONE
-            }
-        }
-
-        searchEdt.addTextChangedListener(this)
-        loadData()
-
-        allTabLayout.setOnClickListener {
-            if (allTab.isChecked) {
-                app?.getDeviceList()?.let {
-                    openMapCluster("all")
+            allTabLayout.setOnClickListener {
+                if (allTab.isChecked) {
+                    app?.getDeviceList()?.let {
+                        openMapCluster("all")
+                    }
+                } else {
+                    allTab.isChecked = true
+                    deviceAdapter?.filter?.filter("")
                 }
-            } else {
-                allTab.isChecked = true
-                deviceAdapter?.filter?.filter("")
             }
-        }
 
-        runningTabLayout.setOnClickListener {
-            if (runningTab.isChecked) {
-                app?.getDeviceList()?.let {
-                    openMapCluster("green")
+            runningTabLayout.setOnClickListener {
+                if (runningTab.isChecked) {
+                    app?.getDeviceList()?.let {
+                        openMapCluster("green")
+                    }
+                } else {
+                    runningTab.isChecked = true
+                    deviceAdapter?.filter?.filter("green")
+                    deviceAdapter?.notifyDataSetChanged()
                 }
-            } else {
-                runningTab.isChecked = true
-                deviceAdapter?.filter?.filter("green")
-                deviceAdapter?.notifyDataSetChanged()
             }
-        }
 
 
-        idleTabLayout.setOnClickListener {
-            if (idleTab.isChecked) {
-                app?.getDeviceList()?.let {
-                    openMapCluster("yellow")
+            idleTabLayout.setOnClickListener {
+                if (idleTab.isChecked) {
+                    app?.getDeviceList()?.let {
+                        openMapCluster("yellow")
+                    }
+                } else {
+                    idleTab.isChecked = true
+                    deviceAdapter?.filter?.filter("yellow")
                 }
-            } else {
-                idleTab.isChecked = true
-                deviceAdapter?.filter?.filter("yellow")
             }
-        }
 
-        inactiveTabLayout.setOnClickListener {
-            if (inActiveTab.isChecked) {
-                app?.getDeviceList()?.let {
-                    openMapCluster("blue")
+            inactiveTabLayout.setOnClickListener {
+                if (inActiveTab.isChecked) {
+                    app?.getDeviceList()?.let {
+                        openMapCluster("blue")
+                    }
+                } else {
+                    inActiveTab.isChecked = true
+                    deviceAdapter?.filter?.filter("blue")
                 }
-            } else {
-                inActiveTab.isChecked = true
-                deviceAdapter?.filter?.filter("blue")
             }
-        }
 
-        stopTabLayout.setOnClickListener {
-            if (stopTab.isChecked) {
-                app?.getDeviceList()?.let {
-                    openMapCluster("red")
+            stopTabLayout.setOnClickListener {
+                if (stopTab.isChecked) {
+                    app?.getDeviceList()?.let {
+                        openMapCluster("red")
+                    }
+                } else {
+                    stopTab.isChecked = true
+                    deviceAdapter?.filter?.filter("red")
                 }
-            } else {
-                stopTab.isChecked = true
-                deviceAdapter?.filter?.filter("red")
             }
-        }
 
-        (activity as Dashboard)?.let {
-            it.loadGeofence()
-            it.loadPOIMarkers()
+            (activity as Dashboard)?.let {
+                it.loadGeofence()
+                it.loadPOIMarkers()
+            }
         }
     }
 
@@ -176,7 +179,7 @@ class GetDevice : BaseFragment(), KodeinAware, TextWatcher {
 
     private val uiRefresher: Runnable = object : Runnable {
         override fun run() {
-            if (!searchEdt.isVisible) {
+            if (!binding.searchEdt.isVisible) {
                 loadData()
             }
             deviceHandler.postDelayed(this, 12000)
@@ -186,23 +189,24 @@ class GetDevice : BaseFragment(), KodeinAware, TextWatcher {
     private fun loadData() {
 
         commonViewModel?.getDeviceInfo("en", localDB.getToken()!!)
-            ?.observe(activity!!, Observer { resources ->
+            ?.observe(requireActivity(), Observer { resources ->
 
                 if (isVisible) {
                     when (resources.status) {
                         Status.SUCCESS -> {
-                            swipe_refresh_layout.isRefreshing = false
-                            progressBar.visibility = View.GONE
+                            binding.swipeRefreshLayout.isRefreshing = false
+                            binding.progressBar.visibility = View.GONE
                             processData(resources.data!!)
                             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                         }
+
                         Status.LOADING -> {
-                            progressBar.visibility = View.VISIBLE
+                            binding.progressBar.visibility = View.VISIBLE
                         }
 
                         Status.ERROR -> {
-                            swipe_refresh_layout.isRefreshing = false
-                            progressBar.visibility = View.GONE
+                            binding.swipeRefreshLayout.isRefreshing = false
+                            binding.progressBar.visibility = View.GONE
                             Toast.makeText(
                                 requireContext(),
                                 "${resources.message}",
@@ -232,12 +236,15 @@ class GetDevice : BaseFragment(), KodeinAware, TextWatcher {
                         "red" -> {
                             redCount += 1
                         }
+
                         "yellow" -> {
                             yellowCount += 1
                         }
+
                         "blue" -> {
                             blueCount += 1
                         }
+
                         "green" -> {
                             greenCount += 1
                         }
@@ -256,31 +263,31 @@ class GetDevice : BaseFragment(), KodeinAware, TextWatcher {
             deviceAdapter?.let {
                 deviceAdapter?.updateItems(data)
                 val filterTxt =
-                    radioController.findViewById<RadioButton>(radioController.checkedRadioButtonId).tag.toString()
-                deviceList?.postDelayed({ deviceAdapter?.filter?.filter(filterTxt) }, 100)
+                    binding.radioController.findViewById<RadioButton>(binding.radioController.checkedRadioButtonId).tag.toString()
+                binding.deviceList?.postDelayed({ deviceAdapter?.filter?.filter(filterTxt) }, 100)
 
             } ?: kotlin.run {
                 deviceAdapter = DeviceAdapter(data)
 
-                deviceList.apply {
+                binding.deviceList.apply {
                     layoutManager = LinearLayoutManager(this@GetDevice.context)
                     adapter = deviceAdapter
                 }
 
-                (deviceList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+                (binding.deviceList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             }
 
-            emptyText.visibility = View.GONE
-            runningTxt.text = "$greenCount"
-            idleTxt.text = "$yellowCount"
-            inActiveTxt.text = "$blueCount"
-            stopTxt.text = "$redCount"
+            binding.inc.emptyText.visibility = View.GONE
+            binding.runningTxt.text = "$greenCount"
+            binding.idleTxt.text = "$yellowCount"
+            binding.inActiveTxt.text = "$blueCount"
+            binding. stopTxt.text = "$redCount"
 
-            totalTxt.text = (greenCount + yellowCount + blueCount + redCount).toString()
-            deviceList.visibility = View.VISIBLE
+            binding.totalTxt.text = (greenCount + yellowCount + blueCount + redCount).toString()
+            binding. deviceList.visibility = View.VISIBLE
 
         } else {
-            emptyText.visibility = View.VISIBLE
+            binding.inc.emptyText.visibility = View.VISIBLE
         }
     }
 

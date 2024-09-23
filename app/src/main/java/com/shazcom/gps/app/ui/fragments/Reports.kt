@@ -50,9 +50,9 @@ import com.shazcom.gps.app.utils.*
 import com.shazcom.gps.app.utils.Constants.CHOOSER_PERMISSIONS_REQUEST_CODE
 import com.shazcom.gps.app.utils.Constants.storagePermissions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.shazcom.gps.app.databinding.FragmentReportBinding
 import com.shazcom.gps.app.network.GPSWoxAPI
-import kotlinx.android.synthetic.main.device_bottom_sheet_layout.*
-import kotlinx.android.synthetic.main.fragment_report.*
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -70,6 +70,7 @@ import kotlin.collections.ArrayList
 
 class Reports : BaseFragment(), KodeinAware, TextWatcher {
 
+    private lateinit var binding: FragmentReportBinding
     private var behavior: BottomSheetBehavior<*>? = null
     private var mReportFormat = "pdf"
     private var extension = ".pdf"
@@ -97,7 +98,8 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_report, container, false)
+        binding = FragmentReportBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -131,166 +133,173 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
 
         commonViewModel = ViewModelProvider(this).get(CommonViewModel::class.java)
         commonViewModel?.commonViewRepository = repository
+        with(binding) {
+            startDateTxt.text = getCurrentDay().split("\n")[0]
+            startTimeTxt.text = getCurrentDay().split("\n")[1]
 
-        startDateTxt.text = getCurrentDay().split("\n")[0]
-        startTimeTxt.text = getCurrentDay().split("\n")[1]
+            endDateTxt.text = nextDay().split("\n")[0]
+            endTimeTxt.text = nextDayAM().split("\n")[1]
 
-        endDateTxt.text = nextDay().split("\n")[0]
-        endTimeTxt.text = nextDayAM().split("\n")[1]
-
-        reportDevices.setOnClickListener { view ->
-            items?.let {
-                if (view.isPressed) {
-                    if (behavior?.state == BottomSheetBehavior.STATE_COLLAPSED) {
-                        behavior?.setState(BottomSheetBehavior.STATE_EXPANDED)
-                    } else {
-                        behavior?.setState(BottomSheetBehavior.STATE_COLLAPSED)
+            reportDevices.setOnClickListener { view ->
+                items?.let {
+                    if (view.isPressed) {
+                        if (behavior?.state == BottomSheetBehavior.STATE_COLLAPSED) {
+                            behavior?.setState(BottomSheetBehavior.STATE_EXPANDED)
+                        } else {
+                            behavior?.setState(BottomSheetBehavior.STATE_COLLAPSED)
+                        }
                     }
                 }
             }
-        }
 
-        reportDeviceAdapter = ReportDeviceAdapter(items) { item -> onDeviceChangeListener(item) }
-        reportDeviceAdapter?.deSelectAll()
-
-        deviceList.apply {
-            layoutManager = LinearLayoutManager(this@Reports.context)
-            adapter = reportDeviceAdapter
-        }
-
-        startDateCard.setOnClickListener { pickStartDate() }
-        startTimeCard.setOnClickListener { pickStartTime() }
-        endDateCard.setOnClickListener { pickEndDate() }
-        endTimeCard.setOnClickListener { pickEndTime() }
-
-        activity?.registerReceiver(
-            onComplete,
-            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-        )
-
-        reportType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                mReportTypeTxt = parent?.selectedItem.toString()
-                mReportType = getReportTypeId(mReportTypeTxt)
-            }
-        }
-
-        reportFormat.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                mReportFormat = getReportFormat(position)
-                when (mReportFormat) {
-                    "pdf" -> {
-                        extension = ".pdf"
-                    }
-                    "pdf_land" -> {
-                        extension = ".pdf"
-                    }
-                    "xls" -> {
-                        extension = ".xls"
-                    }
-                    "html" -> {
-                        extension = ".html"
-                    }
-                }
-            }
-        }
-
-        reportPeriod.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                updateDate(position)
-            }
-        }
-
-        generateBtn.setOnClickListener {
-
-            if (listItems.size == 0) {
-                Toast.makeText(
-                    this@Reports.context,
-                    getString(R.string.please_select_device),
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
-                return@setOnClickListener
-            }
-
-            var deviceArray = ""
-            listItems.forEachIndexed { index, items ->
-                deviceArray += items.id
-                if (index != (listItems.size - 1)) {
-                    deviceArray += ","
-                }
-            }
-
-            commonViewModel?.generateReport(
-                "en",
-                localDB.getToken()!!,
-                mReportType,
-                mReportFormat,
-                deviceArray,
-                "${startDateTxt.text} ${startTimeTxt.text}",
-                "${endDateTxt.text} ${endTimeTxt.text}",
-                email.text.toString().replace(" ", "")
-            )
-                ?.observe(activity!!, androidx.lifecycle.Observer { resources ->
-                    when (resources.status) {
-                        Status.SUCCESS -> {
-                            progressBar.visibility = View.GONE
-                            generateBtn.visibility = View.VISIBLE
-                            processData(resources.data!!)
-                        }
-                        Status.LOADING -> {
-                            progressBar.visibility = View.VISIBLE
-                            generateBtn.visibility = View.GONE
-                        }
-                        Status.ERROR -> {
-                            progressBar.visibility = View.GONE
-                            generateBtn.visibility = View.VISIBLE
-                        }
-                    }
-                })
-        }
-
-        selectCheckBox.setOnClickListener {
-            reportDeviceAdapter?.let {
-                reportDeviceAdapter?.selectAll()
-            }
-        }
-
-        unSelectCheckBox.setOnClickListener {
+            reportDeviceAdapter =
+                ReportDeviceAdapter(items) { item -> onDeviceChangeListener(item) }
             reportDeviceAdapter?.deSelectAll()
-        }
 
-        email.addTextChangedListener(this)
-        scheduleReport.setOnClickListener {
-            proceedScheduleReport()
-        }
+            inc.deviceList.apply {
+                layoutManager = LinearLayoutManager(this@Reports.context)
+                adapter = reportDeviceAdapter
+            }
 
-        reportData?.let {
-            generateBtn.isEnabled = false
-            enableEditMode(it)
+            startDateCard.setOnClickListener { pickStartDate() }
+            startTimeCard.setOnClickListener { pickStartTime() }
+            endDateCard.setOnClickListener { pickEndDate() }
+            endTimeCard.setOnClickListener { pickEndTime() }
+
+            activity?.registerReceiver(
+                onComplete,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+            )
+
+            reportType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    mReportTypeTxt = parent?.selectedItem.toString()
+                    mReportType = getReportTypeId(mReportTypeTxt)
+                }
+            }
+
+            reportFormat.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    mReportFormat = getReportFormat(position)
+                    when (mReportFormat) {
+                        "pdf" -> {
+                            extension = ".pdf"
+                        }
+
+                        "pdf_land" -> {
+                            extension = ".pdf"
+                        }
+
+                        "xls" -> {
+                            extension = ".xls"
+                        }
+
+                        "html" -> {
+                            extension = ".html"
+                        }
+                    }
+                }
+            }
+
+            reportPeriod.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    updateDate(position)
+                }
+            }
+
+            generateBtn.setOnClickListener {
+
+                if (listItems.size == 0) {
+                    Toast.makeText(
+                        this@Reports.context,
+                        getString(R.string.please_select_device),
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                    return@setOnClickListener
+                }
+
+                var deviceArray = ""
+                listItems.forEachIndexed { index, items ->
+                    deviceArray += items.id
+                    if (index != (listItems.size - 1)) {
+                        deviceArray += ","
+                    }
+                }
+
+                commonViewModel?.generateReport(
+                    "en",
+                    localDB.getToken()!!,
+                    mReportType,
+                    mReportFormat,
+                    deviceArray,
+                    "${startDateTxt.text} ${startTimeTxt.text}",
+                    "${endDateTxt.text} ${endTimeTxt.text}",
+                    email.text.toString().replace(" ", "")
+                )
+                    ?.observe(requireActivity(), androidx.lifecycle.Observer { resources ->
+                        when (resources.status) {
+                            Status.SUCCESS -> {
+                                progressBar.visibility = View.GONE
+                                generateBtn.visibility = View.VISIBLE
+                                processData(resources.data!!)
+                            }
+
+                            Status.LOADING -> {
+                                progressBar.visibility = View.VISIBLE
+                                generateBtn.visibility = View.GONE
+                            }
+
+                            Status.ERROR -> {
+                                progressBar.visibility = View.GONE
+                                generateBtn.visibility = View.VISIBLE
+                            }
+                        }
+                    })
+            }
+
+            inc.selectCheckBox.setOnClickListener {
+                reportDeviceAdapter?.let {
+                    reportDeviceAdapter?.selectAll()
+                }
+            }
+
+            inc.unSelectCheckBox.setOnClickListener {
+                reportDeviceAdapter?.deSelectAll()
+            }
+
+            email.addTextChangedListener(this@Reports)
+            scheduleReport.setOnClickListener {
+                proceedScheduleReport()
+            }
+
+            reportData?.let {
+                generateBtn.isEnabled = false
+                enableEditMode(it)
+            }
         }
     }
 
 
-    private fun proceedScheduleReport() {
+    private fun proceedScheduleReport()= with(binding) {
 
         if (listItems.size == 0) {
             Toast.makeText(
@@ -299,7 +308,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
                 Toast.LENGTH_SHORT
             )
                 .show()
-            return
+            return@with
         }
 
         val dailyChecked = if (daily.isChecked) 1 else null
@@ -336,7 +345,9 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
 
         var finalUrl = "${GPSWoxAPI.BASE_URL}$postFix?lang=en&user_api_hash=${localDB.getToken()}" +
                 "&type=$mReportType&format=$mReportFormat&$deviceArrayStr&date_from=${startDateTxt.text} ${startTimeTxt.text}" +
-                "&date_to=${endDateTxt.text} ${endTimeTxt.text}&send_to_email=${email.text.toString().replace(" ","")}" +
+                "&date_to=${endDateTxt.text} ${endTimeTxt.text}&send_to_email=${
+                    email.text.toString().replace(" ", "")
+                }" +
                 "&show_addresses=1&daily=${dailyChecked}&expense_type=all&supplier=all" +
                 "&ignition_off=0&title=${titleTxt.text}&weekly=${weeklyChecked}&monthly=${monthlyChecked}" +
                 "&daily_time=${timeTxt.text}&weekly_time=${timeTxt.text}&monthly_time=${timeTxt.text}"
@@ -358,11 +369,13 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
                             scheduleReport.isEnabled = true
                             processSaveReport(resources.data!!)
                         }
+
                         Status.LOADING -> {
                             progressBar.visibility = View.VISIBLE
                             generateBtn.visibility = View.GONE
                             scheduleReport.isEnabled = false
                         }
+
                         Status.ERROR -> {
                             scheduleReport.isEnabled = false
                             progressBar.visibility = android.view.View.GONE
@@ -394,10 +407,10 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
         if (data.status == 3) {
             data.url?.let {
                 mUrl = data.url.replace("\\", "")
-                if (arePermissionsGranted(activity!!, storagePermissions)) {
+                if (arePermissionsGranted(requireActivity()!!, storagePermissions)) {
                     startDownload(it)
                 } else {
-                    val builder = android.app.AlertDialog.Builder(activity!!)
+                    val builder = android.app.AlertDialog.Builder(requireActivity()!!)
                     builder.setTitle("Permission Required")
                     builder.setMessage("Storage permission is required to download file")
                     builder.setPositiveButton(
@@ -485,10 +498,12 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
 
             val mUrl = URL(URLDecoder.decode(newUrl.toString(), "UTF-8"))
             Log.e("##", "$mUrl")
-            val fileName = "${mReportTypeTxt.replace(
-                " ",
-                "_"
-            )}_${startDateTxt.text}-${endDateTxt.text}$extension"
+            val fileName = "${
+                mReportTypeTxt.replace(
+                    " ",
+                    "_"
+                )
+            }_${binding.startDateTxt.text}-${binding.endDateTxt.text}$extension"
 
             destinationPath = fileName
 
@@ -524,7 +539,8 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
             CoroutineScope(Dispatchers.Main).launch {
                 delay(1000)
 
-                val downloadManager = activity?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                val downloadManager =
+                    activity?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
                 val referenceId =
                     intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -568,7 +584,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
                             if (file.exists()) {
                                 uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                     FileProvider.getUriForFile(
-                                        requireActivity() ,
+                                        requireActivity(),
                                         context?.packageName + ".provider",
                                         file
                                     )
@@ -587,7 +603,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
                                     pdfIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                                     pdfIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-                                    pdfIntent.setDataAndType(uri , getMimeType(extension))
+                                    pdfIntent.setDataAndType(uri, getMimeType(extension))
                                     activity?.startActivity(pdfIntent)
                                 } catch (ex: Exception) {
                                     Toast.makeText(
@@ -597,7 +613,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
                                     ).show()
                                     ex.printStackTrace()
                                 }
-                            }else {
+                            } else {
                                 throw FileNotFoundException("${file.absolutePath} not found")
                             }
 
@@ -614,36 +630,43 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
         super.onDestroy()
     }
 
-    private fun updateDate(position: Int) {
+    private fun updateDate(position: Int)= with(binding) {
         when (position) {
             0 -> { // today
                 startDateTxt.text = getPreviousTime("today")
                 endDateTxt.text = getPreviousTime("next_day")
             }
+
             1 -> { // yesterday
                 startDateTxt.text = getPreviousTime("yesterday")
                 endDateTxt.text = getPreviousTime("today")
             }
+
             2 -> { // Before 2 days
                 startDateTxt.text = getPreviousTime("two_days")
                 endDateTxt.text = getPreviousTime("yesterday")
             }
+
             3 -> { // Before 3 days
                 startDateTxt.text = getPreviousTime("three_days")
                 endDateTxt.text = getPreviousTime("two_days")
             }
+
             4 -> { // This Week
                 startDateTxt.text = getPreviousTime("week_start")
                 endDateTxt.text = getPreviousTime("week_end")
             }
+
             5 -> { // Last Week
                 startDateTxt.text = getPreviousTime("two_days")
                 endDateTxt.text = getPreviousTime("yesterday")
             }
+
             6 -> { // This Month
                 startDateTxt.text = getPreviousTime("month_start")
                 endDateTxt.text = getPreviousTime("month_end")
             }
+
             7 -> { // Last Month
                 startDateTxt.text = getPreviousTime("last_month")
                 endDateTxt.text = getPreviousTime("month_start")
@@ -653,7 +676,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
 
     private fun initBottomSheet() {
 
-        behavior = BottomSheetBehavior.from(deviceBottomSheet)
+        behavior = BottomSheetBehavior.from(binding.inc.deviceBottomSheet)
         behavior?.state = BottomSheetBehavior.STATE_COLLAPSED
         behavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -661,12 +684,16 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
                 when (behavior?.state) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                     }
+
                     BottomSheetBehavior.STATE_EXPANDED -> {
                     }
+
                     BottomSheetBehavior.STATE_COLLAPSED -> {
                     }
+
                     BottomSheetBehavior.STATE_DRAGGING -> {
                     }
+
                     BottomSheetBehavior.STATE_SETTLING -> {
                     }
                 }
@@ -683,7 +710,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
     fun hideBottomSheetFromOutSide(event: MotionEvent) {
         if (behavior?.state == BottomSheetBehavior.STATE_EXPANDED) {
             val outRect = Rect()
-            deviceBottomSheet.getGlobalVisibleRect(outRect)
+            binding.inc.deviceBottomSheet.getGlobalVisibleRect(outRect)
             if (!outRect.contains(
                     event.rawX.toInt(),
                     event.rawY.toInt()
@@ -700,12 +727,12 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
         val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
 
         DatePickerDialog(
-            requireContext() ,
+            requireContext(),
             DatePickerDialog.OnDateSetListener { _, year, month, day ->
                 val pickedDateTime = Calendar.getInstance()
                 pickedDateTime.set(year, month, day)
                 val df = SimpleDateFormat("yyyy-MM-dd")
-                startDateTxt.text = df.format(pickedDateTime.timeInMillis)
+                binding.startDateTxt.text = df.format(pickedDateTime.timeInMillis)
             },
             startYear,
             startMonth,
@@ -721,12 +748,12 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
 
 
         DatePickerDialog(
-            requireContext() ,
+            requireContext(),
             DatePickerDialog.OnDateSetListener { _, year, month, day ->
                 val pickedDateTime = Calendar.getInstance()
                 pickedDateTime.set(year, month, day)
                 val df = SimpleDateFormat("yyyy-MM-dd")
-                endDateTxt.text = df.format(pickedDateTime.timeInMillis)
+                binding. endDateTxt.text = df.format(pickedDateTime.timeInMillis)
             },
             startYear,
             startMonth,
@@ -746,7 +773,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
                 pickedDateTime.set(Calendar.HOUR_OF_DAY, selectedHour)
                 pickedDateTime.set(Calendar.MINUTE, selectedMinute)
                 val df = SimpleDateFormat("hh:mm a")
-                startTimeTxt.text =
+                binding.startTimeTxt.text =
                     df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
             },
             startHour,
@@ -771,7 +798,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
                 pickedDateTime.set(Calendar.HOUR_OF_DAY, selectedHour)
                 pickedDateTime.set(Calendar.MINUTE, selectedMinute)
                 val df = SimpleDateFormat("hh:mm a")
-                endTimeTxt.text =
+                binding. endTimeTxt.text =
                     df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
             },
             startHour,
@@ -799,18 +826,18 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
     }
 
     private fun populateDeviceView() {
-        reportDevices.setText("")
+        binding.reportDevices.setText("")
         listItems.forEach {
-            reportDevices.text.append("${it.name}, ")
+            binding. reportDevices.text.append("${it.name}, ")
         }
 
         if (listItems.size == 0) {
-            reportDevices.text.append("SELECT DEVICE")
+            binding.reportDevices.text.append("SELECT DEVICE")
         }
     }
 
     override fun afterTextChanged(s: Editable?) {
-        scheduleReport.isEnabled = Patterns.EMAIL_ADDRESS.matcher(email.text.toString()).matches()
+        binding.scheduleReport.isEnabled = Patterns.EMAIL_ADDRESS.matcher(binding.email.text.toString()).matches()
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -821,7 +848,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
 
     }
 
-    private fun enableEditMode(reportData: ReportData) {
+    private fun enableEditMode(reportData: ReportData)= with(binding) {
 
         reportDeviceAdapter?.setCheckItem(reportData.devices)
 

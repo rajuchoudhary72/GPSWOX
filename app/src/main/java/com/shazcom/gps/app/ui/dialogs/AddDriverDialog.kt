@@ -20,18 +20,18 @@ import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.ToolsRepository
 import com.shazcom.gps.app.data.response.BaseResponse
 import com.shazcom.gps.app.data.response.Items
+import com.shazcom.gps.app.databinding.AddDriverBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.fragments.DriverPage
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
-import kotlinx.android.synthetic.main.add_driver.*
-import kotlinx.android.synthetic.main.add_task.closeBtn
-import kotlinx.android.synthetic.main.add_task.saveBtn
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
 
 class AddDriverDialog(private val driverPage: DriverPage) : DialogFragment(), KodeinAware {
 
+    private lateinit var binding: AddDriverBinding
     override val kodein by closestKodein()
     private val localDB: LocalDB by instance()
     private val repository: ToolsRepository by instance()
@@ -56,29 +56,29 @@ class AddDriverDialog(private val driverPage: DriverPage) : DialogFragment(), Ko
             setDevices(listItem)
         }
 
-        closeBtn.setOnClickListener {
+        binding. closeBtn.setOnClickListener {
             dismiss()
         }
 
-        saveBtn.setOnClickListener {
+        binding. saveBtn.setOnClickListener {
             toolsViewModel?.addDriver(
                 "en",
                 localDB.getToken()!!,
                 device,
-                name.text.toString(),
-                rfid.text.toString(),
-                phone.text.toString(),
-                email.text.toString(),
-                description.text.toString()
+                binding.   name.text.toString(),
+                binding.  rfid.text.toString(),
+                binding.    phone.text.toString(),
+                binding.    email.text.toString(),
+                binding.   description.text.toString()
             )?.observe(requireActivity(), Observer { resources ->
                 when (resources.status) {
                     Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
-                        saveBtn.visibility = View.INVISIBLE
+                        binding.      progressBar.visibility = View.VISIBLE
+                        binding.     saveBtn.visibility = View.INVISIBLE
                     }
                     Status.ERROR -> {
-                        progressBar.visibility = View.INVISIBLE
-                        saveBtn.visibility = View.VISIBLE
+                        binding.     progressBar.visibility = View.INVISIBLE
+                        binding.   saveBtn.visibility = View.VISIBLE
                         Toast.makeText(
                             this@AddDriverDialog.context,
                             getString(R.string.valid_proper_data),
@@ -86,8 +86,8 @@ class AddDriverDialog(private val driverPage: DriverPage) : DialogFragment(), Ko
                         ).show()
                     }
                     Status.SUCCESS -> {
-                        progressBar.visibility = View.INVISIBLE
-                        saveBtn.visibility = View.VISIBLE
+                        binding.   progressBar.visibility = View.INVISIBLE
+                        binding.   saveBtn.visibility = View.VISIBLE
                         processData(resources.data!!)
                     }
                 }
@@ -113,7 +113,8 @@ class AddDriverDialog(private val driverPage: DriverPage) : DialogFragment(), Ko
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = Dialog(activity!!, R.style.customDialogTheme)
-        dialog.setContentView(R.layout.add_driver)
+         binding=AddDriverBinding.inflate(layoutInflater)
+        dialog.setContentView(binding.root)
         return dialog
     }
 
@@ -138,9 +139,9 @@ class AddDriverDialog(private val driverPage: DriverPage) : DialogFragment(), Ko
             list
         )
         deviceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        deviceSpinner.adapter = deviceAdapter
+        binding. deviceSpinner.adapter = deviceAdapter
 
-        deviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding. deviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }

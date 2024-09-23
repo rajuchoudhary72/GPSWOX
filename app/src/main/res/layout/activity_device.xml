@@ -353,6 +353,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <include layout="@layout/empty_layout" />
+    <include layout="@layout/empty_layout" android:id="@+id/inc" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

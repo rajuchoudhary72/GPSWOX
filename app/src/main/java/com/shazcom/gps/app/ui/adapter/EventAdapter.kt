@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.EventData
+import com.shazcom.gps.app.databinding.ItemEventBinding
 import com.shazcom.gps.app.ui.activities.EventDetail
-import kotlinx.android.synthetic.main.item_event.view.*
+
 
 class EventAdapter(events: List<EventData>) :
     RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
@@ -25,13 +26,14 @@ class EventAdapter(events: List<EventData>) :
     }
 
     class EventViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val eventName = view.eventName!!
-        val eventTime = view.time!!
-        val speed = view.speed!!
-        val rootView = view.rootView!!
+        val eventName = ItemEventBinding.bind(view).eventName!!
+        val eventTime = ItemEventBinding.bind(view).time!!
+        val speed = ItemEventBinding.bind(view).speed!!
+        val rootView = ItemEventBinding.bind(view).rootView!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
+
         return EventViewHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.item_event,

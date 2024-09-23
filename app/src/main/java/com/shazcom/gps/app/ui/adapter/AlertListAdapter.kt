@@ -6,8 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.AlertData
+import com.shazcom.gps.app.databinding.ItemAlertDeviceBinding
+import com.shazcom.gps.app.databinding.ItemGroupBinding
 
-import kotlinx.android.synthetic.main.item_group.view.*
+
 
 
 class AlertListAdapter(
@@ -17,19 +19,20 @@ class AlertListAdapter(
     RecyclerView.Adapter<AlertListAdapter.AlertListViewHolder>() {
 
     class AlertListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val groupName = view.groupName!!
-        val btnLayout = view.btnLayout!!
-        val icDelete = view.deleteAlert!!
-        val icEdit = view.editAlert!!
+
+        val binding=ItemGroupBinding.bind(view)
+        val groupName = binding.groupName!!
+        val btnLayout =binding.btnLayout!!
+        val icDelete = binding.deleteAlert!!
+        val icEdit = binding.editAlert!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlertListViewHolder {
+        val item =
+            ItemGroupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+
         return AlertListViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_group,
-                parent,
-                false
-            )
+            item.rootView
         )
     }
 

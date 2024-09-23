@@ -18,13 +18,15 @@ import com.shazcom.gps.app.ui.BaseFragment
 import com.shazcom.gps.app.ui.activities.Dashboard
 import com.shazcom.gps.app.ui.viewmodal.CommonViewModel
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.fragment_setup_page.*
+import com.shazcom.gps.app.databinding.FragmentSetupPageBinding
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
 
 class SetUpPage : BaseFragment(), KodeinAware {
 
+    private lateinit var binding: FragmentSetupPageBinding
     override val kodein by closestKodein()
     private val localDB: LocalDB by instance()
     private val repository: CommonViewRepository by instance()
@@ -37,7 +39,8 @@ class SetUpPage : BaseFragment(), KodeinAware {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_setup_page, container, false)
+        binding = FragmentSetupPageBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,59 +49,62 @@ class SetUpPage : BaseFragment(), KodeinAware {
         commonViewModel = ViewModelProvider(this).get(CommonViewModel::class.java)
         commonViewModel?.commonViewRepository = repository
         loadSettings()
+        with(binding) {
+            groups.setOnClickListener {
+                findNavController().navigate(R.id.action_setup_to_groups)
+            }
 
-        groups.setOnClickListener {
-            findNavController().navigate(R.id.action_setup_to_groups)
-        }
+            drivers.setOnClickListener {
+                findNavController().navigate(R.id.action_setup_to_driver)
+            }
 
-        drivers.setOnClickListener {
-            findNavController().navigate(R.id.action_setup_to_driver)
-        }
+            events.setOnClickListener {
+                findNavController().navigate(R.id.action_setup_to_events)
+            }
 
-        events.setOnClickListener {
-            findNavController().navigate(R.id.action_setup_to_events)
-        }
+            saveBtn.setOnClickListener {
+                timezoneId =
+                    setupData?.timezones?.find { timezones -> timezones.value == timeZone.selectedItem.toString() }?.id!!?.let { it }!!
 
-        saveBtn.setOnClickListener {
-            timezoneId =
-                setupData?.timezones?.find { timezones -> timezones.value == timeZone.selectedItem.toString() }?.id!!?.let { it }
+                val distanceUnitStr =
+                    setupData?.units_of_distance?.find { unitsOfDistance -> unitsOfDistance.value == distanceUnit.selectedItem.toString() }?.id?.let { it }
 
-            val distanceUnitStr =
-                setupData?.units_of_distance?.find { unitsOfDistance -> unitsOfDistance.value == distanceUnit.selectedItem.toString() }?.id?.let { it }
+                val capacityUnitStr =
+                    setupData?.units_of_capacity?.find { unitsOfDistance -> unitsOfDistance.value == capacityUnit.selectedItem.toString() }?.id?.let { it }
 
-            val capacityUnitStr =
-                setupData?.units_of_capacity?.find { unitsOfDistance -> unitsOfDistance.value == capacityUnit.selectedItem.toString() }?.id?.let { it }
+                val altitudeUnitStr =
+                    setupData?.units_of_altitude?.find { unitsOfDistance -> unitsOfDistance.value == altitudeUnit.selectedItem.toString() }?.id?.let { it }
 
-            val altitudeUnitStr =
-                setupData?.units_of_altitude?.find { unitsOfDistance -> unitsOfDistance.value == altitudeUnit.selectedItem.toString() }?.id?.let { it }
+                commonViewModel?.editSetup(
+                    "en", localDB.getToken()!!,
+                    distanceUnitStr!!,
+                    capacityUnitStr!!,
+                    altitudeUnitStr!!,
+                    timezoneId,
+                    setupData?.sms_gateway!!,
+                    Gson().toJson(setupData?.groups).toString()
+                )?.observe(requireActivity(), Observer {
 
-            commonViewModel?.editSetup(
-                "en", localDB.getToken()!!,
-                distanceUnitStr!!,
-                capacityUnitStr!!,
-                altitudeUnitStr!!,
-                timezoneId,
-                setupData?.sms_gateway!!,
-                Gson().toJson(setupData?.groups).toString()
-            )?.observe(requireActivity(), Observer {
+                        resources ->
+                    when (resources.status) {
+                        Status.ERROR -> {
+                            progressView.visibility = View.GONE
+                            saveBtn.visibility = View.VISIBLE
+                        }
 
-                    resources ->
-                when (resources.status) {
-                    Status.ERROR -> {
-                        progressView.visibility = View.GONE
-                        saveBtn.visibility = View.VISIBLE
+                        Status.LOADING -> {
+                            progressView.visibility = View.VISIBLE
+                            saveBtn.visibility = View.GONE
+                        }
+
+                        Status.SUCCESS -> {
+                            progressView.visibility = View.GONE
+                            saveBtn.visibility = View.VISIBLE
+                        }
                     }
-                    Status.LOADING -> {
-                        progressView.visibility = View.VISIBLE
-                        saveBtn.visibility = View.GONE
-                    }
-                    Status.SUCCESS -> {
-                        progressView.visibility = View.GONE
-                        saveBtn.visibility = View.VISIBLE
-                    }
-                }
 
-            })
+                })
+            }
         }
     }
 
@@ -110,6 +116,7 @@ class SetUpPage : BaseFragment(), KodeinAware {
                     Status.SUCCESS -> {
                         processData(resources.data!!)
                     }
+
                     Status.ERROR -> {
                         Toast.makeText(
                             requireContext(),
@@ -117,19 +124,43 @@ class SetUpPage : BaseFragment(), KodeinAware {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+
+                    else -> {}
                 }
             })
     }
 
     private fun processData(data: EditUserDataResponse) {
         if (isVisible) {
-            data?.let {
-                populateDistanceUnit(data?.units_of_distance, data?.item?.unit_of_distance)
-                populateCapacityUnit(data?.units_of_capacity, data?.item?.unit_of_capacity)
-                populateAltitudeUnit(data?.units_of_altitude, data?.item?.unit_of_altitude)
-                populateWeekDays(data?.weekdays)
-                populateTimeZone(data?.timezones, data?.item?.timezone_id)
-                (activity as Dashboard).saveGroups(data?.groups)
+            data.let {
+                it.item.unit_of_distance.let { it1 ->
+                    populateDistanceUnit(it.units_of_distance,
+                        it1
+                    )
+                }
+                data.units_of_capacity.let { it1 ->
+                    data.item.unit_of_capacity.let { it2 ->
+                        populateCapacityUnit(it1,
+                            it2
+                        )
+                    }
+                }
+                data.units_of_altitude.let { it1 ->
+                    data.item.unit_of_altitude.let { it2 ->
+                        populateAltitudeUnit(it1,
+                            it2
+                        )
+                    }
+                }
+                populateWeekDays(data.weekdays)
+                data.timezones.let { it1 ->
+                    data.item.timezone_id.let { it2 ->
+                        populateTimeZone(it1,
+                            it2
+                        )
+                    }
+                }
+                data.groups.let { it1 -> (activity as Dashboard).saveGroups(it1) }
                 setupData = data
             }
         }
@@ -146,10 +177,10 @@ class SetUpPage : BaseFragment(), KodeinAware {
                 timezones
             )
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        timeZone.adapter = spinnerAdapter
+        binding.timeZone.adapter = spinnerAdapter
 
         val timeZoneVal = timezones.find { timezones -> timezones.id == timezoneId }
-        timeZone.setSelection(timezones.indexOf(timeZoneVal))
+        binding.timeZone.setSelection(timezones.indexOf(timeZoneVal))
     }
 
     private fun populateWeekDays(weekdays: List<Weekdays>) {
@@ -160,7 +191,7 @@ class SetUpPage : BaseFragment(), KodeinAware {
                 weekdays
             )
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        weekDays.adapter = spinnerAdapter
+        binding.weekDays.adapter = spinnerAdapter
     }
 
     private fun populateAltitudeUnit(
@@ -174,7 +205,7 @@ class SetUpPage : BaseFragment(), KodeinAware {
                 unitsOfAltitude
             )
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        altitudeUnit.adapter = spinnerAdapter
+        binding.altitudeUnit.adapter = spinnerAdapter
     }
 
     private fun populateCapacityUnit(
@@ -188,7 +219,7 @@ class SetUpPage : BaseFragment(), KodeinAware {
                 unitsOfCapacity
             )
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        capacityUnit.adapter = spinnerAdapter
+        binding.capacityUnit.adapter = spinnerAdapter
     }
 
     private fun populateDistanceUnit(
@@ -197,15 +228,15 @@ class SetUpPage : BaseFragment(), KodeinAware {
     ) {
         val spinnerAdapter: ArrayAdapter<Units_of_distance> =
             ArrayAdapter<Units_of_distance>(
-                requireContext() ,
+                requireContext(),
                 android.R.layout.simple_spinner_item,
                 unitsOfDistance
             )
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        distanceUnit.adapter = spinnerAdapter
+        binding.distanceUnit.adapter = spinnerAdapter
 
         val distanceVal = unitsOfDistance.find { distance -> distance.id == unitsOfDistance1 }
-        distanceUnit.setSelection(unitsOfDistance.indexOf(distanceVal))
+        binding.distanceUnit.setSelection(unitsOfDistance.indexOf(distanceVal))
     }
 
 

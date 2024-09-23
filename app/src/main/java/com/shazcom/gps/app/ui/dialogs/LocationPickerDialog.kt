@@ -20,14 +20,14 @@ import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.BitmapDescriptorFactory
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
-import kotlinx.android.synthetic.main.dialog_loc_picker.*
-import kotlinx.android.synthetic.main.dialog_loc_picker.closeBtn
-import kotlinx.android.synthetic.main.dialog_loc_picker.saveBtn
+import com.shazcom.gps.app.databinding.DialogLocPickerBinding
+
 
 class LocationPickerDialog(private val isPickUp: Boolean, private val taskDialog: AddTaskDialog) :
     DialogFragment(),
     OnMapReadyCallback {
 
+    private lateinit var binding: DialogLocPickerBinding
     private var mMap: GoogleMap? = null
     private var mMapMarker = ""
     private val mapData: MapData = MapData()
@@ -37,11 +37,12 @@ class LocationPickerDialog(private val isPickUp: Boolean, private val taskDialog
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_loc_picker, container, false)
+       binding=  DialogLocPickerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = Dialog(activity!!, R.style.customDialogTheme)
+        val dialog = Dialog(requireActivity(), R.style.customDialogTheme)
         dialog.setContentView(R.layout.dialog_loc_picker)
         return dialog
     }
@@ -55,7 +56,7 @@ class LocationPickerDialog(private val isPickUp: Boolean, private val taskDialog
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 dialog?.window?.statusBarColor =
-                    ContextCompat.getColor(context!!, R.color.colorPrimaryDark)
+                    ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark)
             }
         }
     }
@@ -74,11 +75,11 @@ class LocationPickerDialog(private val isPickUp: Boolean, private val taskDialog
             }
         }
 
-        closeBtn.setOnClickListener {
+        binding.  closeBtn.setOnClickListener {
             dismiss()
         }
 
-        saveBtn.setOnClickListener {
+        binding.saveBtn.setOnClickListener {
             mMapMarker?.isNotEmpty()?.let {
                 taskDialog.saveMapData(mapData)
                 dismiss()
@@ -96,7 +97,7 @@ class LocationPickerDialog(private val isPickUp: Boolean, private val taskDialog
     }
 
     fun showAddress(addressOutPut: String) {
-        locationAddress.text = addressOutPut
+        binding. locationAddress.text = addressOutPut
         mapData.address = addressOutPut
     }
 
@@ -111,12 +112,12 @@ class LocationPickerDialog(private val isPickUp: Boolean, private val taskDialog
         )
 
         latLng?.let {
-            locLatitude.text = it?.latitude!!.toString()
-            locLongitude.text = it?.longitude!!.toString()
+            binding.   locLatitude.text = it?.latitude!!.toString()
+            binding.   locLongitude.text = it?.longitude!!.toString()
             val location = Location("new_loc")
             location.latitude = it.latitude
             location.longitude = it.longitude
-            locationAddress.text = "Fetching Address ..."
+            binding. locationAddress.text = "Fetching Address ..."
             (requireActivity() as TaskPage).startIntentService(location)
             mapData.lat = it.latitude
             mapData.lng = it.longitude

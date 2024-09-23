@@ -26,11 +26,13 @@ import com.shazcom.gps.app.data.repository.ToolsRepository
 import com.shazcom.gps.app.data.response.DeviceData
 import com.shazcom.gps.app.data.response.Groups
 import com.shazcom.gps.app.data.response.Items
+import com.shazcom.gps.app.databinding.ActivityAddServiceBinding
+import com.shazcom.gps.app.databinding.ActivityDashboardBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseActivity
 import com.shazcom.gps.app.ui.fragments.Reports
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
-import kotlinx.android.synthetic.main.activity_dashboard.*
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
@@ -39,6 +41,7 @@ import org.kodein.di.generic.instance
 @Suppress("DEPRECATION")
 class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChangedListener {
 
+    private lateinit var binding: ActivityDashboardBinding
     override val kodein by kodein()
     private val localDB: LocalDB by instance<LocalDB>()
     private var doubleBackToExitPressedOnce = false
@@ -66,8 +69,8 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
             mServiceIntent?.action = DeviceServiceConstants.ACTION_START_SERVICE
             startService(mServiceIntent)
         }
-
-        setContentView(R.layout.activity_dashboard)
+        binding = ActivityDashboardBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         toolsViewModel = ViewModelProvider(this).get(ToolsViewModel::class.java)
         toolsViewModel?.toolsRepository = repository
@@ -76,34 +79,34 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
         loadPOIMarkers()
 
         navController = Navigation.findNavController(this, R.id.fragment)
-        NavigationUI.setupWithNavController(navView, navController!!)
+        NavigationUI.setupWithNavController(binding.navView, navController!!)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        nav_icon.setOnClickListener {
-            if (!drawerLayout.isDrawerOpen(GravityCompat.START)) drawerLayout.openDrawer(
+        binding.navIcon.setOnClickListener {
+            if (!binding.drawerLayout.isDrawerOpen(GravityCompat.START)) binding.drawerLayout.openDrawer(
                 GravityCompat.START
             )
-            else drawerLayout.closeDrawer(GravityCompat.END)
+            else binding.drawerLayout.closeDrawer(GravityCompat.END)
         }
 
         navController?.addOnDestinationChangedListener(this)
-        navView.setCheckedItem(0)
+        binding.navView.setCheckedItem(0)
 
-        navView.menu.findItem(R.id.logout).setOnMenuItemClickListener {
+        binding.navView.menu.findItem(R.id.logout).setOnMenuItemClickListener {
             doLogout()
             return@setOnMenuItemClickListener true
         }
 
 
-        navView.menu.findItem(R.id.customerCall).setOnMenuItemClickListener {
+        binding.navView.menu.findItem(R.id.customerCall).setOnMenuItemClickListener {
             openDialer()
-            drawerLayout.closeDrawers()
+            binding.drawerLayout.closeDrawers()
             return@setOnMenuItemClickListener true
         }
 
-        navView.menu.findItem(R.id.customerEmail).setOnMenuItemClickListener {
+        binding.navView.menu.findItem(R.id.customerEmail).setOnMenuItemClickListener {
             openEmail()
-            drawerLayout.closeDrawers()
+            binding.drawerLayout.closeDrawers()
             return@setOnMenuItemClickListener true
         }
 
@@ -115,7 +118,7 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
         }*/
 
 
-        back_icon.setOnClickListener {
+        binding.backIcon.setOnClickListener {
             navController?.navigateUp()
         }
 
@@ -141,7 +144,7 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
 
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(
-            Navigation.findNavController(this, R.id.fragment), drawerLayout
+            Navigation.findNavController(this, R.id.fragment), binding.drawerLayout
         )
     }
 
@@ -152,12 +155,12 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
     ) {
 
         if (destination.id == R.id.status) {
-            search_icon.visibility = View.VISIBLE
+            binding.searchIcon.visibility = View.VISIBLE
         } else {
-            search_icon.visibility = View.INVISIBLE
+            binding.searchIcon.visibility = View.INVISIBLE
         }
 
-        navTitle.text = destination.label
+        binding.navTitle.text = destination.label
     }
 
     fun saveDevices(list: ArrayList<Items>) {
@@ -216,6 +219,8 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
                     Status.SUCCESS -> {
                         (application as GPSWoxApp).saveGeofence(resources?.data?.items?.geofences)
                     }
+
+                    else -> {}
                 }
             })
     }
@@ -228,6 +233,8 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
                     Status.SUCCESS -> {
                         (application as GPSWoxApp).savePoiMarkers(resources?.data?.items?.mapIcons)
                     }
+
+                    else -> {}
                 }
             })
     }
@@ -249,6 +256,8 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
                                 }
                             }
                         }
+
+                        else -> {}
                     }
                 })
         }
@@ -259,7 +268,7 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
 
         context?.let {
             //if (doubleBackToExitPressedOnce) {
-                if (navView.checkedItem?.itemId == R.id.status) {
+                if (binding.navView.checkedItem?.itemId == R.id.status) {
                     finish()
                 } else {
                     navController?.navigate(R.id.status)

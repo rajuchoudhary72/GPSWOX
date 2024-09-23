@@ -6,22 +6,23 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.AlertOption
-import kotlinx.android.synthetic.main.item_alert_device.view.*
+import com.shazcom.gps.app.databinding.ItemAlertDeviceBinding
+import com.shazcom.gps.app.ui.adapter.AlertDeviceAdapter.AlertDeviceViewHolder
+
 
 class AlertDriverAdapter(private val driverList : List<AlertOption>) :
     RecyclerView.Adapter<AlertDriverAdapter.AlertDriverViewHolder>() {
 
     class AlertDriverViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val checkedItem = view.checkedItem!!
+        val checkedItem = ItemAlertDeviceBinding.bind(view).checkedItem!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlertDriverViewHolder {
+        val item =
+            ItemAlertDeviceBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+
         return AlertDriverViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_alert_device,
-                parent,
-                false
-            )
+            item.root
         )
     }
 

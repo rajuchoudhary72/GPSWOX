@@ -7,7 +7,7 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.shazcom.gps.app.R
+
 import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.CommonViewRepository
 import com.shazcom.gps.app.data.response.ServiceResponse
@@ -16,14 +16,15 @@ import com.shazcom.gps.app.ui.BaseActivity
 import com.shazcom.gps.app.ui.adapter.ServiceAdapter
 import com.shazcom.gps.app.ui.viewmodal.CommonViewModel
 import com.mb.battery.app.utils.PaginationListener
-import kotlinx.android.synthetic.main.activity_services.*
-import kotlinx.android.synthetic.main.empty_layout.*
+import com.shazcom.gps.app.databinding.ActivityServicesBinding
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
 class ServicePage : BaseActivity(), KodeinAware {
 
+    private lateinit var binding: ActivityServicesBinding
     override val kodein by kodein()
     private val localDB: LocalDB by instance()
     private val repository: CommonViewRepository by instance()
@@ -43,33 +44,35 @@ class ServicePage : BaseActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_services)
+        binding = ActivityServicesBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         deviceId = intent.getIntExtra("deviceId", 0)
         deviceName = intent.getStringExtra("deviceName")
         odometerValue = intent.getStringExtra("odometer").toString()
         engineLoadValue = intent.getStringExtra("engineLoad").toString()
+        with(binding) {
+            toolBar.title = deviceName
+            toolBar.setNavigationOnClickListener { finish() }
 
-        toolBar.title = deviceName
-        toolBar.setNavigationOnClickListener { finish() }
+            commonViewModel = ViewModelProvider(this@ServicePage).get(CommonViewModel::class.java)
+            commonViewModel?.commonViewRepository = repository
 
-        commonViewModel = ViewModelProvider(this).get(CommonViewModel::class.java)
-        commonViewModel?.commonViewRepository = repository
+            loadService()
 
-        loadService()
-
-        addService.setOnClickListener {
-            Intent(this@ServicePage, AddServicePage::class.java).apply {
-                putExtra("deviceId", deviceId!!)
-                putExtra("deviceName", deviceName!!)
-                putExtra("odometer", odometerValue)
-                putExtra("engineLoad", engineLoadValue)
-                startActivity(this)
+            addService.setOnClickListener {
+                Intent(this@ServicePage, AddServicePage::class.java).apply {
+                    putExtra("deviceId", deviceId!!)
+                    putExtra("deviceName", deviceName!!)
+                    putExtra("odometer", odometerValue)
+                    putExtra("engineLoad", engineLoadValue)
+                    startActivity(this)
+                }
             }
         }
     }
 
-    private fun loadService() {
+    private fun loadService() = with(binding){
 
         commonViewModel?.getServices("en", localDB.getToken()!!, deviceId!!, currentPage)
             ?.observe(this@ServicePage, Observer { resources ->
@@ -77,10 +80,11 @@ class ServicePage : BaseActivity(), KodeinAware {
                 when (resources.status) {
                     Status.SUCCESS -> {
                         progressBar.visibility = View.GONE
-                        emptyText.visibility = View.INVISIBLE
+                        inc.emptyText.visibility = View.INVISIBLE
                         loadMoreLayout.visibility = View.GONE
                         processData(resources.data!!)
                     }
+
                     Status.LOADING -> {
                         if (currentPage == 1) {
                             progressBar.visibility = View.VISIBLE
@@ -88,6 +92,7 @@ class ServicePage : BaseActivity(), KodeinAware {
                             loadMoreLayout.visibility = View.VISIBLE
                         }
                     }
+
                     Status.ERROR -> {
                         progressBar.visibility = View.GONE
                         loadMoreLayout.visibility = View.GONE
@@ -109,11 +114,11 @@ class ServicePage : BaseActivity(), KodeinAware {
                         odometerValue,
                         engineLoadValue
                     )
-                    serviceList.apply {
+                    binding.serviceList.apply {
                         layoutManager = LinearLayoutManager(this@ServicePage)
                         adapter = serviceAdapter
                     }.also {
-                        serviceList.addOnScrollListener(object :
+                       binding. serviceList.addOnScrollListener(object :
                             PaginationListener(it.layoutManager as LinearLayoutManager) {
                             override fun loadMoreItems() {
                                 isLoading = true
@@ -135,8 +140,8 @@ class ServicePage : BaseActivity(), KodeinAware {
                     isLoading = false
                 }
             } else {
-                emptyText.visibility = View.VISIBLE
-                emptyText.text = "No Service Found"
+                binding.inc.emptyText.visibility = View.VISIBLE
+                binding.inc.emptyText.text = "No Service Found"
             }
         }
     }

@@ -11,13 +11,15 @@ import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.CommonViewRepository
 import com.shazcom.gps.app.data.response.HistoryData
+import com.shazcom.gps.app.databinding.ActivityServicesBinding
+import com.shazcom.gps.app.databinding.ActivitySummaryBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseActivity
 import com.shazcom.gps.app.ui.viewmodal.CommonViewModel
 import com.shazcom.gps.app.utils.getCurrentDay
 import com.shazcom.gps.app.utils.getNewTimeFormat
 import com.shazcom.gps.app.utils.nextDay
-import kotlinx.android.synthetic.main.activity_summary.*
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
@@ -27,6 +29,7 @@ import java.util.*
 @SuppressLint("SimpleDateFormat")
 class SummaryPage : BaseActivity(), KodeinAware {
 
+    private lateinit var binding: ActivitySummaryBinding
     override val kodein by kodein()
     private val localDB: LocalDB by instance()
     private val repository: CommonViewRepository by instance()
@@ -37,35 +40,37 @@ class SummaryPage : BaseActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_summary)
+        binding = ActivitySummaryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         deviceId = intent.getIntExtra("deviceId", 0)
         deviceName = intent.getStringExtra("deviceName")
+        with(binding) {
+            toolBar.title = deviceName!!
+            toolBar.setNavigationOnClickListener { finish() }
 
-        toolBar.title = deviceName!!
-        toolBar.setNavigationOnClickListener { finish() }
+            commonViewModel = ViewModelProvider(this@SummaryPage).get(CommonViewModel::class.java)
+            commonViewModel?.commonViewRepository = repository
 
-        commonViewModel = ViewModelProvider(this).get(CommonViewModel::class.java)
-        commonViewModel?.commonViewRepository = repository
+            showBtn.setOnClickListener {
+                loadSummary()
+            }
 
-        showBtn.setOnClickListener {
-            loadSummary()
+            startDateCard.setOnClickListener { pickStartDate() }
+            startTimeCard.setOnClickListener { pickStartTime() }
+            endDateCard.setOnClickListener { pickEndDate() }
+            endTimeCard.setOnClickListener { pickEndTime() }
+
+            startDateTxt.text = getCurrentDay().split("\n")[0]
+            startTimeTxt.text = getCurrentDay().split("\n")[1]
+
+            endDateTxt.text = nextDay().split("\n")[0]
+            endTimeTxt.text = nextDay().split("\n")[1]
         }
-
-        startDateCard.setOnClickListener { pickStartDate() }
-        startTimeCard.setOnClickListener { pickStartTime() }
-        endDateCard.setOnClickListener { pickEndDate() }
-        endTimeCard.setOnClickListener { pickEndTime() }
-
-        startDateTxt.text = getCurrentDay().split("\n")[0]
-        startTimeTxt.text = getCurrentDay().split("\n")[1]
-
-        endDateTxt.text = nextDay().split("\n")[0]
-        endTimeTxt.text = nextDay().split("\n")[1]
     }
 
     @SuppressLint("SetTextI18n")
-    private fun loadSummary() {
+    private fun loadSummary() = with(binding){
 
         val fromDate = startDateTxt.text.toString()
         val fromTime = startTimeTxt.text.toString()
@@ -82,7 +87,7 @@ class SummaryPage : BaseActivity(), KodeinAware {
             toDate.replace(" ", ""),
             getNewTimeFormat(toTime)
         )
-            ?.observe(this, Observer { resources ->
+            ?.observe(this@SummaryPage, Observer { resources ->
                 when (resources.status) {
                     Status.SUCCESS -> {
                         progressBar.visibility = View.INVISIBLE
@@ -115,7 +120,7 @@ class SummaryPage : BaseActivity(), KodeinAware {
                 val pickedDateTime = Calendar.getInstance()
                 pickedDateTime.set(year, month, day)
                 val df = SimpleDateFormat("yyyy-MM-dd")
-                startDateTxt.text = df.format(pickedDateTime.timeInMillis)
+                binding.startDateTxt.text = df.format(pickedDateTime.timeInMillis)
 
             },
             startYear,
@@ -136,7 +141,7 @@ class SummaryPage : BaseActivity(), KodeinAware {
                 val pickedDateTime = Calendar.getInstance()
                 pickedDateTime.set(year, month, day)
                 val df = SimpleDateFormat("yyyy-MM-dd")
-                endDateTxt.text = df.format(pickedDateTime.timeInMillis)
+                binding.endDateTxt.text = df.format(pickedDateTime.timeInMillis)
 
             },
             startYear,
@@ -158,7 +163,8 @@ class SummaryPage : BaseActivity(), KodeinAware {
                 pickedDateTime.set(Calendar.HOUR_OF_DAY, selectedHour)
                 pickedDateTime.set(Calendar.MINUTE, selectedMinute)
                 val df = SimpleDateFormat("hh:mm a")
-                startTimeTxt.text = df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
+               binding. startTimeTxt.text =
+                    df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
             },
             startHour,
             startMinute,
@@ -182,7 +188,8 @@ class SummaryPage : BaseActivity(), KodeinAware {
                 pickedDateTime.set(Calendar.HOUR_OF_DAY, selectedHour)
                 pickedDateTime.set(Calendar.MINUTE, selectedMinute)
                 val df = SimpleDateFormat("hh:mm a")
-                endTimeTxt.text = df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
+                binding.endTimeTxt.text =
+                    df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
             },
             startHour,
             startMinute,
@@ -193,7 +200,7 @@ class SummaryPage : BaseActivity(), KodeinAware {
         mTimePicker.show()
     }
 
-    private fun processData(data: HistoryData) {
+    private fun processData(data: HistoryData)= with(binding) {
         distanceSum.text = "${data.distance_sum}"
         topSpeed.text = "${data.top_speed}"
         moveDuration.text = "${data.move_duration}"
@@ -201,7 +208,7 @@ class SummaryPage : BaseActivity(), KodeinAware {
         fuelCons.text = "${data.fuel_consumption ?: "0 ltr"}"
     }
 
-    private fun clearData() {
+    private fun clearData()= with(binding) {
         summaryLayout.visibility = View.INVISIBLE
         distanceSum.text = "-"
         topSpeed.text = "-"

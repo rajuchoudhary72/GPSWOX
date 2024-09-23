@@ -15,16 +15,13 @@ import com.google.android.libraries.maps.OnMapReadyCallback
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.android.synthetic.main.activity_history_detail.*
-import kotlinx.android.synthetic.main.drive_bottom_sheet_layout.*
-import kotlinx.android.synthetic.main.end_bottom_sheet_layout.*
-import kotlinx.android.synthetic.main.event_bottom_sheet_layout.*
-import kotlinx.android.synthetic.main.history_bottom_sheet_layout.*
-import kotlinx.android.synthetic.main.parking_bottom_sheet_layout.*
+import com.shazcom.gps.app.databinding.ActivityHistoryDetailBinding
+
 import kotlin.math.roundToInt
 
 class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
 
+    private lateinit var binding: ActivityHistoryDetailBinding
     var itemsInner: ItemsInner? = null
     var distanceRouteStart: String? = null
     var moveDurationStart: String? = null
@@ -43,7 +40,8 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_history_detail)
+        binding = ActivityHistoryDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
 
         itemsInner = (application as GPSWoxApp).getItemInner()
@@ -55,8 +53,8 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
         fuelConsStart = intent?.getStringExtra("fuel_cons")
 
 
-        toolBar.title = deviceName
-        toolBar.setNavigationOnClickListener { finish() }
+        binding.toolBar.title = deviceName
+        binding.toolBar.setNavigationOnClickListener { finish() }
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment?
@@ -85,15 +83,19 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
             1 -> {
                 displayDrive()
             }
+
             2 -> {
                 displayPark()
             }
+
             3 -> {
                 displayStart()
             }
+
             4 -> {
                 displayEnd()
             }
+
             5 -> {
                 displayEvent()
             }
@@ -103,16 +105,19 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
     override fun popUpAddress(addressOutput: String) {
         when (itemsInner?.status!!) {
             2 -> {
-                parkingAddress.text = addressOutput
+                binding.incParkingBottomSheet.parkingAddress.text = addressOutput
             }
+
             3 -> {
-                startAddress.text = addressOutput
+                binding.incHistoryBottomSheet.startAddress.text = addressOutput
             }
+
             4 -> {
-                endAddress.text = addressOutput
+                binding.incEndBottomSheet.endAddress.text = addressOutput
             }
+
             5 -> {
-                eventAddress.text = addressOutput
+                binding.incEventBottomSheet.eventAddress.text = addressOutput
             }
         }
     }
@@ -120,16 +125,19 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
     override fun popUpAddressWithKeyWord(addressOutput: String, keyword: String) {
         when (keyword) {
             "PARK_START" -> {
-                parkingStartAddress.text = addressOutput
+                binding.incParkingBottomSheet.parkingStartAddress.text = addressOutput
             }
+
             "PARK_STOP" -> {
-                parkingStopAddress.text = addressOutput
+                binding.incParkingBottomSheet.parkingStopAddress.text = addressOutput
             }
+
             "DRIVE_START" -> {
-                driveStartAddress.text = addressOutput
+                binding.incDriveBottomSheet.driveStartAddress.text = addressOutput
             }
+
             "DRIVE_STOP" -> {
-                driveStopAddress.text = addressOutput
+                binding.incDriveBottomSheet.driveStopAddress.text = addressOutput
             }
         }
     }
@@ -209,21 +217,24 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
     @SuppressLint("SetTextI18n")
     private fun displayStart() {
 
-        driveDataSheet.visibility = View.GONE
-        endDataSheet.visibility = View.GONE
-        eventDataSheet.visibility = View.GONE
-        parkDataSheet.visibility = View.GONE
-        mapDataSheet.visibility = View.VISIBLE
+        binding.incDriveBottomSheet.driveDataSheet.visibility = View.GONE
+        binding.incEndBottomSheet.endDataSheet.visibility = View.GONE
+        binding.incEventBottomSheet.eventDataSheet.visibility = View.GONE
+        binding.incParkingBottomSheet.parkDataSheet.visibility = View.GONE
+        binding.incHistoryBottomSheet.mapDataSheet.visibility = View.VISIBLE
 
-        startFuelCons.text = fuelConsStart
-        startDriver.text = itemsInner?.driver?.name?.let { it } ?: run { "-" }
-        startLatitude.text = "${itemsInner?.items!![0].latitude}\u00B0"
-        startLongitude.text = "${itemsInner?.items!![0].longitude}\u00B0"
-        startAltitude.text = "${itemsInner?.items!![0].altitude}m"
-        startRoute.text = distanceRouteStart
-        startMoveDuration.text = moveDurationStart
-        startStopDuration.text = stopDurationStart
-        startTopSpeed.text = topSpeedStart
+        binding.incHistoryBottomSheet.startFuelCons.text = fuelConsStart
+        binding.incHistoryBottomSheet.startDriver.text =
+            itemsInner?.driver?.name?.let { it } ?: run { "-" }
+        binding.incHistoryBottomSheet.startLatitude.text =
+            "${itemsInner?.items!![0].latitude}\u00B0"
+        binding.incHistoryBottomSheet.startLongitude.text =
+            "${itemsInner?.items!![0].longitude}\u00B0"
+        binding.incHistoryBottomSheet.startAltitude.text = "${itemsInner?.items!![0].altitude}m"
+        binding.incHistoryBottomSheet.startRoute.text = distanceRouteStart
+        binding.incHistoryBottomSheet.startMoveDuration.text = moveDurationStart
+        binding.incHistoryBottomSheet.startStopDuration.text = stopDurationStart
+        binding.incHistoryBottomSheet.startTopSpeed.text = topSpeedStart
 
         val itemMain = itemsInner?.items!![0]
         var itemLocation = LatLng(itemMain?.latitude!!, itemMain?.longitude!!)
@@ -238,7 +249,7 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
         mMap?.moveCamera(CameraUpdateFactory.newLatLng(itemLocation))
         mMap?.animateCamera(CameraUpdateFactory.zoomTo(15f))
 
-        startBehavior = BottomSheetBehavior.from(mapDataSheet)
+        startBehavior = BottomSheetBehavior.from(binding.incHistoryBottomSheet.mapDataSheet)
         startBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 val h = bottomSheet.height.toFloat()
@@ -255,7 +266,7 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
             }
         })
 
-        startAddress.setOnClickListener {
+        binding.incHistoryBottomSheet.startAddress.setOnClickListener {
             if (startBehavior?.state == BottomSheetBehavior.STATE_COLLAPSED) {
                 startBehavior?.setState(BottomSheetBehavior.STATE_EXPANDED)
             } else {
@@ -270,21 +281,22 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
 
     private fun displayEnd() {
 
-        driveDataSheet.visibility = View.GONE
-        endDataSheet.visibility = View.VISIBLE
-        eventDataSheet.visibility = View.GONE
-        parkDataSheet.visibility = View.GONE
-        mapDataSheet.visibility = View.GONE
+        binding.incDriveBottomSheet.driveDataSheet.visibility = View.GONE
+        binding.incEndBottomSheet.endDataSheet.visibility = View.VISIBLE
+        binding.incEventBottomSheet.eventDataSheet.visibility = View.GONE
+        binding.incParkingBottomSheet.parkDataSheet.visibility = View.GONE
+        binding.incHistoryBottomSheet.mapDataSheet.visibility = View.GONE
 
-        endFuelCons.text = fuelConsStart
-        endDriver.text = itemsInner?.driver?.name?.let { it } ?: run { "-" }
-        endLatitude.text = "${itemsInner?.items!![0].latitude}\u00B0"
-        endLongitude.text = "${itemsInner?.items!![0].longitude}\u00B0"
-        endAltitude.text = "${itemsInner?.items!![0].altitude}m"
-        endRoute.text = distanceRouteStart
-        endMoveDuration.text = moveDurationStart
-        endStopDuration.text = stopDurationStart
-        endTopSpeed.text = topSpeedStart
+        binding.incEndBottomSheet.endFuelCons.text = fuelConsStart
+        binding.incEndBottomSheet.endDriver.text =
+            itemsInner?.driver?.name?.let { it } ?: run { "-" }
+        binding.incEndBottomSheet.endLatitude.text = "${itemsInner?.items!![0].latitude}\u00B0"
+        binding.incEndBottomSheet.endLongitude.text = "${itemsInner?.items!![0].longitude}\u00B0"
+        binding.incEndBottomSheet.endAltitude.text = "${itemsInner?.items!![0].altitude}m"
+        binding.incEndBottomSheet.endRoute.text = distanceRouteStart
+        binding.incEndBottomSheet.endMoveDuration.text = moveDurationStart
+        binding.incEndBottomSheet.endStopDuration.text = stopDurationStart
+        binding.incEndBottomSheet.endTopSpeed.text = topSpeedStart
 
         val itemMain = itemsInner?.items!![0]
         var itemLocation = LatLng(itemMain?.latitude!!, itemMain?.longitude!!)
@@ -299,7 +311,7 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
         mMap?.moveCamera(CameraUpdateFactory.newLatLng(itemLocation))
         mMap?.animateCamera(CameraUpdateFactory.zoomTo(15f))
 
-        endBehavior = BottomSheetBehavior.from(endDataSheet)
+        endBehavior = BottomSheetBehavior.from(binding.incEndBottomSheet.endDataSheet)
         endBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 val h = bottomSheet.height.toFloat()
@@ -316,7 +328,7 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
             }
         })
 
-        startAddress.setOnClickListener {
+        binding.incHistoryBottomSheet.startAddress.setOnClickListener {
             if (endBehavior?.state == BottomSheetBehavior.STATE_COLLAPSED) {
                 endBehavior?.setState(BottomSheetBehavior.STATE_EXPANDED)
             } else {
@@ -330,13 +342,13 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
 
     }
 
-    private fun displayDrive() {
+    private fun displayDrive() = with(binding.incDriveBottomSheet) {
 
         driveDataSheet.visibility = View.VISIBLE
-        endDataSheet.visibility = View.GONE
-        eventDataSheet.visibility = View.GONE
-        parkDataSheet.visibility = View.GONE
-        mapDataSheet.visibility = View.GONE
+        binding.incEndBottomSheet.endDataSheet.visibility = View.GONE
+        binding.incEventBottomSheet.eventDataSheet.visibility = View.GONE
+        binding.incParkingBottomSheet.parkDataSheet.visibility = View.GONE
+        binding.incHistoryBottomSheet.mapDataSheet.visibility = View.GONE
 
         driveFuelCons.text = "${itemsInner?.fuel_consumption} ltr"
         driveDriver.text = itemsInner?.driver?.name?.let { it } ?: run { "-" }
@@ -382,13 +394,13 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun displayPark() {
+    private fun displayPark() = with(binding.incParkingBottomSheet) {
 
-        driveDataSheet.visibility = View.GONE
-        endDataSheet.visibility = View.GONE
-        eventDataSheet.visibility = View.GONE
+        binding.incDriveBottomSheet.driveDataSheet.visibility = View.GONE
+        binding.incEndBottomSheet.endDataSheet.visibility = View.GONE
+        binding.incEventBottomSheet.eventDataSheet.visibility = View.GONE
         parkDataSheet.visibility = View.VISIBLE
-        mapDataSheet.visibility = View.GONE
+        binding.incHistoryBottomSheet.mapDataSheet.visibility = View.GONE
 
         parkingFuelCons.text = fuelConsStart
         parkingDriver.text = itemsInner?.driver?.name?.let { it } ?: run { "-" }
@@ -443,7 +455,6 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
         }
 
 
-
         val locData1 = itemsInner?.items!![0]
         val locData2 = itemsInner?.items!![itemsInner?.items!!.size - 1]
 
@@ -462,13 +473,13 @@ class HistoryDetailPage : BaseActivity(), OnMapReadyCallback {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun displayEvent() {
+    private fun displayEvent() = with(binding.incEventBottomSheet){
 
-        driveDataSheet.visibility = View.GONE
-        endDataSheet.visibility = View.GONE
+        binding.incDriveBottomSheet.driveDataSheet.visibility = View.GONE
+        binding.incEndBottomSheet.endDataSheet.visibility = View.GONE
         eventDataSheet.visibility = View.VISIBLE
-        parkDataSheet.visibility = View.GONE
-        mapDataSheet.visibility = View.GONE
+       binding.incParkingBottomSheet. parkDataSheet.visibility = View.GONE
+       binding.incHistoryBottomSheet. mapDataSheet.visibility = View.GONE
 
         eventName.text = itemsInner?.message
         eventDriver.text = itemsInner?.driver?.name?.let { it } ?: run { "-" }

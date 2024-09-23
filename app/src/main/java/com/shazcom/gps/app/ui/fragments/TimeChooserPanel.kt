@@ -8,14 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.shazcom.gps.app.R
+import com.shazcom.gps.app.databinding.FragmentDatePanelBinding
 import com.shazcom.gps.app.ui.BaseFragment
 import com.shazcom.gps.app.ui.activities.Dashboard
-import kotlinx.android.synthetic.main.fragment__date_panel.*
+
 import java.text.SimpleDateFormat
 import java.util.*
 
 class TimeChooserPanel : BaseFragment(), RadioGroup.OnCheckedChangeListener {
 
+    private lateinit var binding: FragmentDatePanelBinding
     private var deviceId: Int? = 0
     private var keyword: String = "today"
 
@@ -28,17 +30,18 @@ class TimeChooserPanel : BaseFragment(), RadioGroup.OnCheckedChangeListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment__date_panel, container, false)
+         binding=FragmentDatePanelBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        timeRadioGrp.setOnCheckedChangeListener(this)
-        showBtn.setOnClickListener {
+        binding.timeRadioGrp.setOnCheckedChangeListener(this)
+        binding. showBtn.setOnClickListener {
             val parent = parentFragment as HistoryPage
 
-            if (keyword == "custom" && startDateTimeTxt.text == "Select Start Date" && endDateTimeTxt.text == "Select End Date"
+            if (keyword == "custom" && binding.startDateTimeTxt.text == "Select Start Date" && binding.endDateTimeTxt.text == "Select End Date"
             ) {
                 Toast.makeText(
                     requireContext(),
@@ -49,8 +52,8 @@ class TimeChooserPanel : BaseFragment(), RadioGroup.OnCheckedChangeListener {
             }
 
             parent.loadHistory(
-                deviceId!!, keyword, startDateTimeTxt.text as String,
-                endDateTimeTxt.text as String
+                deviceId!!, keyword, binding.startDateTimeTxt.text as String,
+                binding.endDateTimeTxt.text as String
             )
         }
 
@@ -60,8 +63,8 @@ class TimeChooserPanel : BaseFragment(), RadioGroup.OnCheckedChangeListener {
         list?.let {
             val adapter = ArrayAdapter(requireContext() , R.layout.spinner_item, list)
             adapter.setDropDownViewResource(R.layout.spinner_item)
-            selectDevice.adapter = adapter
-            selectDevice.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            binding.selectDevice.adapter = adapter
+            binding.selectDevice.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
                 override fun onItemSelected(
                     parent: AdapterView<*>?,
@@ -74,11 +77,11 @@ class TimeChooserPanel : BaseFragment(), RadioGroup.OnCheckedChangeListener {
             }
         }
 
-        startDateTimeTxt.setOnClickListener {
+        binding.startDateTimeTxt.setOnClickListener {
             pickDate1()
         }
 
-        endDateTimeTxt.setOnClickListener {
+        binding.endDateTimeTxt.setOnClickListener {
             pickDate2()
         }
     }
@@ -100,7 +103,7 @@ class TimeChooserPanel : BaseFragment(), RadioGroup.OnCheckedChangeListener {
                         val pickedDateTime = Calendar.getInstance()
                         pickedDateTime.set(year, month, day, hour, minute)
                         val df = SimpleDateFormat("yyyy-MM-dd\nHH:mm aa")
-                        startDateTimeTxt.text = df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
+                        binding.startDateTimeTxt.text = df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
                     },
                     startHour,
                     startMinute,
@@ -131,7 +134,7 @@ class TimeChooserPanel : BaseFragment(), RadioGroup.OnCheckedChangeListener {
                         val pickedDateTime = Calendar.getInstance()
                         pickedDateTime.set(year, month, day, hour, minute)
                         val df = SimpleDateFormat("yyyy-MM-dd\nHH:mm aa")
-                        endDateTimeTxt.text = df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
+                        binding.endDateTimeTxt.text = df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
                     },
                     startHour,
                     startMinute,
@@ -148,27 +151,27 @@ class TimeChooserPanel : BaseFragment(), RadioGroup.OnCheckedChangeListener {
         when (checkedId) {
             R.id.today -> {
                 keyword = "today"
-                timePanel.visibility = View.GONE
+                binding.timePanel.visibility = View.GONE
             }
             R.id.yesterDay -> {
                 keyword = "yesterday"
-                timePanel.visibility = View.GONE
+                binding.timePanel.visibility = View.GONE
             }
             R.id.week -> {
                 keyword = "week"
-                timePanel.visibility = View.GONE
+                binding.timePanel.visibility = View.GONE
             }
             R.id.currentMonth -> {
                 keyword = "currentMonth"
-                timePanel.visibility = View.GONE
+                binding.timePanel.visibility = View.GONE
             }
             R.id.lastMonth -> {
                 keyword = "lastMonth"
-                timePanel.visibility = View.GONE
+                binding.timePanel.visibility = View.GONE
             }
             R.id.customPeriod -> {
                 keyword = "custom"
-                timePanel.visibility = View.VISIBLE
+                binding.timePanel.visibility = View.VISIBLE
             }
         }
     }

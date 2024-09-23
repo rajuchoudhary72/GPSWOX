@@ -14,23 +14,25 @@ import com.google.android.libraries.maps.model.BitmapDescriptorFactory
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.android.synthetic.main.activity_event_detail.*
-import kotlinx.android.synthetic.main.event_bottom_sheet_layout.*
+import com.shazcom.gps.app.databinding.ActivityEventDetailBinding
+
 import kotlin.math.roundToInt
 
 class EventDetail : BaseActivity(), OnMapReadyCallback {
 
+    private lateinit var binding: ActivityEventDetailBinding
     var mMap: GoogleMap? = null
     var eventBehavior: BottomSheetBehavior<*>? = null
     var eventItem: EventData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_event_detail)
+        binding=ActivityEventDetailBinding.inflate(layoutInflater)
+        setContentView(binding.toolBar)
 
         eventItem = intent?.getParcelableExtra("eventItem")
-        toolBar.title = "${eventItem?.device_name}"
-        toolBar.setNavigationOnClickListener { finish() }
+        binding.toolBar.title = "${eventItem?.device_name}"
+        binding.toolBar.setNavigationOnClickListener { finish() }
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment?
@@ -53,12 +55,12 @@ class EventDetail : BaseActivity(), OnMapReadyCallback {
 
     private fun displayEvent() {
 
-        eventDataSheet.visibility = View.VISIBLE
-        eventName.text = eventItem?.message
-        eventDriver.text = "-"
-        eventLatitude.text = eventItem?.latitude?.let { "$it\u00B0" } ?: run { "-" }
-        eventLongitude.text = eventItem?.longitude?.let { "$it\u00B0" } ?: run { "-" }
-        eventAltitude.text = eventItem?.altitude?.let { "${it}m" } ?: run { "-" }
+        binding.inc.eventDataSheet.visibility = View.VISIBLE
+        binding.inc.eventName.text = eventItem?.message
+        binding.inc.eventDriver.text = "-"
+        binding.inc.eventLatitude.text = eventItem?.latitude?.let { "$it\u00B0" } ?: run { "-" }
+        binding.inc.eventLongitude.text = eventItem?.longitude?.let { "$it\u00B0" } ?: run { "-" }
+        binding.inc. eventAltitude.text = eventItem?.altitude?.let { "${it}m" } ?: run { "-" }
 
         var itemLocation = LatLng(eventItem?.latitude!!, eventItem?.longitude!!)
         val location = Location("${eventItem?.device_id}")
@@ -76,7 +78,7 @@ class EventDetail : BaseActivity(), OnMapReadyCallback {
         mMap?.moveCamera(CameraUpdateFactory.newLatLng(itemLocation))
         mMap?.animateCamera(CameraUpdateFactory.zoomTo(15f))
 
-        eventBehavior = BottomSheetBehavior.from(eventDataSheet)
+        eventBehavior = BottomSheetBehavior.from(binding.inc.eventDataSheet)
         eventBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 val h = bottomSheet.height.toFloat()
@@ -93,7 +95,7 @@ class EventDetail : BaseActivity(), OnMapReadyCallback {
             }
         })
 
-        eventAddress.setOnClickListener {
+        binding.inc.eventAddress.setOnClickListener {
             if (eventBehavior?.state == BottomSheetBehavior.STATE_COLLAPSED) {
                 eventBehavior?.setState(BottomSheetBehavior.STATE_EXPANDED)
             } else {
@@ -108,6 +110,6 @@ class EventDetail : BaseActivity(), OnMapReadyCallback {
 
     override fun popUpAddress(addressOutput: String) {
         super.popUpAddress(addressOutput)
-        eventAddress.text = "$addressOutput"
+        binding.inc.eventAddress.text = "$addressOutput"
     }
 }

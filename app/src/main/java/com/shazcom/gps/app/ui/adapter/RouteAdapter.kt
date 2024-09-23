@@ -10,10 +10,11 @@ import com.shazcom.gps.app.GPSWoxApp
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.HistoryData
 import com.shazcom.gps.app.data.response.ItemsInner
+import com.shazcom.gps.app.databinding.ItemRouteBinding
 import com.shazcom.gps.app.ui.activities.HistoryDetailPage
 import com.shazcom.gps.app.utils.getStatus
 import com.shazcom.gps.app.utils.getStatusImage
-import kotlinx.android.synthetic.main.item_route.view.*
+
 
 class RouteAdapter(
     private val routeList: List<ItemsInner>,
@@ -25,11 +26,11 @@ class RouteAdapter(
     RecyclerView.Adapter<RouteAdapter.RouteAdapterViewHolder>() {
 
     class RouteAdapterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val routeImage = view.routeImage!!
-        val timeTxt = view.timeTxt!!
-        val eventName = view.eventName!!
-        val eventTxt = view.eventTxt!!
-        val rootView = view.rootView!!
+        val routeImage =ItemRouteBinding.bind(view).routeImage!!
+        val timeTxt = ItemRouteBinding.bind(view).timeTxt!!
+        val eventName = ItemRouteBinding.bind(view).eventName!!
+        val eventTxt = ItemRouteBinding.bind(view).eventTxt!!
+        val rootView = ItemRouteBinding.bind(view).rootView!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RouteAdapterViewHolder {

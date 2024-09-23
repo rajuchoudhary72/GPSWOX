@@ -14,6 +14,7 @@ import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.CommonViewRepository
 import com.shazcom.gps.app.data.response.HistoryData
 import com.shazcom.gps.app.data.response.ItemsInner
+import com.shazcom.gps.app.databinding.ActivityRouteBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseActivity
 import com.shazcom.gps.app.ui.adapter.RouteAdapter
@@ -21,8 +22,7 @@ import com.shazcom.gps.app.ui.viewmodal.CommonViewModel
 import com.shazcom.gps.app.utils.getCurrentDay
 import com.shazcom.gps.app.utils.getNewTimeFormat
 import com.shazcom.gps.app.utils.nextDay
-import kotlinx.android.synthetic.main.activity_route.*
-import kotlinx.android.synthetic.main.empty_layout.*
+
 import kotlinx.coroutines.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
@@ -33,6 +33,7 @@ import java.util.*
 @SuppressLint("SimpleDateFormat")
 class RoutePage : BaseActivity(), KodeinAware {
 
+    private lateinit var binding: ActivityRouteBinding
     private var dataList: ArrayList<ItemsInner>? = null
     override val kodein by kodein()
     private val localDB: LocalDB by instance()
@@ -44,35 +45,37 @@ class RoutePage : BaseActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_route)
+        binding = ActivityRouteBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         deviceId = intent.getIntExtra("deviceId", 0)
         deviceName = intent.getStringExtra("deviceName")
+        with(binding) {
+            toolBar.title = deviceName!!
+            toolBar.setNavigationOnClickListener { finish() }
 
-        toolBar.title = deviceName!!
-        toolBar.setNavigationOnClickListener { finish() }
+            commonViewModel = ViewModelProvider(this@RoutePage).get(CommonViewModel::class.java)
+            commonViewModel?.commonViewRepository = repository
 
-        commonViewModel = ViewModelProvider(this).get(CommonViewModel::class.java)
-        commonViewModel?.commonViewRepository = repository
+            showBtn.setOnClickListener {
+                loadRoute()
+            }
 
-        showBtn.setOnClickListener {
-            loadRoute()
+            startDateCard.setOnClickListener { pickStartDate() }
+            startTimeCard.setOnClickListener { pickStartTime() }
+            endDateCard.setOnClickListener { pickEndDate() }
+            endTimeCard.setOnClickListener { pickEndTime() }
+
+            startDateTxt.text = getCurrentDay().split("\n")[0]
+            startTimeTxt.text = getCurrentDay().split("\n")[1]
+
+            endDateTxt.text = nextDay().split("\n")[0]
+            endTimeTxt.text = nextDay().split("\n")[1]
         }
-
-        startDateCard.setOnClickListener { pickStartDate() }
-        startTimeCard.setOnClickListener { pickStartTime() }
-        endDateCard.setOnClickListener { pickEndDate() }
-        endTimeCard.setOnClickListener { pickEndTime() }
-
-        startDateTxt.text = getCurrentDay().split("\n")[0]
-        startTimeTxt.text = getCurrentDay().split("\n")[1]
-
-        endDateTxt.text = nextDay().split("\n")[0]
-        endTimeTxt.text = nextDay().split("\n")[1]
     }
 
     @SuppressLint("SetTextI18n")
-    private fun loadRoute() {
+    private fun loadRoute()=with(binding) {
 
         val fromDate = startDateTxt.text.toString()
         val fromTime = startTimeTxt.text.toString()
@@ -89,29 +92,30 @@ class RoutePage : BaseActivity(), KodeinAware {
             toDate.replace(" ", ""),
             getNewTimeFormat(toTime)
         )
-            ?.observe(this, Observer { resources ->
+            ?.observe(this@RoutePage, Observer { resources ->
                 when (resources.status) {
                     Status.SUCCESS -> {
                         progressBar.visibility = View.INVISIBLE
-                        emptyText.visibility = View.INVISIBLE
+                       inc. emptyText.visibility = View.INVISIBLE
                         routeList.visibility = View.VISIBLE
                         processData(resources.data!!)
                     }
 
                     Status.LOADING -> {
                         progressBar.visibility = View.VISIBLE
-                        emptyText.visibility = View.INVISIBLE
+                       inc. emptyText.visibility = View.INVISIBLE
                         routeList.visibility = View.INVISIBLE
                     }
 
                     Status.ERROR -> {
                         progressBar.visibility = View.INVISIBLE
-                        emptyText.visibility = View.VISIBLE
+                        inc.emptyText.visibility = View.VISIBLE
                         routeList.visibility = View.INVISIBLE
-                        emptyText.text = "No History Found"
+                       inc. emptyText.text = "No History Found"
                     }
                 }
             })
+
     }
 
 
@@ -128,7 +132,7 @@ class RoutePage : BaseActivity(), KodeinAware {
                 val pickedDateTime = Calendar.getInstance()
                 pickedDateTime.set(year, month, day)
                 val df = SimpleDateFormat("yyyy-MM-dd")
-                startDateTxt.text = df.format(pickedDateTime.timeInMillis)
+               binding. startDateTxt.text = df.format(pickedDateTime.timeInMillis)
 
             },
             startYear,
@@ -150,7 +154,7 @@ class RoutePage : BaseActivity(), KodeinAware {
                 val pickedDateTime = Calendar.getInstance()
                 pickedDateTime.set(year, month, day)
                 val df = SimpleDateFormat("yyyy-MM-dd")
-                endDateTxt.text = df.format(pickedDateTime.timeInMillis)
+               binding. endDateTxt.text = df.format(pickedDateTime.timeInMillis)
 
             },
             startYear,
@@ -172,7 +176,8 @@ class RoutePage : BaseActivity(), KodeinAware {
                 pickedDateTime.set(Calendar.HOUR_OF_DAY, selectedHour)
                 pickedDateTime.set(Calendar.MINUTE, selectedMinute)
                 val df = SimpleDateFormat("hh:mm a")
-                startTimeTxt.text = df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
+               binding. startTimeTxt.text =
+                    df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
             },
             startHour,
             startMinute,
@@ -196,7 +201,8 @@ class RoutePage : BaseActivity(), KodeinAware {
                 pickedDateTime.set(Calendar.HOUR_OF_DAY, selectedHour)
                 pickedDateTime.set(Calendar.MINUTE, selectedMinute)
                 val df = SimpleDateFormat("hh:mm a")
-                endTimeTxt.text = df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
+               binding. endTimeTxt.text =
+                    df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
             },
             startHour,
             startMinute,
@@ -223,7 +229,7 @@ class RoutePage : BaseActivity(), KodeinAware {
                         firstItem?.let { dataList?.add(firstItem) }
 
                         val otherItems = async {
-                            val inItems = data.items.filter { it.status !in listOf(3,4) }
+                            val inItems = data.items.filter { it.status !in listOf(3, 4) }
                             inItems.sortedBy { it.items[0].raw_time }
                         }.await()
                         dataList?.addAll(otherItems)
@@ -233,9 +239,14 @@ class RoutePage : BaseActivity(), KodeinAware {
 
                         withContext(Dispatchers.Main) {
                             dataList?.let {
-                                routeList.apply {
+                               binding. routeList.apply {
                                     layoutManager = LinearLayoutManager(this@RoutePage)
-                                    adapter = RouteAdapter(it ,deviceName ?: "", data , application as GPSWoxApp)
+                                    adapter = RouteAdapter(
+                                        it,
+                                        deviceName ?: "",
+                                        data,
+                                        application as GPSWoxApp
+                                    )
                                 }
                             }
                         }
@@ -244,9 +255,9 @@ class RoutePage : BaseActivity(), KodeinAware {
 
                 } else {
                     withContext(Dispatchers.Main) {
-                        emptyText.visibility = View.VISIBLE
-                        routeList.visibility = View.INVISIBLE
-                        emptyText.text = getString(R.string.no_history_found)
+                       binding.inc. emptyText.visibility = View.VISIBLE
+                      binding.  routeList.visibility = View.INVISIBLE
+                      binding.inc.  emptyText.text = getString(R.string.no_history_found)
                     }
                 }
             }

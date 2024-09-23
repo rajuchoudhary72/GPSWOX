@@ -8,12 +8,14 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.DialogFragment
 import com.shazcom.gps.app.R
-import kotlinx.android.synthetic.main.layout_color_dialog.*
+import com.shazcom.gps.app.databinding.LayoutColorDialogBinding
+
 import okhttp3.internal.toHexString
 
 class ColorDialog(private val geoFenceDialog: GeoFenceDialog) : DialogFragment(),
     SeekBar.OnSeekBarChangeListener {
 
+    private lateinit var binding: LayoutColorDialogBinding
     private var colorRedValue = 0
     private var colorGreenValue = 0
     private var colorBlueValue = 0
@@ -24,26 +26,27 @@ class ColorDialog(private val geoFenceDialog: GeoFenceDialog) : DialogFragment()
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.layout_color_dialog, container, false)
+      binding=  LayoutColorDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        colorRed.setOnSeekBarChangeListener(this)
-        colorGreen.setOnSeekBarChangeListener(this)
-        colorBlue.setOnSeekBarChangeListener(this)
+        binding.colorRed.setOnSeekBarChangeListener(this)
+        binding. colorGreen.setOnSeekBarChangeListener(this)
+        binding. colorBlue.setOnSeekBarChangeListener(this)
 
-        colorRedValue = colorRed.progress
-        colorBlueValue = colorBlue.progress
-        colorGreenValue = colorGreen.progress
+        colorRedValue = binding.colorRed.progress
+        colorBlueValue =binding. colorBlue.progress
+        colorGreenValue = binding.colorGreen.progress
 
         val rgbColor = Color.rgb(colorRedValue, colorGreenValue, colorBlueValue)
-        colorPane.setBackgroundColor(rgbColor)
+        binding. colorPane.setBackgroundColor(rgbColor)
         if (rgbColor.toString().length > 6) {
-            colorCode.setText(rgbColor.toHexString().substring(2, 8))
+            binding.colorCode.setText(rgbColor.toHexString().substring(2, 8))
         } else {
-            colorCode.setText(rgbColor.toHexString())
+            binding. colorCode.setText(rgbColor.toHexString())
         }
 
     }
@@ -68,7 +71,7 @@ class ColorDialog(private val geoFenceDialog: GeoFenceDialog) : DialogFragment()
 
         updateColorPane()
 
-        selectBtn.setOnClickListener {
+        binding. selectBtn.setOnClickListener {
             geoFenceDialog.addPolygonColor(hexColor)
             dismiss()
         }
@@ -76,12 +79,12 @@ class ColorDialog(private val geoFenceDialog: GeoFenceDialog) : DialogFragment()
 
     private fun updateColorPane() {
         val rgbColor = Color.rgb(colorRedValue, colorGreenValue, colorBlueValue)
-        colorPane.setBackgroundColor(rgbColor)
+        binding. colorPane.setBackgroundColor(rgbColor)
         hexColor = rgbColor.toHexString()
         if (hexColor.length > 6) {
-            colorCode.setText(hexColor.substring(2, 8))
+            binding. colorCode.setText(hexColor.substring(2, 8))
         } else {
-            colorCode.setText(hexColor)
+            binding.  colorCode.setText(hexColor)
         }
     }
 

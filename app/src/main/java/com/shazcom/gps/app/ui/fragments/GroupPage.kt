@@ -8,13 +8,15 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.Groups
+import com.shazcom.gps.app.databinding.FragmentGroupPageBinding
 import com.shazcom.gps.app.ui.BaseFragment
 import com.shazcom.gps.app.ui.activities.Dashboard
 import com.shazcom.gps.app.ui.adapter.GroupAdapter
-import kotlinx.android.synthetic.main.fragment_group_page.*
+
 
 class GroupPage : BaseFragment() {
 
+    private lateinit var binding: FragmentGroupPageBinding
     var activity: Dashboard? = null
     private var groups: List<Groups>? = null
 
@@ -23,7 +25,8 @@ class GroupPage : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_group_page, container, false)
+      binding=   FragmentGroupPageBinding.inflate(inflater,container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,7 +58,7 @@ class GroupPage : BaseFragment() {
 
 
     private fun loadGroups() {
-        groupList.apply {
+        binding. groupList.apply {
             layoutManager = LinearLayoutManager(this@GroupPage.context)
             adapter = GroupAdapter(groups!!)
         }

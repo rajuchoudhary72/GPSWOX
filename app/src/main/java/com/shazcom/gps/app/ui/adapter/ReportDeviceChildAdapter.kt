@@ -7,7 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.Items
-import kotlinx.android.synthetic.main.item_device_child_report.view.*
+import com.shazcom.gps.app.databinding.ItemDeviceChildReportBinding
+
 
 class ReportDeviceChildAdapter(
     private val itemList: List<Items>,
@@ -16,7 +17,7 @@ class ReportDeviceChildAdapter(
     RecyclerView.Adapter<ReportDeviceChildAdapter.ReportDeviceChildAdapterViewHolder>() {
 
     class ReportDeviceChildAdapterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val childTitle = view.headerTxt!!
+        val childTitle =ItemDeviceChildReportBinding.bind( view).headerTxt!!
     }
 
     override fun onCreateViewHolder(

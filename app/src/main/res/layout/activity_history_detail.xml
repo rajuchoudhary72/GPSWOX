@@ -37,15 +37,15 @@
                 tools:context=".ui.activities.MapPage" />
 
 
-            <include layout="@layout/history_bottom_sheet_layout" />
+            <include layout="@layout/history_bottom_sheet_layout" android:id="@+id/incHistoryBottomSheet" />
 
-            <include layout="@layout/drive_bottom_sheet_layout" />
+            <include layout="@layout/drive_bottom_sheet_layout" android:id="@+id/incDriveBottomSheet" />
 
-            <include layout="@layout/event_bottom_sheet_layout" />
+            <include layout="@layout/event_bottom_sheet_layout" android:id="@+id/incEventBottomSheet" />
 
-            <include layout="@layout/end_bottom_sheet_layout" />
+            <include layout="@layout/end_bottom_sheet_layout"  android:id="@+id/incEndBottomSheet"/>
 
-            <include layout="@layout/parking_bottom_sheet_layout" />
+            <include layout="@layout/parking_bottom_sheet_layout" android:id="@+id/incParkingBottomSheet"/>
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

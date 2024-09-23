@@ -16,13 +16,14 @@ import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
 import com.shazcom.gps.app.GPSWoxApp
 import com.shazcom.gps.app.data.response.Items
+import com.shazcom.gps.app.databinding.ActivityRulersBinding
 import com.shazcom.gps.app.utils.getCar
-import kotlinx.android.synthetic.main.activity_rulers.*
-import kotlinx.android.synthetic.main.activity_show_point.toolBar
+
 import java.text.DecimalFormat
 
 class Rulers : BaseActivity(), OnMapReadyCallback {
 
+    private lateinit var binding: ActivityRulersBinding
     private var mMap: GoogleMap? = null
     private val locationList = ArrayList<Location>()
     private val decimalFormat = DecimalFormat("#.##")
@@ -30,16 +31,17 @@ class Rulers : BaseActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_rulers)
+        binding= ActivityRulersBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        toolBar.title = "Rulers"
-        toolBar.setNavigationOnClickListener { finish() }
+       binding. toolBar.title = "Rulers"
+        binding. toolBar.setNavigationOnClickListener { finish() }
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
-        clearBtn.setOnClickListener {
+        binding. clearBtn.setOnClickListener {
             locationList.clear()
             mMap?.clear()
-            distance.text = "Select at least 2 points"
+            binding.distance.text = "Select at least 2 points"
         }
 
         val app = application as GPSWoxApp
@@ -63,9 +65,9 @@ class Rulers : BaseActivity(), OnMapReadyCallback {
         )
 
         deviceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        deviceSpinner.adapter = deviceAdapter
+        binding. deviceSpinner.adapter = deviceAdapter
 
-        deviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding. deviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
@@ -81,7 +83,7 @@ class Rulers : BaseActivity(), OnMapReadyCallback {
 
         }
 
-        spinnerLayout.visibility = View.VISIBLE
+        binding. spinnerLayout.visibility = View.VISIBLE
     }
 
 
@@ -147,11 +149,11 @@ class Rulers : BaseActivity(), OnMapReadyCallback {
                 i++
                 j++
 
-                distance.text = "Distance : ${decimalFormat.format(measureDistance)} meters"
+                binding. distance.text = "Distance : ${decimalFormat.format(measureDistance)} meters"
             }
 
         } else {
-            distance.text = "Select at least 2 points"
+            binding. distance.text = "Select at least 2 points"
         }
     }
 }

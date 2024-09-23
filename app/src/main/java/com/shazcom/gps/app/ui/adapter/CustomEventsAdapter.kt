@@ -6,22 +6,22 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.SystemEventData
-import kotlinx.android.synthetic.main.item_alert_device.view.*
+import com.shazcom.gps.app.databinding.ItemAlertDeviceBinding
+
 
 class CustomEventsAdapter(private val events : List<SystemEventData>) :
     RecyclerView.Adapter<CustomEventsAdapter.CustomEventsViewHolder>() {
 
     class CustomEventsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val checkedItem = view.checkedItem!!
+        val checkedItem = ItemAlertDeviceBinding.bind(view).checkedItem!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomEventsViewHolder {
+        val item =
+            ItemAlertDeviceBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+
         return CustomEventsViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_alert_device,
-                parent,
-                false
-            )
+            item.root
         )
     }
 

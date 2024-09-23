@@ -8,20 +8,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.shazcom.gps.app.GPSWoxApp
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.Services
+import com.shazcom.gps.app.databinding.FragmentMaintenanceBinding
 import com.shazcom.gps.app.ui.BaseFragment
 import com.shazcom.gps.app.ui.adapter.MaintenanceAdapter
-import kotlinx.android.synthetic.main.empty_layout.*
-import kotlinx.android.synthetic.main.fragment_maintenance.*
+
 
 class Maintenance : BaseFragment() {
 
+    private lateinit var binding: FragmentMaintenanceBinding
     private val serviceList = ArrayList<Services>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_maintenance, container, false)
+         binding=FragmentMaintenanceBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,13 +40,13 @@ class Maintenance : BaseFragment() {
         }.also {
             loadMaintenance()
         } ?: kotlin.run {
-            emptyText.text = getString(R.string.no_data_found)
-            emptyText.visibility = View.VISIBLE
+            binding.inc. emptyText.text = getString(R.string.no_data_found)
+            binding.inc. emptyText.visibility = View.VISIBLE
         }
     }
 
     private fun loadMaintenance() {
-        maintenanceList.apply {
+        binding.  maintenanceList.apply {
             layoutManager = LinearLayoutManager(this@Maintenance.context)
             adapter = MaintenanceAdapter(serviceList)
         }

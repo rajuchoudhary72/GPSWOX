@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.DeviceData
 import com.shazcom.gps.app.data.response.Items
+import com.shazcom.gps.app.databinding.EmptyAdapterLayoutBinding
+import com.shazcom.gps.app.databinding.ItemAlertDeviceBinding
+import com.shazcom.gps.app.databinding.ItemDeviceBinding
 import com.shazcom.gps.app.utils.collapse
 import com.shazcom.gps.app.utils.expand
-import kotlinx.android.synthetic.main.empty_layout.view.*
-import kotlinx.android.synthetic.main.item_device.view.*
+
 
 class DeviceAdapter(deviceList: List<DeviceData>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
@@ -39,33 +41,35 @@ class DeviceAdapter(deviceList: List<DeviceData>) :
 
 
     class DeviceAdapterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val title = view.headerTxt
-        val childItems = view.childItems
+        val title = ItemDeviceBinding.bind(view).headerTxt
+        val childItems = ItemDeviceBinding.bind(view).childItems
     }
 
     class DeviceAdapterEmptyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val emptyTxt = view.emptyText
+        val emptyTxt = EmptyAdapterLayoutBinding.bind(view).emptyText
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
         if (viewType == EMPTY_VIEW_TYPE) {
             Log.e("View", "Empty")
-            return DeviceAdapterEmptyViewHolder(
-                LayoutInflater.from(parent.context).inflate(
-                    R.layout.empty_adapter_layout,
+            val empty =
+                EmptyAdapterLayoutBinding.inflate(
+                    LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
+
+            return DeviceAdapterEmptyViewHolder(
+                empty.root
             )
         } else {
             Log.e("View", "Normal")
+            val itemDevice =
+                ItemDeviceBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+
             return DeviceAdapterViewHolder(
-                LayoutInflater.from(parent.context).inflate(
-                    R.layout.item_device,
-                    parent,
-                    false
-                )
+                itemDevice.root
             )
         }
     }
@@ -139,7 +143,7 @@ class DeviceAdapter(deviceList: List<DeviceData>) :
                             }
                         }
 
-                        if(itemList.size > 0) {
+                        if (itemList.size > 0) {
                             deviceItem.items = itemList
                             resultList.add(deviceItem)
                         }

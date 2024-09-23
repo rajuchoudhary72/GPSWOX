@@ -17,16 +17,18 @@ import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.ToolsRepository
 import com.shazcom.gps.app.data.response.IconItems
 import com.shazcom.gps.app.data.response.PoiIconsResponse
+import com.shazcom.gps.app.databinding.DialogPoiIconsBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.adapter.PoiIconAdapter
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
-import kotlinx.android.synthetic.main.dialog_poi_icons.*
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
 
 class PoiIconDialog(private val poiDialog: POIDialog) : DialogFragment(), KodeinAware {
 
+    private lateinit var binding: DialogPoiIconsBinding
     override val kodein by closestKodein()
     private val localDB: LocalDB by instance<LocalDB>()
     private val repository: ToolsRepository by instance<ToolsRepository>()
@@ -44,36 +46,36 @@ class PoiIconDialog(private val poiDialog: POIDialog) : DialogFragment(), Kodein
                 if(isVisible) {
                     when (resources.status) {
                         Status.SUCCESS -> {
-                            progressBar.visibility = View.INVISIBLE
+                            binding. progressBar.visibility = View.INVISIBLE
                             processData(resources.data!!)
                         }
 
                         Status.LOADING -> {
-                            progressBar.visibility = View.VISIBLE
+                            binding. progressBar.visibility = View.VISIBLE
                         }
 
                         Status.ERROR -> {
-                            progressBar.visibility = View.INVISIBLE
+                            binding. progressBar.visibility = View.INVISIBLE
                         }
                     }
                 }
             }
         )
 
-        closeBtn.setOnClickListener {
+        binding.   closeBtn.setOnClickListener {
             dismiss()
         }
     }
 
     private fun processData(data: PoiIconsResponse) {
-        poiIconList.apply {
+        binding. poiIconList.apply {
             layoutManager = GridLayoutManager(this@PoiIconDialog.context, 6)
             adapter = PoiIconAdapter(data.items) { item -> onPoiIconClick(item) }
         }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = Dialog(activity!!, R.style.customDialogTheme)
+        val dialog = Dialog(requireActivity(), R.style.customDialogTheme)
         dialog.setContentView(R.layout.dialog_poi_icons)
         return dialog
     }
@@ -87,7 +89,7 @@ class PoiIconDialog(private val poiDialog: POIDialog) : DialogFragment(), Kodein
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 dialog?.window?.statusBarColor =
-                    ContextCompat.getColor(context!!, R.color.colorPrimaryDark)
+                    ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark)
             }
         }
     }
@@ -97,7 +99,8 @@ class PoiIconDialog(private val poiDialog: POIDialog) : DialogFragment(), Kodein
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_poi_icons, container, false)
+       binding= DialogPoiIconsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     private fun onPoiIconClick(iconItems: IconItems) {

@@ -18,41 +18,44 @@ import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.BitmapDescriptorFactory
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
-import kotlinx.android.synthetic.main.activity_show_point.*
+import com.shazcom.gps.app.databinding.ActivityShowPointBinding
 
 
 class ShowPoint : BaseActivity(), OnMapReadyCallback {
 
+    private lateinit var binding: ActivityShowPointBinding
     private var mMap: GoogleMap? = null
     val listItem = arrayListOf<Items>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_show_point)
+        binding = ActivityShowPointBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        with(binding) {
+            toolBar.title = "Show Point"
+            toolBar.setNavigationOnClickListener { finish() }
 
-        toolBar.title = "Show Point"
-        toolBar.setNavigationOnClickListener { finish() }
+            val mapFragment = supportFragmentManager
+                .findFragmentById(R.id.map) as SupportMapFragment?
+            mapFragment?.getMapAsync(this@ShowPoint)
 
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(this)
+            val app = application as GPSWoxApp
+            val deviceData = app?.getDeviceList()
 
-        val app = application as GPSWoxApp
-        val deviceData = app?.getDeviceList()
+            deviceData?.let {
 
-        deviceData?.let {
+                for (data in it) {
+                    listItem.addAll(data.items)
+                }
 
-            for (data in it) {
-                listItem.addAll(data.items)
+                setDevices(listItem)
             }
-
-            setDevices(listItem)
         }
     }
 
-    private fun setDevices(list: List<Items>) {
+    private fun setDevices(list: List<Items>) = with(binding){
         val deviceAdapter = ArrayAdapter(
-            this,
+            this@ShowPoint,
             android.R.layout.simple_spinner_dropdown_item,
             list
         )
@@ -115,17 +118,17 @@ class ShowPoint : BaseActivity(), OnMapReadyCallback {
         )
 
         latLng?.let {
-            locLatitude.text = it?.latitude!!.toString()
-            locLongitude.text = it?.longitude!!.toString()
+            binding.locLatitude.text = it?.latitude!!.toString()
+            binding.locLongitude.text = it?.longitude!!.toString()
             val location = Location("new_loc")
             location.latitude = it.latitude
             location.longitude = it.longitude
-            locationAddress.text = "Fetching Address ..."
+            binding.locationAddress.text = "Fetching Address ..."
             startIntentService(location)
         }
     }
 
     override fun popUpAddress(addressOutput: String) {
-        locationAddress.text = addressOutput
+        binding.locationAddress.text = addressOutput
     }
 }

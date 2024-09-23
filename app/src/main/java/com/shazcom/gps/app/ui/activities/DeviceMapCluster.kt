@@ -21,7 +21,8 @@ import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.LatLngBounds
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
-import kotlinx.android.synthetic.main.activity_map_cluster.*
+import com.shazcom.gps.app.databinding.ActivityMapClusterBinding
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
@@ -34,6 +35,7 @@ class DeviceMapCluster : BaseActivity(), OnMapReadyCallback, KodeinAware,
     ClusterManager.OnClusterItemInfoWindowClickListener<MapClusterItem>,
     GoogleMap.OnCameraMoveListener {
 
+    private lateinit var binding: ActivityMapClusterBinding
     private var mClusterManager: ClusterManager<MapClusterItem>? = null
     private var mMap: GoogleMap? = null
     override val kodein by kodein()
@@ -43,13 +45,14 @@ class DeviceMapCluster : BaseActivity(), OnMapReadyCallback, KodeinAware,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+       binding= ActivityMapClusterBinding.inflate(layoutInflater)
         setContentView(R.layout.activity_map_cluster)
         app = application as GPSWoxApp
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
-        closeBtn.setOnClickListener { finish() }
+        binding.closeBtn.setOnClickListener { finish() }
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
@@ -88,129 +91,129 @@ class DeviceMapCluster : BaseActivity(), OnMapReadyCallback, KodeinAware,
 
     private fun initClicks() {
 
-        zoomIn.setOnClickListener {
+        binding.zoomIn.setOnClickListener {
             mMap?.animateCamera(CameraUpdateFactory.zoomIn())
             if (currentZoomLevel < mMap?.maxZoomLevel!!) {
                 currentZoomLevel += 1
             }
         }
-        zoomOut.setOnClickListener {
+        binding.zoomOut.setOnClickListener {
             mMap?.animateCamera(CameraUpdateFactory.zoomOut())
             if (currentZoomLevel > mMap?.minZoomLevel!!) {
                 currentZoomLevel -= 1
             }
         }
 
-        mapType.setOnClickListener {
-            if (mapTypeLayout.isVisible) {
-                mapTypeLayout.visibility = View.GONE
+        binding.mapType.setOnClickListener {
+            if ( binding.mapTypeLayout.isVisible) {
+                binding.mapTypeLayout.visibility = View.GONE
             } else {
-                mapTypeLayout.visibility = View.VISIBLE
+                binding.mapTypeLayout.visibility = View.VISIBLE
             }
         }
 
-        trafficBtn.setOnClickListener {
+        binding.trafficBtn.setOnClickListener {
             mMap?.isTrafficEnabled = !mMap?.isTrafficEnabled!!
 
             if (mMap?.isTrafficEnabled!!) {
                 ViewCompat.setBackgroundTintList(
-                    trafficBtn,
+                    binding.trafficBtn,
                     ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.colorPrimaryDark)
                 )
             } else {
                 ViewCompat.setBackgroundTintList(
-                    trafficBtn,
+                    binding.trafficBtn,
                     ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.btn_color)
                 )
             }
         }
 
-        mapNormal.setOnClickListener {
+        binding.mapNormal.setOnClickListener {
             ViewCompat.setBackgroundTintList(
-                mapNormal,
+                binding.mapNormal,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.colorPrimaryDark)
             )
             ViewCompat.setBackgroundTintList(
-                mapHybrid,
+                binding.mapHybrid,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.white)
             )
             ViewCompat.setBackgroundTintList(
-                mapSatellite,
+                binding.mapSatellite,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.white)
             )
             ViewCompat.setBackgroundTintList(
-                mapTerrain,
+                binding.mapTerrain,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.white)
             )
 
             mMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
-            mapTypeLayout.visibility = View.GONE
+            binding.mapTypeLayout.visibility = View.GONE
             localDB.saveMapType("MAP_TYPE_NORMAL")
         }
 
-        mapHybrid.setOnClickListener {
+        binding.mapHybrid.setOnClickListener {
             ViewCompat.setBackgroundTintList(
-                mapNormal,
+                binding.mapNormal,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.white)
             )
             ViewCompat.setBackgroundTintList(
-                mapHybrid,
+                binding.mapHybrid,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.colorPrimaryDark)
             )
             ViewCompat.setBackgroundTintList(
-                mapSatellite,
+                binding. mapSatellite,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.white)
             )
             ViewCompat.setBackgroundTintList(
-                mapTerrain,
+                binding.mapTerrain,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.white)
             )
             mMap?.mapType = GoogleMap.MAP_TYPE_HYBRID
-            mapTypeLayout.visibility = View.GONE
+            binding.mapTypeLayout.visibility = View.GONE
             localDB.saveMapType("MAP_TYPE_HYBRID")
         }
 
-        mapSatellite.setOnClickListener {
+        binding.mapSatellite.setOnClickListener {
             ViewCompat.setBackgroundTintList(
-                mapNormal,
+                binding.mapNormal,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.white)
             )
             ViewCompat.setBackgroundTintList(
-                mapHybrid,
+                binding.mapHybrid,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.white)
             )
             ViewCompat.setBackgroundTintList(
-                mapSatellite,
+                binding.mapSatellite,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.colorPrimaryDark)
             )
             ViewCompat.setBackgroundTintList(
-                mapTerrain,
+                binding.mapTerrain,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.white)
             )
             mMap?.mapType = GoogleMap.MAP_TYPE_SATELLITE
-            mapTypeLayout.visibility = View.GONE
+            binding.mapTypeLayout.visibility = View.GONE
             localDB.saveMapType("MAP_TYPE_SATELLITE")
         }
 
-        mapTerrain.setOnClickListener {
+        binding.mapTerrain.setOnClickListener {
             ViewCompat.setBackgroundTintList(
-                mapNormal,
+                binding. mapNormal,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.white)
             )
             ViewCompat.setBackgroundTintList(
-                mapHybrid,
+                binding.mapHybrid,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.white)
             )
             ViewCompat.setBackgroundTintList(
-                mapSatellite,
+                binding. mapSatellite,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.white)
             )
             ViewCompat.setBackgroundTintList(
-                mapTerrain,
+                binding.mapTerrain,
                 ContextCompat.getColorStateList(this@DeviceMapCluster, R.color.colorPrimaryDark)
             )
             mMap?.mapType = GoogleMap.MAP_TYPE_TERRAIN
-            mapTypeLayout.visibility = View.GONE
+            binding.mapTypeLayout.visibility = View.GONE
             localDB.saveMapType("MAP_TYPE_TERRAIN")
         }
     }

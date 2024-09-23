@@ -14,13 +14,14 @@ import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.AuthRepository
 import com.shazcom.gps.app.data.response.AuthResponse
+import com.shazcom.gps.app.databinding.ActivityLoginBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.network.request.UserAuth
 import com.shazcom.gps.app.ui.BaseActivity
 import com.shazcom.gps.app.ui.viewmodal.AuthViewModel
 import com.shazcom.gps.app.utils.LocaleHelper
 import com.shazcom.gps.app.utils.hideKeyboard
-import kotlinx.android.synthetic.main.activity_login.*
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
@@ -28,6 +29,7 @@ import org.kodein.di.generic.instance
 
 class LoginActivity : BaseActivity(), KodeinAware {
 
+    private lateinit var binding: ActivityLoginBinding
     private var authViewModel: AuthViewModel? = null
     private var logHidePass = false
 
@@ -37,7 +39,8 @@ class LoginActivity : BaseActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         localDB.getToken()?.let {
             Intent(this@LoginActivity, Dashboard::class.java).apply {
@@ -48,70 +51,76 @@ class LoginActivity : BaseActivity(), KodeinAware {
 
         authViewModel = ViewModelProvider(this).get(AuthViewModel::class.java)
         authViewModel?.authRepository = repository
+        with(binding) {
 
-        forgotPassword.setOnClickListener {
-            Intent(this@LoginActivity, ForgotPassword::class.java).apply {
-                startActivity(this)
+
+            forgotPassword.setOnClickListener {
+                Intent(this@LoginActivity, ForgotPassword::class.java).apply {
+                    startActivity(this)
+                }
             }
-        }
 
-        loginBtn.setOnClickListener {
-            loginBtn.hideKeyboard()
+            loginBtn.setOnClickListener {
+                loginBtn.hideKeyboard()
 
-            if (isValidData()) {
-                authViewModel?.authUser(
-                    UserAuth(
-                        userName.text.toString().trim(),
-                        password.text.toString().trim()
+                if (isValidData()) {
+                    authViewModel?.authUser(
+                        UserAuth(
+                            userName.text.toString().trim(),
+                            password.text.toString().trim()
+                        )
                     )
-                )
-                    ?.observe(this, Observer { resources ->
-                        when (resources.status) {
-                            Status.SUCCESS -> {
-                                progressBar.visibility = View.INVISIBLE
-                                loginBtn.isEnabled = true
-                                processData(resources.data!!)
+                        ?.observe(this@LoginActivity, Observer { resources ->
+                            when (resources.status) {
+                                Status.SUCCESS -> {
+                                    progressBar.visibility = View.INVISIBLE
+                                    loginBtn.isEnabled = true
+                                    processData(resources.data!!)
+                                }
+
+                                Status.LOADING -> {
+                                    progressBar.visibility = View.VISIBLE
+                                    loginBtn.isEnabled = false
+                                }
+
+                                Status.ERROR -> {
+                                    showSnackbar(resources.message.toString())
+                                    progressBar.visibility = View.INVISIBLE
+                                    loginBtn.isEnabled = true
+                                }
                             }
-                            Status.LOADING -> {
-                                progressBar.visibility = View.VISIBLE
-                                loginBtn.isEnabled = false
-                            }
-                            Status.ERROR -> {
-                                showSnackbar(resources.message.toString())
-                                progressBar.visibility = View.INVISIBLE
-                                loginBtn.isEnabled = true
-                            }
+                        })
+                } else {
+                    showSnackbar(getString(R.string.enter_valid_cred))
+                }
+            }
+
+            languageSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                }
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    when (parent?.selectedItem.toString()) {
+                        "English" -> {
+                            LocaleHelper.setLocale(this@LoginActivity, "en");
+                            LocaleHelper.getLanguage(this@LoginActivity)
+                                ?.let { Log.e("desiredLocale", it) }
+                            refreshLang()
+
                         }
-                    })
-            } else {
-                showSnackbar(getString(R.string.enter_valid_cred))
-            }
-        }
 
-        languageSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
-
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                when (parent?.selectedItem.toString()) {
-                    "English" -> {
-                        LocaleHelper.setLocale(this@LoginActivity, "en");
-                        LocaleHelper.getLanguage(this@LoginActivity)
-                            ?.let { Log.e("desiredLocale", it) }
-                        refreshLang()
-
-                    }
-                    "Chinese" -> {
-                        LocaleHelper.setLocale(this@LoginActivity, "cn");
-                        LocaleHelper.getLanguage(this@LoginActivity)
-                            ?.let { Log.e("desiredLocale", it) }
-                        refreshLang()
+                        "Chinese" -> {
+                            LocaleHelper.setLocale(this@LoginActivity, "cn");
+                            LocaleHelper.getLanguage(this@LoginActivity)
+                                ?.let { Log.e("desiredLocale", it) }
+                            refreshLang()
+                        }
                     }
                 }
             }
@@ -137,9 +146,9 @@ class LoginActivity : BaseActivity(), KodeinAware {
     }
 
     private fun isValidData(): Boolean {
-        if (userName.text.isNullOrEmpty() || password.text.isNullOrEmpty()) {
+        if (binding.userName.text.isNullOrEmpty() || binding.password.text.isNullOrEmpty()) {
             return false
-        } else if (!EMAIL_ADDRESS.matcher(userName.text.toString().trim()).matches()) {
+        } else if (!EMAIL_ADDRESS.matcher(binding.userName.text.toString().trim()).matches()) {
             return false
         }
 
@@ -147,7 +156,7 @@ class LoginActivity : BaseActivity(), KodeinAware {
     }
 
 
-    fun logPasswordTransform(view: View) {
+    fun logPasswordTransform(view: View)= with(binding) {
 
         if (!logHidePass) {
             logHidePass = true

@@ -209,7 +209,7 @@
             android:indeterminateTint="@color/colorPrimaryDark"
             android:visibility="invisible" />
 
-        <include layout="@layout/empty_layout" />
+        <include layout="@layout/empty_layout" android:id="@+id/inc"/>
 
     </RelativeLayout>
 

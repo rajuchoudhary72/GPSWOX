@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.IconItems
-import kotlinx.android.synthetic.main.item_poi_icon.view.*
+import com.shazcom.gps.app.databinding.ItemPoiIconBinding
 
 
 class PoiIconAdapter(
@@ -17,10 +17,11 @@ class PoiIconAdapter(
     RecyclerView.Adapter<PoiIconAdapter.PoiIconViewHolder>() {
 
     class PoiIconViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val poiImage = view.poiIcon!!
+        val poiImage = ItemPoiIconBinding.bind(view).poiIcon!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PoiIconViewHolder {
+
         return PoiIconViewHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.item_poi_icon,

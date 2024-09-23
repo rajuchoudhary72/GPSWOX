@@ -6,13 +6,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.DriverData
-import kotlinx.android.synthetic.main.item_group.view.*
+import com.shazcom.gps.app.databinding.ItemGroupBinding
+
 
 class DriverAdapter(private val drivers: List<DriverData>) :
     RecyclerView.Adapter<DriverAdapter.DriverViewHolder>() {
 
     class DriverViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val name = view.groupName
+        val name =
+            ItemGroupBinding.bind(view).groupName
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DriverViewHolder {

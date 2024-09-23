@@ -11,6 +11,7 @@ import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.CommonViewRepository
 import com.shazcom.gps.app.data.response.HistoryData
+import com.shazcom.gps.app.databinding.LayoutHistoryListingBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseFragment
 import com.shazcom.gps.app.ui.viewmodal.CommonViewModel
@@ -18,7 +19,7 @@ import com.shazcom.gps.app.utils.getCurrentDay
 import com.shazcom.gps.app.utils.getNewTimeFormat
 import com.shazcom.gps.app.utils.getPreviousDays
 import com.shazcom.gps.app.utils.nextDay
-import kotlinx.android.synthetic.main.layout_history_listing.*
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
@@ -30,6 +31,7 @@ class HistoryListing(
     private val endDate: String = ""
 ) : BaseFragment(), KodeinAware {
 
+    private lateinit var binding: LayoutHistoryListingBinding
     private var startDateTime: String? = null
     private var endDateTime: String? = null
 
@@ -48,7 +50,8 @@ class HistoryListing(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.layout_history_listing, container, false)
+       binding= LayoutHistoryListingBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,7 +60,7 @@ class HistoryListing(
         commonViewModel = ViewModelProvider(this).get(CommonViewModel::class.java)
         commonViewModel?.commonViewRepository = repository
 
-        clearAll.setOnClickListener {
+        binding. clearAll.setOnClickListener {
             parentFragment?.childFragmentManager?.popBackStack()
         }
 
@@ -113,10 +116,10 @@ class HistoryListing(
                 when (resources.status) {
                     Status.SUCCESS -> {
                         processData(resources.data!!)
-                        progressBar.visibility = View.INVISIBLE
+                        binding. progressBar.visibility = View.INVISIBLE
                     }
                     Status.ERROR -> {
-                        progressBar.visibility = View.INVISIBLE
+                        binding.   progressBar.visibility = View.INVISIBLE
                         Toast.makeText(
                             this@HistoryListing.context,
                             getString(R.string.no_history),
@@ -124,6 +127,8 @@ class HistoryListing(
                         )
                             .show()
                     }
+
+                    Status.LOADING -> TODO()
                 }
             })
     }

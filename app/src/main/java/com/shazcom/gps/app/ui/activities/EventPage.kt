@@ -16,16 +16,15 @@ import com.shazcom.gps.app.ui.BaseActivity
 import com.shazcom.gps.app.ui.adapter.EventAdapter
 import com.shazcom.gps.app.ui.viewmodal.CommonViewModel
 import com.mb.battery.app.utils.PaginationListener
-import kotlinx.android.synthetic.main.activity_events.*
-import kotlinx.android.synthetic.main.activity_events.progressBar
-import kotlinx.android.synthetic.main.activity_events.toolBar
-import kotlinx.android.synthetic.main.empty_layout.*
+import com.shazcom.gps.app.databinding.ActivityEventsBinding
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
 class EventPage : BaseActivity(), KodeinAware {
 
+    private lateinit var binding: ActivityEventsBinding
     override val kodein by kodein()
     private val localDB: LocalDB by instance<LocalDB>()
     private val repository: CommonViewRepository by instance<CommonViewRepository>()
@@ -40,13 +39,14 @@ class EventPage : BaseActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_events)
+       binding= ActivityEventsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         deviceId = intent.getIntExtra("deviceId", 0)
         deviceName = intent.getStringExtra("deviceName")
 
-        toolBar.title = deviceName!!
-        toolBar.setNavigationOnClickListener {
+        binding. toolBar.title = deviceName!!
+        binding. toolBar.setNavigationOnClickListener {
 
             if (!isTaskRoot) {
                 finish()
@@ -71,20 +71,20 @@ class EventPage : BaseActivity(), KodeinAware {
 
                 when (resources.status) {
                     Status.SUCCESS -> {
-                        progressBar.visibility = View.GONE
-                        loadMoreLayout.visibility = View.GONE
+                        binding. progressBar.visibility = View.GONE
+                        binding. loadMoreLayout.visibility = View.GONE
                         processData(resources.data!!)
                     }
                     Status.LOADING -> {
                         if (currentPage == 1) {
-                            progressBar.visibility = View.VISIBLE
+                            binding.  progressBar.visibility = View.VISIBLE
                         } else {
-                            loadMoreLayout.visibility = View.VISIBLE
+                            binding.  loadMoreLayout.visibility = View.VISIBLE
                         }
                     }
                     Status.ERROR -> {
-                        progressBar.visibility = View.GONE
-                        loadMoreLayout.visibility = View.GONE
+                        binding. progressBar.visibility = View.GONE
+                        binding. loadMoreLayout.visibility = View.GONE
                     }
                 }
             })
@@ -96,11 +96,11 @@ class EventPage : BaseActivity(), KodeinAware {
                 if (currentPage == 1) {
                     totalPage = data.items.last_page!!
                     eventAdapter = EventAdapter(data.items.data)
-                    eventList.apply {
+                    binding. eventList.apply {
                         layoutManager = LinearLayoutManager(this@EventPage)
                         adapter = eventAdapter
                     }.also {
-                        eventList.addOnScrollListener(object :
+                        binding.  eventList.addOnScrollListener(object :
                             PaginationListener(it.layoutManager as LinearLayoutManager) {
                             override fun loadMoreItems() {
                                 isLoading = true
@@ -122,8 +122,8 @@ class EventPage : BaseActivity(), KodeinAware {
                     isLoading = false
                 }
             } else {
-                emptyText.visibility = View.VISIBLE
-                emptyText.text = "No Events Found"
+                binding.inc. emptyText.visibility = View.VISIBLE
+                binding.inc.  emptyText.text = "No Events Found"
             }
         }
     }

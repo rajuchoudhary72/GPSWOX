@@ -19,18 +19,18 @@ import com.shazcom.gps.app.data.repository.ToolsRepository
 import com.shazcom.gps.app.data.response.ProtocolResponse
 import com.shazcom.gps.app.data.response.Protocols
 import com.shazcom.gps.app.data.response.Types
+import com.shazcom.gps.app.databinding.AddCustomEventBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.fragments.CustomEventPage
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
-import kotlinx.android.synthetic.main.add_custom_event.*
-import kotlinx.android.synthetic.main.add_task.closeBtn
-import kotlinx.android.synthetic.main.add_task.saveBtn
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
 
 class AddEventDialog(private val customEventPage: CustomEventPage) : DialogFragment(), KodeinAware {
 
+    private lateinit var bindnig: AddCustomEventBinding
     override val kodein by closestKodein()
     private val localDB: LocalDB by instance()
     private val repository: ToolsRepository by instance()
@@ -46,11 +46,11 @@ class AddEventDialog(private val customEventPage: CustomEventPage) : DialogFragm
         loadProtocols()
 
 
-        closeBtn.setOnClickListener {
+        bindnig.  closeBtn.setOnClickListener {
             dismiss()
         }
 
-        saveBtn.setOnClickListener {
+        bindnig.   saveBtn.setOnClickListener {
 
         }
     }
@@ -62,6 +62,8 @@ class AddEventDialog(private val customEventPage: CustomEventPage) : DialogFragm
                     Status.SUCCESS -> {
                         setProtocolAndTypes(resources?.data!!)
                     }
+
+                    else -> {}
                 }
             })
     }
@@ -71,22 +73,22 @@ class AddEventDialog(private val customEventPage: CustomEventPage) : DialogFragm
         val protocolAdapter = ArrayAdapter<Protocols>(
             requireContext(),
             android.R.layout.simple_spinner_dropdown_item,
-            data?.protocols
+            data.protocols
         )
 
         val typesAdapter = ArrayAdapter<Types>(
             requireContext(),
             android.R.layout.simple_spinner_dropdown_item,
-            data?.types
+            data.types
         )
 
         typesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        typeSpinner.adapter = typesAdapter
+        bindnig.  typeSpinner.adapter = typesAdapter
 
         protocolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        protocolSpinner.adapter = protocolAdapter
+        bindnig.  protocolSpinner.adapter = protocolAdapter
 
-        protocolSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        bindnig.   protocolSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
@@ -103,7 +105,7 @@ class AddEventDialog(private val customEventPage: CustomEventPage) : DialogFragm
         }
 
 
-        typeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        bindnig.   typeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
@@ -121,8 +123,9 @@ class AddEventDialog(private val customEventPage: CustomEventPage) : DialogFragm
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = Dialog(activity!!, R.style.customDialogTheme)
-        dialog.setContentView(R.layout.add_custom_event)
+        val dialog = Dialog(requireActivity(), R.style.customDialogTheme)
+        bindnig=AddCustomEventBinding.inflate(layoutInflater)
+        dialog.setContentView(bindnig.root)
         return dialog
     }
 
@@ -135,7 +138,7 @@ class AddEventDialog(private val customEventPage: CustomEventPage) : DialogFragm
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 dialog?.window?.statusBarColor =
-                    ContextCompat.getColor(context!!, R.color.colorPrimaryDark)
+                    ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark)
             }
         }
     }

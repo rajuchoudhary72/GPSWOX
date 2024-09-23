@@ -42,7 +42,7 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <include layout="@layout/empty_layout" />
+    <include layout="@layout/empty_layout" android:id="@+id/inc" />
 
     <ProgressBar
         android:id="@+id/progressBar"

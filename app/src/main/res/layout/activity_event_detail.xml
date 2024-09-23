@@ -44,7 +44,9 @@
             </RelativeLayout>
 
 
-            <include layout="@layout/event_bottom_sheet_layout" />
+            <include
+                android:id="@+id/inc"
+                layout="@layout/event_bottom_sheet_layout" />
 
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -24,9 +24,8 @@ import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.OnMapReadyCallback
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.*
-import kotlinx.android.synthetic.main.dialog_map.*
-import kotlinx.android.synthetic.main.dialog_map.closeBtn
-import kotlinx.android.synthetic.main.dialog_map.saveBtn
+import com.shazcom.gps.app.databinding.DialogMapBinding
+
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
@@ -35,6 +34,7 @@ class GeoFenceMapDialog(private val color: String, private val geoFenceDialog: G
     DialogFragment(),
     OnMapReadyCallback {
 
+    private lateinit var binding: DialogMapBinding
     private var mMap: GoogleMap? = null
     private var mMapMarker = ArrayList<String>()
     private var app: GPSWoxApp? = null
@@ -47,7 +47,8 @@ class GeoFenceMapDialog(private val color: String, private val geoFenceDialog: G
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_map, container, false)
+      binding=  DialogMapBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -65,7 +66,7 @@ class GeoFenceMapDialog(private val color: String, private val geoFenceDialog: G
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 dialog?.window?.statusBarColor =
-                    ContextCompat.getColor(context!!, R.color.colorPrimaryDark)
+                    ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark)
             }
         }
     }
@@ -73,7 +74,7 @@ class GeoFenceMapDialog(private val color: String, private val geoFenceDialog: G
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bottomLayout.visibility = View.GONE
+        binding. bottomLayout.visibility = View.GONE
 
         val fm: FragmentManager = childFragmentManager
         var supportMapFragment = fm.findFragmentById(R.id.map) as SupportMapFragment?
@@ -86,11 +87,11 @@ class GeoFenceMapDialog(private val color: String, private val geoFenceDialog: G
             }
         }
 
-        closeBtn.setOnClickListener {
+        binding.   closeBtn.setOnClickListener {
             dismiss()
         }
 
-        saveBtn.setOnClickListener {
+        binding.  saveBtn.setOnClickListener {
             mMapMarker.isNotEmpty().let {
                 geoFenceDialog.addGeoFence(mMapMarker.toString())
                 dismiss()
@@ -112,15 +113,15 @@ class GeoFenceMapDialog(private val color: String, private val geoFenceDialog: G
                 setDevices(listItem)
             }
         }else {
-            deviceSpinner.visibility = View.GONE
+            binding.  deviceSpinner.visibility = View.GONE
         }
 
 
-        clearPolygons.setOnClickListener {
+        binding.   clearPolygons.setOnClickListener {
             coordinateObject = ""
             polygonList.clear()
-            if(deviceSpinner.isVisible) {
-                moveToMap(listItem[deviceSpinner.selectedItemPosition])
+            if(   binding.deviceSpinner.isVisible) {
+                moveToMap(listItem[   binding.deviceSpinner.selectedItemPosition])
             }else{
                 mMap?.clear()
             }
@@ -136,9 +137,9 @@ class GeoFenceMapDialog(private val color: String, private val geoFenceDialog: G
         )
 
         deviceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        deviceSpinner.adapter = deviceAdapter
+        binding. deviceSpinner.adapter = deviceAdapter
 
-        deviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.deviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
@@ -154,7 +155,7 @@ class GeoFenceMapDialog(private val color: String, private val geoFenceDialog: G
 
         }
 
-        spinnerLayout.visibility = View.VISIBLE
+        binding.  spinnerLayout.visibility = View.VISIBLE
     }
 
     private fun moveToMap(items: Items) {
@@ -225,9 +226,9 @@ class GeoFenceMapDialog(private val color: String, private val geoFenceDialog: G
             )
 
             makePolygonLocationString()
-            clearPolygons.visibility = View.VISIBLE
+            binding.clearPolygons.visibility = View.VISIBLE
         } else {
-            clearPolygons.visibility = View.GONE
+            binding. clearPolygons.visibility = View.GONE
         }
     }
 

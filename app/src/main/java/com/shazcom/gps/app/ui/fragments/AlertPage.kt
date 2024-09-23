@@ -18,13 +18,14 @@ import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.ToolsRepository
 import com.shazcom.gps.app.data.response.AlertData
 import com.shazcom.gps.app.data.response.AlertResponse
+import com.shazcom.gps.app.databinding.FragmentAlertPageBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseFragment
 import com.shazcom.gps.app.ui.activities.Alerts
 import com.shazcom.gps.app.ui.activities.Dashboard
 import com.shazcom.gps.app.ui.adapter.AlertListAdapter
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
-import kotlinx.android.synthetic.main.fragment_alert_page.*
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
@@ -32,6 +33,7 @@ import org.kodein.di.generic.instance
 class AlertPage : BaseFragment(), KodeinAware {
 
 
+    private lateinit var binding: FragmentAlertPageBinding
     override val kodein by closestKodein()
     private val localDB: LocalDB by instance<LocalDB>()
     private val repository: ToolsRepository by instance<ToolsRepository>()
@@ -49,7 +51,8 @@ class AlertPage : BaseFragment(), KodeinAware {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_alert_page, container, false)
+       binding=  FragmentAlertPageBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
 
@@ -75,20 +78,20 @@ class AlertPage : BaseFragment(), KodeinAware {
 
         loadAlerts()
 
-        addAlert.setOnClickListener {
+        binding.addAlert.setOnClickListener {
             Intent(requireActivity(), Alerts::class.java).apply {
                 startActivityForResult(this, 1190)
             }
         }
 
 
-        alertList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding. alertList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0 && addAlert.isShown) {
-                    addAlert.visibility = View.INVISIBLE
-                } else if (dy <= 0 && !addAlert.isShown) {
-                    addAlert.show()
+                if (dy > 0 &&  binding.addAlert.isShown) {
+                    binding. addAlert.visibility = View.INVISIBLE
+                } else if (dy <= 0 && ! binding.addAlert.isShown) {
+                    binding.addAlert.show()
                 }
             }
 
@@ -113,14 +116,14 @@ class AlertPage : BaseFragment(), KodeinAware {
 
 
                     Status.SUCCESS -> {
-                        progressBar.visibility = View.INVISIBLE
+                        binding. progressBar.visibility = View.INVISIBLE
                         processData(resources.data)
                     }
                     Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
+                        binding.   progressBar.visibility = View.VISIBLE
                     }
                     Status.ERROR -> {
-                        progressBar.visibility = View.INVISIBLE
+                        binding.  progressBar.visibility = View.INVISIBLE
                     }
                 }
             })
@@ -128,11 +131,11 @@ class AlertPage : BaseFragment(), KodeinAware {
 
     private fun processData(data: AlertResponse?) {
         data?.let {
-            alertList.apply {
+            binding.  alertList.apply {
                 layoutManager = LinearLayoutManager(this@AlertPage.context)
                 adapter =
                     AlertListAdapter(
-                        data?.items?.alerts,
+                        data.items.alerts,
                         { alertData -> editItem(alertData) },
                         { alertData -> deleteItem(alertData) })
             }
@@ -168,7 +171,7 @@ class AlertPage : BaseFragment(), KodeinAware {
             ?.observe(requireActivity(), Observer { resources ->
                 when (resources.status) {
                     Status.ERROR -> {
-                        progressBar.visibility = View.INVISIBLE
+                        binding.progressBar.visibility = View.INVISIBLE
                         Toast.makeText(
                             requireContext(),
                             getString(R.string.something_went_wrong),
@@ -176,10 +179,10 @@ class AlertPage : BaseFragment(), KodeinAware {
                         ).show()
                     }
                     Status.LOADING -> {
-                        progressBar.visibility = View.VISIBLE
+                        binding. progressBar.visibility = View.VISIBLE
                     }
                     Status.SUCCESS -> {
-                        progressBar.visibility = View.INVISIBLE
+                        binding. progressBar.visibility = View.INVISIBLE
                         if (resources.data?.status!! == 1) {
                             Toast.makeText(
                                 requireContext(),

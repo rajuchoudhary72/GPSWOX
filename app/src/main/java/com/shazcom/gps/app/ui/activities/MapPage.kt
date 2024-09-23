@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
@@ -40,15 +41,14 @@ import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.CommonViewRepository
 import com.shazcom.gps.app.data.response.*
 import com.shazcom.gps.app.data.vo.LatLngModel
+import com.shazcom.gps.app.databinding.ActivityMapBinding
 import com.shazcom.gps.app.ui.BaseActivity
 import com.shazcom.gps.app.ui.viewmodal.CommonViewModel
 import com.shazcom.gps.app.utils.LocaleHelper
 import com.shazcom.gps.app.utils.getCar
 import com.shazcom.gps.app.utils.getMapTypes
 import com.shazcom.gps.app.utils.isWhite
-import kotlinx.android.synthetic.main.activity_map.*
-import kotlinx.android.synthetic.main.bottom_sheet_buttons.*
-import kotlinx.android.synthetic.main.map_bottomsheet_layout.*
+
 import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONException
@@ -62,6 +62,7 @@ import kotlin.math.roundToInt
 
 class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
 
+    private lateinit var binding: ActivityMapBinding
     private var deviceService: Messenger? = null
     var deviceItem: Items? = null
     var behavior: BottomSheetBehavior<*>? = null
@@ -84,40 +85,43 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_map)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_map)
+       // setContentView(binding.root)
 
         deviceItem = intent?.extras?.get("deviceItem") as Items?
+        with(binding) {
+            toolBar.title = deviceItem?.name
+            toolBar.subtitle = deviceItem?.time
 
-        toolBar.title = deviceItem?.name
-        toolBar.subtitle = deviceItem?.time
+            commonViewModel = ViewModelProvider(this@MapPage).get(CommonViewModel::class.java)
+            commonViewModel?.commonViewRepository = repository
 
-        commonViewModel = ViewModelProvider(this).get(CommonViewModel::class.java)
-        commonViewModel?.commonViewRepository = repository
+            initBottomSheet()
 
-        initBottomSheet()
+            deviceItem?.let {
+                upadateUI(it)
+            }
 
-        deviceItem?.let {
-            upadateUI(it)
+            toolBar.setNavigationOnClickListener { finish() }
+
+            val mapFragment = supportFragmentManager
+                .findFragmentById(R.id.map) as SupportMapFragment?
+            mapFragment?.getMapAsync(this@MapPage)
+
+            initClicks()
         }
-
-        toolBar.setNavigationOnClickListener { finish() }
-
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(this)
-
-        initClicks()
     }
 
 
     private fun inflateSensorView(type: String, value: String) {
         val inflater = LayoutInflater.from(this@MapPage)
-        val view = inflater.inflate(R.layout.item_sensors, sensorParent, false)
+        val view = inflater.inflate(R.layout.item_sensors, binding.inc.sensorParent, false)
         val sensorName = view.findViewById<TextView>(R.id.sensorName)
         val sensorValue = view.findViewById<TextView>(R.id.sensorValue)
         sensorName.text = "$type"?.capitalize()
         sensorValue.text = HtmlCompat.fromHtml("$value", HtmlCompat.FROM_HTML_MODE_LEGACY)
-        sensorLayout.addView(view)
+        binding.inc.sensorLayout.addView(view)
     }
 
 
@@ -130,10 +134,10 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
     @SuppressLint("SetTextI18n", "WrongConstant")
     private fun upadateUI(item: Items) {
 
-        speedTool.text = "${item.speed} ${item.distance_unit_hour}"
+        binding.speedTool.text = "${item.speed} ${item.distance_unit_hour}"
 
-        if (sensorLayout.childCount > 0) {
-            sensorLayout.removeAllViews()
+        if (binding.inc.sensorLayout.childCount > 0) {
+            binding.inc.sensorLayout.removeAllViews()
         }
 
         inflateSensorView(getString(R.string.speed), "${item.speed} ${item.distance_unit_hour}")
@@ -142,12 +146,12 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
             "${item.total_distance} ${item.unit_of_distance}"
         )
 
-        item.sensors.forEach { sensor ->
+      /*  item.sensors.forEach { sensor ->
             inflateSensorView(
                 sensor.type.toString(),
                 sensor.value.toString()
             )
-        }
+        }*/
 
         if (item.lat != null && item.lng != null) {
             if (checkNewLocation(item)) {
@@ -160,7 +164,7 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
 
         CoroutineScope(Dispatchers.Main).launch {
             delay(500)
-            mapDataSheet.post {
+            binding.inc.mapDataSheet.post {
                 loadTail()
             }
         }
@@ -198,7 +202,7 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
             return
         }
 
-        behavior = BottomSheetBehavior.from(mapDataSheet)
+        behavior = BottomSheetBehavior.from(binding.inc.mapDataSheet)
         behavior?.state = BottomSheetBehavior.STATE_COLLAPSED
         behavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -211,6 +215,26 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
                         bottomSheet.requestLayout()
                         setMapPaddingBottom(off)
                     }
+
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+
+                    }
+
+                    BottomSheetBehavior.STATE_DRAGGING -> {
+
+                    }
+
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+
+                    }
+
+                    BottomSheetBehavior.STATE_HALF_EXPANDED -> {
+
+                    }
+
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+
+                    }
                 }
             }
 
@@ -219,7 +243,7 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
             }
         })
 
-        mapDataSheet.findViewById<ImageView>(R.id.osViewBtn).setOnClickListener {
+        binding.inc.mapDataSheet.findViewById<ImageView>(R.id.osViewBtn).setOnClickListener {
             try {
                 val gmmIntentUri: Uri =
                     Uri.parse("google.streetview:cbll=${deviceItem?.lat},${deviceItem?.lng}")
@@ -239,7 +263,7 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
 
     override fun popUpAddress(addressOutput: String) {
         CoroutineScope(Dispatchers.Main).launch {
-            address.text = "$addressOutput"
+            binding.inc.address.text = "$addressOutput"
         }
     }
 
@@ -247,7 +271,7 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
         val maxMapPaddingBottom = 1.0f
         mMap?.setPadding(0, 0, 0, (off * maxMapPaddingBottom).roundToInt())
 
-        val carLocation = LatLng(deviceItem?.lat!!, deviceItem?.lng!!)
+ val carLocation = LatLng(deviceItem?.lat!!, deviceItem?.lng!!)
         mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(carLocation, currentZoomLevel))
     }
 
@@ -295,12 +319,12 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
         }
 
         if (localDB.isTailFlag()) {
-            renderMarker(R.color.colorPrimary, mapTail)
+            renderMarker(R.color.colorPrimary, binding.mapTail)
             mMap?.addPolyline(
                 PolylineOptions().color(colorPrimary).width(12f).geodesic(true).addAll(listLatlng)
             )
         } else {
-            renderMarker(R.color.white, mapTail)
+            renderMarker(R.color.white, binding.mapTail)
         }
 
         var carLocation = LatLng(deviceItem?.lat!!, deviceItem?.lng!!)
@@ -389,12 +413,12 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
         }
 
         if (localDB.isTailFlag()) {
-            renderMarker(R.color.colorPrimary, mapTail)
+            renderMarker(R.color.colorPrimary, binding.mapTail)
             mMap?.addPolyline(
                 PolylineOptions().color(colorPrimary).width(12f).geodesic(true).addAll(listLatlng)
             )
         } else {
-            renderMarker(R.color.white, mapTail)
+            renderMarker(R.color.white, binding.mapTail)
         }
 
         var carLocation = LatLng(item.lat, item.lng)
@@ -469,11 +493,11 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
     private fun upadateLatestUI(item: LatestItem) {
 
 
-        speedTool.text = "${item.speed} ${item.distance_unit_hour}"
-        toolBar.subtitle = item?.time
+        binding.speedTool.text = "${item.speed} ${item.distance_unit_hour}"
+        binding. toolBar.subtitle = item?.time
 
-        if (sensorLayout.childCount > 0) {
-            sensorLayout.removeAllViews()
+        if (binding.inc.sensorLayout.childCount > 0) {
+            binding.inc.sensorLayout.removeAllViews()
         }
 
         inflateSensorView(getString(R.string.speed), "${item.speed} ${item.distance_unit_hour}")
@@ -506,7 +530,7 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
 
         CoroutineScope(Dispatchers.Main).launch {
             delay(500)
-            mapDataSheet.post {
+            binding.inc.mapDataSheet.post {
                 loadTailLatest(item)
             }
         }
@@ -516,7 +540,7 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
 
     private fun initClicks() {
 
-        address.setOnClickListener {
+        binding.inc. address.setOnClickListener {
             if (it.isPressed) {
                 if (behavior?.state == BottomSheetBehavior.STATE_COLLAPSED) {
                     behavior?.setState(BottomSheetBehavior.STATE_EXPANDED)
@@ -527,14 +551,14 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
             }
         }
 
-        summaryBtn.setOnClickListener {
+        binding.inc.incPlay.summaryBtn.setOnClickListener {
             Intent(this@MapPage, SummaryPage::class.java).apply {
                 putExtra("deviceId", deviceItem?.id!!)
                 putExtra("deviceName", deviceItem?.name!!)
                 startActivity(this)
             }
         }
-        playBtn.setOnClickListener {
+        binding.inc.incPlay.playBtn.setOnClickListener {
             Intent(this@MapPage, PlayBackRoute::class.java).apply {
                 putExtra("deviceId", deviceItem?.id!!)
                 putExtra("deviceName", deviceItem?.name!!)
@@ -542,7 +566,7 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
             }
         }
 
-        routeBtn.setOnClickListener {
+        binding.inc.incPlay.routeBtn.setOnClickListener {
             Intent(this@MapPage, RoutePage::class.java).apply {
                 putExtra("deviceId", deviceItem?.id!!)
                 putExtra("deviceName", deviceItem?.name!!)
@@ -550,7 +574,7 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
             }
         }
 
-        eventsBtn.setOnClickListener {
+        binding.inc.incPlay.eventsBtn.setOnClickListener {
             Intent(this@MapPage, EventPage::class.java).apply {
                 putExtra("deviceId", deviceItem?.id!!)
                 putExtra("deviceName", deviceItem?.name!!)
@@ -558,7 +582,7 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
             }
         }
 
-        serviceBtn.setOnClickListener {
+        binding.inc.incPlay.serviceBtn.setOnClickListener {
             Intent(this@MapPage, ServicePage::class.java).apply {
                 putExtra("deviceId", deviceItem?.id!!)
                 putExtra("deviceName", deviceItem?.name!!)
@@ -568,100 +592,100 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
             }
         }
 
-        zoomIn.setOnClickListener {
+        binding.  zoomIn.setOnClickListener {
             mMap?.animateCamera(CameraUpdateFactory.zoomIn())
             if (currentZoomLevel < mMap?.maxZoomLevel!!) {
                 currentZoomLevel += 1
             }
         }
-        zoomOut.setOnClickListener {
+        binding.zoomOut.setOnClickListener {
             mMap?.animateCamera(CameraUpdateFactory.zoomOut())
             if (currentZoomLevel > mMap?.minZoomLevel!!) {
                 currentZoomLevel -= 1
             }
         }
 
-        mapType.setOnClickListener {
-            if (mapTypeLayout.isVisible) {
-                mapTypeLayout.visibility = View.GONE
-                mapFeatureLayout.visibility = View.GONE
+        binding. mapType.setOnClickListener {
+            if (binding.mapTypeLayout.isVisible) {
+                binding.mapTypeLayout.visibility = View.GONE
+                binding. mapFeatureLayout.visibility = View.GONE
             } else {
-                mapTypeLayout.visibility = View.VISIBLE
-                mapFeatureLayout.visibility = View.VISIBLE
+                binding.mapTypeLayout.visibility = View.VISIBLE
+                binding. mapFeatureLayout.visibility = View.VISIBLE
             }
         }
 
-        trafficBtn.setOnClickListener {
+        binding.trafficBtn.setOnClickListener {
             mMap?.isTrafficEnabled = !mMap?.isTrafficEnabled!!
 
             if (mMap?.isTrafficEnabled!!) {
                 ViewCompat.setBackgroundTintList(
-                    trafficBtn,
+                    binding.trafficBtn,
                     ContextCompat.getColorStateList(this@MapPage, R.color.colorPrimaryDark)
                 )
             } else {
                 ViewCompat.setBackgroundTintList(
-                    trafficBtn,
+                    binding.trafficBtn,
                     ContextCompat.getColorStateList(this@MapPage, R.color.btn_color)
                 )
             }
         }
 
-        mapNormal.setOnClickListener {
+        binding. mapNormal.setOnClickListener {
             mMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
-            mapTypeLayout.visibility = View.GONE
-            mapFeatureLayout.visibility = View.GONE
+            binding.mapTypeLayout.visibility = View.GONE
+            binding.mapFeatureLayout.visibility = View.GONE
             localDB.saveMapType("MAP_TYPE_NORMAL")
             selectedMap(1)
         }
 
-        mapHybrid.setOnClickListener {
+        binding.  mapHybrid.setOnClickListener {
 
             mMap?.mapType = GoogleMap.MAP_TYPE_HYBRID
-            mapTypeLayout.visibility = View.GONE
-            mapFeatureLayout.visibility = View.GONE
+            binding. mapTypeLayout.visibility = View.GONE
+            binding.  mapFeatureLayout.visibility = View.GONE
             localDB.saveMapType("MAP_TYPE_HYBRID")
             selectedMap(4)
         }
 
-        mapSatellite.setOnClickListener {
+        binding. mapSatellite.setOnClickListener {
 
             mMap?.mapType = GoogleMap.MAP_TYPE_SATELLITE
-            mapTypeLayout.visibility = View.GONE
-            mapFeatureLayout.visibility = View.GONE
+            binding.mapTypeLayout.visibility = View.GONE
+            binding. mapFeatureLayout.visibility = View.GONE
             localDB.saveMapType("MAP_TYPE_SATELLITE")
             selectedMap(2)
         }
 
-        mapTerrain.setOnClickListener {
+        binding. mapTerrain.setOnClickListener {
 
             mMap?.mapType = GoogleMap.MAP_TYPE_TERRAIN
-            mapTypeLayout.visibility = View.GONE
-            mapFeatureLayout.visibility = View.GONE
+            binding.mapTypeLayout.visibility = View.GONE
+            binding.mapFeatureLayout.visibility = View.GONE
             localDB.saveMapType("MAP_TYPE_TERRAIN")
             selectedMap(3)
         }
 
-        mapTail.setOnClickListener {
+        binding.  mapTail.setOnClickListener {
             localDB?.flipTailFlag()
             renderTail()
-            mapTypeLayout.visibility = View.GONE
-            mapFeatureLayout.visibility = View.GONE
+            binding.mapTypeLayout.visibility = View.GONE
+            binding.mapFeatureLayout.visibility = View.GONE
         }
 
-        mapPoi.setOnClickListener {
+        binding.  mapPoi.setOnClickListener {
             localDB?.flipPOIFlag()
             renderPoi()
-            mapTypeLayout.visibility = View.GONE
-            mapFeatureLayout.visibility = View.GONE
+            binding.mapTypeLayout.visibility = View.GONE
+            binding. mapFeatureLayout.visibility = View.GONE
 
         }
 
-        mapGeoFence.setOnClickListener {
+        binding.  mapGeoFence.setOnClickListener {
             localDB?.flipGeofenceFlag()
             renderGeofence()
-            mapTypeLayout.visibility = View.GONE
-            mapFeatureLayout.visibility = View.GONE
+            binding.mapTypeLayout.visibility = View.GONE
+            binding. mapFeatureLayout.visibility = View.GONE
         }
     }
 
@@ -672,21 +696,21 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
         }
 
         if (localDB.isPOIFlag()) {
-            renderMarker(R.color.colorPrimary, mapPoi)
+            renderMarker(R.color.colorPrimary,binding. mapPoi)
         } else {
-            renderMarker(R.color.white, mapPoi)
+            renderMarker(R.color.white, binding.mapPoi)
         }
     }
 
     private fun renderTail() {
         loadTail()
-        mapFeatureLayout.visibility = View.GONE
-        mapTypeLayout.visibility = View.GONE
+        binding.mapFeatureLayout.visibility = View.GONE
+        binding.mapTypeLayout.visibility = View.GONE
 
         if (localDB.isTailFlag()) {
-            renderMarker(R.color.colorPrimary, mapTail)
+            renderMarker(R.color.colorPrimary, binding.mapTail)
         } else {
-            renderMarker(R.color.white, mapTail)
+            renderMarker(R.color.white, binding.mapTail)
         }
     }
 
@@ -697,9 +721,9 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
         }
 
         if (localDB.isGeofenceFlag()) {
-            renderMarker(R.color.colorPrimary, mapGeoFence)
+            renderMarker(R.color.colorPrimary, binding.mapGeoFence)
         } else {
-            renderMarker(R.color.white, mapGeoFence)
+            renderMarker(R.color.white, binding.mapGeoFence)
         }
     }
 
@@ -781,72 +805,72 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
 
 
                 ViewCompat.setBackgroundTintList(
-                    mapHybrid,
+                    binding.mapHybrid,
                     ContextCompat.getColorStateList(this@MapPage, R.color.white)
                 )
                 ViewCompat.setBackgroundTintList(
-                    mapSatellite,
+                    binding.mapSatellite,
                     ContextCompat.getColorStateList(this@MapPage, R.color.white)
                 )
                 ViewCompat.setBackgroundTintList(
-                    mapTerrain,
+                    binding.mapTerrain,
                     ContextCompat.getColorStateList(this@MapPage, R.color.white)
                 )
             }
 
             2 -> {
                 ViewCompat.setBackgroundTintList(
-                    mapNormal,
+                    binding.mapNormal,
                     ContextCompat.getColorStateList(this@MapPage, R.color.white)
                 )
                 ViewCompat.setBackgroundTintList(
-                    mapHybrid,
+                    binding.mapHybrid,
                     ContextCompat.getColorStateList(this@MapPage, R.color.white)
                 )
                 ViewCompat.setBackgroundTintList(
-                    mapSatellite,
+                    binding.mapSatellite,
                     ContextCompat.getColorStateList(this@MapPage, R.color.colorPrimaryDark)
                 )
                 ViewCompat.setBackgroundTintList(
-                    mapTerrain,
+                    binding.mapTerrain,
                     ContextCompat.getColorStateList(this@MapPage, R.color.white)
                 )
             }
 
             3 -> {
                 ViewCompat.setBackgroundTintList(
-                    mapNormal,
+                    binding. mapNormal,
                     ContextCompat.getColorStateList(this@MapPage, R.color.white)
                 )
                 ViewCompat.setBackgroundTintList(
-                    mapHybrid,
+                    binding.mapHybrid,
                     ContextCompat.getColorStateList(this@MapPage, R.color.white)
                 )
                 ViewCompat.setBackgroundTintList(
-                    mapSatellite,
+                    binding.mapSatellite,
                     ContextCompat.getColorStateList(this@MapPage, R.color.white)
                 )
                 ViewCompat.setBackgroundTintList(
-                    mapTerrain,
+                    binding.mapTerrain,
                     ContextCompat.getColorStateList(this@MapPage, R.color.colorPrimaryDark)
                 )
             }
 
             4 -> {
                 ViewCompat.setBackgroundTintList(
-                    mapNormal,
+                    binding.mapNormal,
                     ContextCompat.getColorStateList(this@MapPage, R.color.white)
                 )
                 ViewCompat.setBackgroundTintList(
-                    mapHybrid,
+                    binding.mapHybrid,
                     ContextCompat.getColorStateList(this@MapPage, R.color.colorPrimaryDark)
                 )
                 ViewCompat.setBackgroundTintList(
-                    mapSatellite,
+                    binding.mapSatellite,
                     ContextCompat.getColorStateList(this@MapPage, R.color.white)
                 )
                 ViewCompat.setBackgroundTintList(
-                    mapTerrain,
+                    binding.mapTerrain,
                     ContextCompat.getColorStateList(this@MapPage, R.color.white)
                 )
             }

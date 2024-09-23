@@ -9,9 +9,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.ServiceData
+import com.shazcom.gps.app.databinding.ItemServiceBinding
 import com.shazcom.gps.app.ui.activities.AddServicePage
 import com.shazcom.gps.app.ui.activities.ServicePage
-import kotlinx.android.synthetic.main.item_service.view.*
+
 
 class ServiceAdapter(
     private val activity : ServicePage,
@@ -34,9 +35,9 @@ class ServiceAdapter(
     }
 
     class ServiceViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val serviceName = view.serviceName!!
-        val serviceDue = view.timeLeft!!
-        val edtBtn = view.edtBtn!!
+        val serviceName =ItemServiceBinding.bind(view).serviceName!!
+        val serviceDue = ItemServiceBinding.bind(view).timeLeft!!
+        val edtBtn = ItemServiceBinding.bind(view).edtBtn!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServiceViewHolder {

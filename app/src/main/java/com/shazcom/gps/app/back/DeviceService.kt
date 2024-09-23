@@ -1,13 +1,16 @@
 package com.shazcom.gps.app.back
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.*
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
@@ -184,8 +187,16 @@ class DeviceService : LifecycleService(), KodeinAware {
             //.addAction(stopAction)
             .build()
         val notificationManager = NotificationManagerCompat.from(this)
-        notificationManager.notify(1, notificationBuilder.build())
-        startForeground(1, notification)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationManager.notify(1, notificationBuilder.build())
+            startForeground(1, notification)
+            return
+        }
+
     }
 
     override fun onDestroy() {
@@ -227,6 +238,9 @@ class DeviceService : LifecycleService(), KodeinAware {
                                         }
                                     }
                                 }
+
+                                Status.ERROR -> {}
+                                Status.LOADING -> {}
                             }
                         })
                 }

@@ -15,18 +15,19 @@ import com.shazcom.gps.app.data.response.DeviceCommandResponse
 import com.shazcom.gps.app.data.response.DeviceGprs
 import com.shazcom.gps.app.data.response.SendCommandDataResponse
 import com.shazcom.gps.app.data.response.TemplateData
+import com.shazcom.gps.app.databinding.ActivityGprsCommandBinding
 import com.shazcom.gps.app.network.GPSWoxAPI
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseActivity
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
-import com.shazcom.gps.app.utils.getCommandList
-import kotlinx.android.synthetic.main.activity_gprs_command.*
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
 class GprsCommand : BaseActivity(), KodeinAware {
 
+    private lateinit var binding: ActivityGprsCommandBinding
     private var type: String = "custom"
     private var deviceData: List<DeviceGprs>? = null
     override val kodein by kodein()
@@ -40,65 +41,68 @@ class GprsCommand : BaseActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_gprs_command)
+      binding=  ActivityGprsCommandBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        with(binding) {
+            toolBar.setNavigationOnClickListener { finish() }
 
-        toolBar.setNavigationOnClickListener { finish() }
+            toolsViewModel = ViewModelProvider(this@GprsCommand).get(ToolsViewModel::class.java)
+            toolsViewModel?.toolsRepository = repository
+            loadCommandData()
 
-        toolsViewModel = ViewModelProvider(this).get(ToolsViewModel::class.java)
-        toolsViewModel?.toolsRepository = repository
-        loadCommandData()
-
-        gprsBtn.setOnClickListener {
-            gprsBtn.isChecked = true
-            smsBtn.isChecked = false
-            if (viewSwitch) {
-                viewSwitcher.showNext()
-                viewSwitch = false
-            }
-        }
-
-        smsBtn.setOnClickListener {
-            gprsBtn.isChecked = false
-            smsBtn.isChecked = true
-            if (!viewSwitch) {
-                viewSwitcher.showPrevious()
-                viewSwitch = true
-            }
-        }
-
-        sendCommandBtn.setOnClickListener {
-            sendCommand()
-        }
-
-        sendCommandBtnSMS.setOnClickListener {
-            sendSmsCommand()
-        }
-
-
-        deviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                Log.e("onItem Selected", "onNothingSelected")
+            gprsBtn.setOnClickListener {
+                gprsBtn.isChecked = true
+                smsBtn.isChecked = false
+                if (viewSwitch) {
+                    viewSwitcher.showNext()
+                    viewSwitch = false
+                }
             }
 
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                Log.e("onItem Selected", "onItemSelected")
-                deviceData?.let {
-                    device = it?.get(position)?.id!!
-                    loadDeviceCommand(device)
+            smsBtn.setOnClickListener {
+                gprsBtn.isChecked = false
+                smsBtn.isChecked = true
+                if (!viewSwitch) {
+                    viewSwitcher.showPrevious()
+                    viewSwitch = true
+                }
+            }
+
+            sendCommandBtn.setOnClickListener {
+                sendCommand()
+            }
+
+            sendCommandBtnSMS.setOnClickListener {
+                sendSmsCommand()
+            }
+
+
+            deviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    Log.e("onItem Selected", "onNothingSelected")
                 }
 
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    Log.e("onItem Selected", "onItemSelected")
+                    deviceData?.let {
+                        device = it?.get(position)?.id!!
+                        loadDeviceCommand(device)
+                    }
+
+                }
             }
         }
+
     }
 
-    private fun loadCommandData() {
+    private fun loadCommandData() = with(binding){
         toolsViewModel?.loadCommandData("en", localDB?.getToken()!!)
-            ?.observe(this, Observer { resources ->
+            ?.observe(this@GprsCommand, Observer { resources ->
                 when (resources.status) {
                     Status.LOADING -> {
                         progressBar.visibility = View.VISIBLE
@@ -117,7 +121,7 @@ class GprsCommand : BaseActivity(), KodeinAware {
             })
     }
 
-    private fun processData(data: SendCommandDataResponse?) {
+    private fun processData(data: SendCommandDataResponse?)= with(binding) {
 
         if (data?.devices_gprs?.isNotEmpty()!!) {
             deviceData = data?.devices_gprs
@@ -125,7 +129,7 @@ class GprsCommand : BaseActivity(), KodeinAware {
             loadDeviceCommand(device)
 
             val deviceAdapter = ArrayAdapter(
-                this,
+                this@GprsCommand,
                 android.R.layout.simple_spinner_dropdown_item,
                 data?.devices_gprs
             )
@@ -151,13 +155,13 @@ class GprsCommand : BaseActivity(), KodeinAware {
 
             }
 
-            setSmsTemplate(data?.sms_templates)
+            data?.sms_templates?.let { setSmsTemplate(it) }
         }
     }
 
-    private fun loadDeviceCommand(device: Int) {
+    private fun loadDeviceCommand(device: Int)= with(binding) {
         toolsViewModel?.loadDeviceCommandData("en", localDB?.getToken()!!, device)
-            ?.observe(this, Observer { resources ->
+            ?.observe(this@GprsCommand, Observer { resources ->
                 when (resources.status) {
                     Status.LOADING -> {
                         progressBar.visibility = View.VISIBLE
@@ -182,9 +186,9 @@ class GprsCommand : BaseActivity(), KodeinAware {
         }
     }
 
-    private fun setCommandSpinner(list: List<DeviceCommandResponse>) {
+    private fun setCommandSpinner(list: List<DeviceCommandResponse>) = with(binding){
         val commandAdapter = ArrayAdapter(
-            this,
+            this@GprsCommand,
             android.R.layout.simple_spinner_dropdown_item,
             list
         )
@@ -217,9 +221,9 @@ class GprsCommand : BaseActivity(), KodeinAware {
         }
     }
 
-    private fun setSmsTemplate(list: List<TemplateData>) {
+    private fun setSmsTemplate(list: List<TemplateData>) = with(binding){
         val smsAdapter = ArrayAdapter(
-            this,
+            this@GprsCommand,
             android.R.layout.simple_spinner_dropdown_item,
             list
         )
@@ -247,7 +251,7 @@ class GprsCommand : BaseActivity(), KodeinAware {
         }
     }
 
-    private fun sendCommand() {
+    private fun sendCommand() = with(binding){
 
         toolsViewModel?.sendCommand(
             "en",
@@ -256,7 +260,7 @@ class GprsCommand : BaseActivity(), KodeinAware {
             type!!,
             messageTxt.text.toString()
         )
-            ?.observe(this, Observer { resources ->
+            ?.observe(this@GprsCommand, Observer { resources ->
                 when (resources.status) {
                     Status.LOADING -> {
                         progressBar.visibility = View.VISIBLE
@@ -265,18 +269,18 @@ class GprsCommand : BaseActivity(), KodeinAware {
                     Status.ERROR -> {
                         progressBar.visibility = View.INVISIBLE
                         sendCommandBtn.visibility = View.VISIBLE
-                        Toast.makeText(this, getString(R.string.whoops_no_gprs), Toast.LENGTH_SHORT)
+                        Toast.makeText(this@GprsCommand, getString(R.string.whoops_no_gprs), Toast.LENGTH_SHORT)
                             .show()
                     }
                     Status.SUCCESS -> {
                         progressBar.visibility = View.INVISIBLE
                         sendCommandBtn.visibility = View.VISIBLE
                         if(resources?.data?.error != null) {
-                            Toast.makeText(this, getString(R.string.whoops_no_gprs), Toast.LENGTH_SHORT)
+                            Toast.makeText(this@GprsCommand, getString(R.string.whoops_no_gprs), Toast.LENGTH_SHORT)
                                 .show()
                         }else {
                             Toast.makeText(
-                                this,
+                                this@GprsCommand,
                                 getString(R.string.command_send_success),
                                 Toast.LENGTH_SHORT
                             ).show()
@@ -286,7 +290,7 @@ class GprsCommand : BaseActivity(), KodeinAware {
             })
     }
 
-    private fun sendSmsCommand() {
+    private fun sendSmsCommand() = with(binding){
 
         var smsUrl = GPSWoxAPI.BASE_URL + "send_sms_command?"
         smsUrl += "lang=en&user_api_hash=${localDB.getToken()}"
@@ -297,7 +301,7 @@ class GprsCommand : BaseActivity(), KodeinAware {
         toolsViewModel?.sendSmsCommand(
             smsUrl
         )
-            ?.observe(this, Observer { resources ->
+            ?.observe(this@GprsCommand, Observer { resources ->
                 when (resources.status) {
                     Status.LOADING -> {
                         progressBarSMS.visibility = View.VISIBLE
@@ -307,7 +311,7 @@ class GprsCommand : BaseActivity(), KodeinAware {
                         progressBarSMS.visibility = View.INVISIBLE
                         sendCommandBtnSMS.visibility = View.VISIBLE
                         Toast.makeText(
-                            this,
+                            this@GprsCommand,
                             getString(R.string.something_went_wrong),
                             Toast.LENGTH_SHORT
                         )
@@ -317,7 +321,7 @@ class GprsCommand : BaseActivity(), KodeinAware {
                         progressBarSMS.visibility = View.INVISIBLE
                         sendCommandBtnSMS.visibility = View.VISIBLE
                         Toast.makeText(
-                            this,
+                            this@GprsCommand,
                             getString(R.string.command_send_success),
                             Toast.LENGTH_SHORT
                         ).show()

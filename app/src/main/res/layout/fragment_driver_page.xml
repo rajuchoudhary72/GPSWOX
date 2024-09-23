@@ -30,6 +30,6 @@
         android:visibility="invisible"
         android:layout_gravity="center" />
 
-    <include layout="@layout/empty_layout" />
+    <include layout="@layout/empty_layout"  android:id="@+id/inc"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

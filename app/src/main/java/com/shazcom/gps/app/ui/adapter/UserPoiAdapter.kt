@@ -7,7 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.MapIcons
-import kotlinx.android.synthetic.main.item_user_poi.view.*
+import com.shazcom.gps.app.databinding.ItemUserPoiBinding
+
 
 class UserPoiAdapter(
     private val poiPoints: List<MapIcons>,
@@ -18,13 +19,13 @@ class UserPoiAdapter(
     RecyclerView.Adapter<UserPoiAdapter.UserPoiViewHolder>() {
 
     class UserPoiViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val poiImage = view.poiImage!!
-        val poiTitle = view.poiTitle!!
-        val poiDescription = view.poiDescription!!
-        val rootView = view.rootView!!
-        val btnLayout = view.btnLayout!!
-        val editBtn = view.editBtn!!
-        val deleteBtn = view.deleteBtn!!
+        val poiImage = ItemUserPoiBinding.bind(view).poiImage!!
+        val poiTitle =  ItemUserPoiBinding.bind(view).poiTitle!!
+        val poiDescription =  ItemUserPoiBinding.bind(view).poiDescription!!
+        val rootView =  ItemUserPoiBinding.bind(view).rootView!!
+        val btnLayout =  ItemUserPoiBinding.bind(view).btnLayout!!
+        val editBtn =  ItemUserPoiBinding.bind(view).editBtn!!
+        val deleteBtn =  ItemUserPoiBinding.bind(view).deleteBtn!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserPoiViewHolder {

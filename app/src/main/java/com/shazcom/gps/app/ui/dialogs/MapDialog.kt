@@ -28,7 +28,8 @@ import com.google.android.libraries.maps.model.MarkerOptions
 import com.google.gson.Gson
 import com.shazcom.gps.app.data.response.MapIcons
 import com.shazcom.gps.app.data.vo.LatLngModel
-import kotlinx.android.synthetic.main.dialog_map.*
+import com.shazcom.gps.app.databinding.DialogMapBinding
+
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.net.URL
@@ -36,6 +37,7 @@ import java.net.URL
 
 class MapDialog(private val poiDialog: POIDialog) : DialogFragment(), OnMapReadyCallback {
 
+    private lateinit var binding: DialogMapBinding
     private var mMap: GoogleMap? = null
     private var mMapMarker = ""
     val listItem = arrayListOf<Items>()
@@ -46,12 +48,13 @@ class MapDialog(private val poiDialog: POIDialog) : DialogFragment(), OnMapReady
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_map, container, false)
+       binding= DialogMapBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = Dialog(activity!!, R.style.customDialogTheme)
+        val dialog = Dialog(requireActivity(), R.style.customDialogTheme)
         dialog.setContentView(R.layout.dialog_map)
         return dialog
     }
@@ -84,11 +87,11 @@ class MapDialog(private val poiDialog: POIDialog) : DialogFragment(), OnMapReady
             }
         }
 
-        closeBtn.setOnClickListener {
+        binding.closeBtn.setOnClickListener {
             dismiss()
         }
 
-        saveBtn.setOnClickListener {
+        binding. saveBtn.setOnClickListener {
             mMapMarker.isNotEmpty().let {
                 poiDialog.setPoiMapMarker(mMapMarker)
                 dismiss()
@@ -111,7 +114,7 @@ class MapDialog(private val poiDialog: POIDialog) : DialogFragment(), OnMapReady
                 setDevices(listItem)
             }
         }else {
-            deviceSpinner.visibility = View.GONE
+            binding.  deviceSpinner.visibility = View.GONE
         }
     }
 
@@ -123,9 +126,9 @@ class MapDialog(private val poiDialog: POIDialog) : DialogFragment(), OnMapReady
         )
 
         deviceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        deviceSpinner.adapter = deviceAdapter
+        binding. deviceSpinner.adapter = deviceAdapter
 
-        deviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.deviceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
@@ -141,7 +144,7 @@ class MapDialog(private val poiDialog: POIDialog) : DialogFragment(), OnMapReady
 
         }
 
-        spinnerLayout.visibility = View.VISIBLE
+        binding.  spinnerLayout.visibility = View.VISIBLE
     }
 
     private fun moveToMap(items: Items) {
@@ -185,8 +188,8 @@ class MapDialog(private val poiDialog: POIDialog) : DialogFragment(), OnMapReady
         )
 
         latLng?.let {
-            locLatitude.text = it?.latitude!!.toString()
-            locLongitude.text = it?.longitude!!.toString()
+            binding.   locLatitude.text = it?.latitude!!.toString()
+            binding.  locLongitude.text = it?.longitude!!.toString()
 
             mMapMarker = "{\\\"lat\\\": ${it?.latitude!!},\\\"lng\\\": ${it?.longitude!!}}"
         }
@@ -221,8 +224,8 @@ class MapDialog(private val poiDialog: POIDialog) : DialogFragment(), OnMapReady
 
                         mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(poiLocation , 15f))
                         poiLocation.let {
-                            locLatitude.text = it.latitude.toString()
-                            locLongitude.text = it.longitude.toString()
+                            binding.    locLatitude.text = it.latitude.toString()
+                            binding.   locLongitude.text = it.longitude.toString()
                             mMapMarker = "{\\\"lat\\\": ${it.latitude},\\\"lng\\\": ${it.longitude}}"
                         }
                     }

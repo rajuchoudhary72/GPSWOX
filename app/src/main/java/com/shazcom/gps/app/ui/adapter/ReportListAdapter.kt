@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.ReportData
-import kotlinx.android.synthetic.main.item_group.view.*
+import com.shazcom.gps.app.databinding.ItemGroupBinding
 
 
 class ReportListAdapter(
@@ -16,10 +16,10 @@ class ReportListAdapter(
     RecyclerView.Adapter<ReportListAdapter.ReportListViewHolder>() {
 
     class ReportListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val groupName = view.groupName!!
-        val btnLayout = view.btnLayout!!
-        val icDelete = view.deleteAlert!!
-        val icEdit = view.editAlert!!
+        val groupName =ItemGroupBinding.bind( view).groupName!!
+        val btnLayout = ItemGroupBinding.bind( view).btnLayout!!
+        val icDelete = ItemGroupBinding.bind( view).deleteAlert!!
+        val icEdit = ItemGroupBinding.bind( view).editAlert!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReportListViewHolder {

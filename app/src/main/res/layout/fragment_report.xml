@@ -511,6 +511,6 @@
 
     </LinearLayout>
 
-    <include layout="@layout/device_bottom_sheet_layout" />
+    <include layout="@layout/device_bottom_sheet_layout"  android:id="@+id/inc"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

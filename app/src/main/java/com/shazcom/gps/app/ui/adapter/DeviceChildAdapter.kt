@@ -9,22 +9,23 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.response.Items
+import com.shazcom.gps.app.databinding.ItemDeviceChildBinding
 import com.shazcom.gps.app.ui.activities.MapPage
 import com.shazcom.gps.app.utils.getCar
 import com.shazcom.gps.app.utils.getColor
-import kotlinx.android.synthetic.main.item_device_child.view.*
+
 
 class DeviceChildAdapter(private val itemList: List<Items>) :
     RecyclerView.Adapter<DeviceChildAdapter.DeviceChildAdapterViewHolder>() {
 
     class DeviceChildAdapterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val childTitle = view.headerTxt!!
-        val dateTxt = view.dateTxt!!
-        val colorDot = view.dotColor!!
-        val speed = view.speed!!
-        val icon = view.icon!!
-        val address = view.address!!
-        val duration = view.duration!!
+        val childTitle = ItemDeviceChildBinding.bind(view).headerTxt!!
+        val dateTxt =  ItemDeviceChildBinding.bind(view).dateTxt!!
+        val colorDot =  ItemDeviceChildBinding.bind(view).dotColor!!
+        val speed =  ItemDeviceChildBinding.bind(view).speed!!
+        val icon =  ItemDeviceChildBinding.bind(view).icon!!
+        val address =  ItemDeviceChildBinding.bind(view).address!!
+        val duration =  ItemDeviceChildBinding.bind(view).duration!!
         val rootView = view.rootView!!
     }
 
@@ -32,12 +33,12 @@ class DeviceChildAdapter(private val itemList: List<Items>) :
         parent: ViewGroup,
         viewType: Int
     ): DeviceChildAdapterViewHolder {
+        val binding = ItemDeviceChildBinding.inflate(
+            LayoutInflater.from(parent.context), parent,
+            false
+        )
         return DeviceChildAdapterViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_device_child,
-                parent,
-                false
-            )
+            binding.root
         )
     }
 

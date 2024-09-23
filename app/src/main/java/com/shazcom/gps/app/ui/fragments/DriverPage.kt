@@ -12,20 +12,21 @@ import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.ToolsRepository
 import com.shazcom.gps.app.data.response.UserDriverResponse
+import com.shazcom.gps.app.databinding.FragmentDriverPageBinding
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseFragment
 import com.shazcom.gps.app.ui.activities.Dashboard
 import com.shazcom.gps.app.ui.adapter.DriverAdapter
 import com.shazcom.gps.app.ui.dialogs.AddDriverDialog
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
-import kotlinx.android.synthetic.main.empty_layout.*
-import kotlinx.android.synthetic.main.fragment_driver_page.*
+
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.support.closestKodein
 import org.kodein.di.generic.instance
 
 class DriverPage : BaseFragment(), KodeinAware {
 
+    private lateinit var binding: FragmentDriverPageBinding
     override val kodein by closestKodein()
     private val localDB: LocalDB by instance<LocalDB>()
     private val repository: ToolsRepository by instance<ToolsRepository>()
@@ -36,7 +37,8 @@ class DriverPage : BaseFragment(), KodeinAware {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_driver_page, container, false)
+       binding=  FragmentDriverPageBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,7 +55,7 @@ class DriverPage : BaseFragment(), KodeinAware {
 
         loadDrivers()
 
-        addDriver.setOnClickListener {
+        binding.addDriver.setOnClickListener {
             val addDriverDialog = AddDriverDialog(this)
             addDriverDialog.show(childFragmentManager, AddDriverDialog::class.java.name)
         }
@@ -75,16 +77,16 @@ class DriverPage : BaseFragment(), KodeinAware {
                 if(isVisible) {
                     when (resources.status) {
                         Status.SUCCESS -> {
-                            progressBar.visibility = View.INVISIBLE
+                            binding.      progressBar.visibility = View.INVISIBLE
                             processData(resources.data)
                         }
                         Status.ERROR -> {
-                            progressBar.visibility = View.INVISIBLE
-                            emptyText.visibility = View.VISIBLE
-                            emptyText.text = "No Driver Found"
+                            binding.   progressBar.visibility = View.INVISIBLE
+                            binding.inc.  emptyText.visibility = View.VISIBLE
+                            binding.inc. emptyText.text = "No Driver Found"
                         }
                         Status.LOADING -> {
-                            progressBar.visibility = View.VISIBLE
+                            binding.  progressBar.visibility = View.VISIBLE
                         }
                     }
                 }
@@ -93,7 +95,7 @@ class DriverPage : BaseFragment(), KodeinAware {
     }
 
     private fun processData(data: UserDriverResponse?) {
-        driverList.apply {
+        binding.  driverList.apply {
             layoutManager = LinearLayoutManager(this@DriverPage.context)
             adapter = DriverAdapter(data?.items?.drivers?.data!!)
         }
