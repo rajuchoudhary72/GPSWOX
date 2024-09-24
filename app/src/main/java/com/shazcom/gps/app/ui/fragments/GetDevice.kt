@@ -185,35 +185,38 @@ class GetDevice : BaseFragment(), KodeinAware, TextWatcher {
 
     private fun loadData() {
 
-        commonViewModel?.getDeviceInfo("en", localDB.getToken()!!)
-            ?.observe(activity!!, Observer { resources ->
+        activity?.let {
+            commonViewModel?.getDeviceInfo("en", localDB.getToken()!!)
+                ?.observe(it, Observer { resources ->
 
-                if (isVisible) {
-                    when (resources.status) {
-                        Status.SUCCESS -> {
-                            swipe_refresh_layout.isRefreshing = false
-                            progressBar.visibility = View.GONE
-                            processData(resources.data!!)
-                            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                        }
-                        Status.LOADING -> {
-                            progressBar.visibility = View.VISIBLE
-                        }
+                    if (isVisible) {
+                        when (resources.status) {
+                            Status.SUCCESS -> {
+                                swipe_refresh_layout.isRefreshing = false
+                                progressBar.visibility = View.GONE
+                                processData(resources.data!!)
+                                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                            }
 
-                        Status.ERROR -> {
-                            swipe_refresh_layout.isRefreshing = false
-                            progressBar.visibility = View.GONE
-                            Toast.makeText(
-                                requireContext(),
-                                "${resources.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                            Status.LOADING -> {
+                                progressBar.visibility = View.VISIBLE
+                            }
 
+                            Status.ERROR -> {
+                                swipe_refresh_layout.isRefreshing = false
+                                progressBar.visibility = View.GONE
+                                Toast.makeText(
+                                    requireContext(),
+                                    "${resources.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
+                            }
                         }
                     }
-                }
-            })
+                })
+        }
     }
 
     private fun processData(data: List<DeviceData>) {
@@ -226,7 +229,7 @@ class GetDevice : BaseFragment(), KodeinAware, TextWatcher {
 
             val routeItemList = arrayListOf<Items>()
             data.forEach { deviceData ->
-                deviceData.items.forEach { item ->
+                deviceData.items?.forEach { item ->
                     routeItemList.add(item)
                     when (item.icon_color) {
                         "red" -> {

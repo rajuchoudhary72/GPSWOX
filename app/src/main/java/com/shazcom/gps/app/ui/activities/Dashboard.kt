@@ -16,7 +16,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseApp
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import com.shazcom.gps.app.GPSWoxApp
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.back.DeviceService
@@ -120,7 +120,7 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
         }
 
         FirebaseApp.initializeApp(this@Dashboard)
-        FirebaseInstanceId.getInstance().instanceId
+        FirebaseMessaging.getInstance().token
             .addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     Log.w("TrackProGps", "getInstanceId failed", task.exception)
@@ -128,7 +128,7 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
                 }
 
                 // Get new Instance ID token
-                val token = task.result?.token
+                val token = task.result
                 localDB.saveFcmToken(token!!)
 
                 // Log and toast
@@ -216,6 +216,7 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
                     Status.SUCCESS -> {
                         (application as GPSWoxApp).saveGeofence(resources?.data?.items?.geofences)
                     }
+                    else ->{}
                 }
             })
     }
@@ -228,6 +229,7 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
                     Status.SUCCESS -> {
                         (application as GPSWoxApp).savePoiMarkers(resources?.data?.items?.mapIcons)
                     }
+                    else ->{}
                 }
             })
     }
@@ -249,6 +251,7 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
                                 }
                             }
                         }
+                        else ->{}
                     }
                 })
         }

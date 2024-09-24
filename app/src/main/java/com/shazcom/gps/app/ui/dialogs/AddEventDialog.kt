@@ -62,6 +62,7 @@ class AddEventDialog(private val customEventPage: CustomEventPage) : DialogFragm
                     Status.SUCCESS -> {
                         setProtocolAndTypes(resources?.data!!)
                     }
+                    else ->{}
                 }
             })
     }
@@ -71,13 +72,13 @@ class AddEventDialog(private val customEventPage: CustomEventPage) : DialogFragm
         val protocolAdapter = ArrayAdapter<Protocols>(
             requireContext(),
             android.R.layout.simple_spinner_dropdown_item,
-            data?.protocols
+            data?.protocols?: emptyList()
         )
 
         val typesAdapter = ArrayAdapter<Types>(
             requireContext(),
             android.R.layout.simple_spinner_dropdown_item,
-            data?.types
+            data?.types?: emptyList()
         )
 
         typesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -121,7 +122,7 @@ class AddEventDialog(private val customEventPage: CustomEventPage) : DialogFragm
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = Dialog(activity!!, R.style.customDialogTheme)
+        val dialog = Dialog(requireActivity(), R.style.customDialogTheme)
         dialog.setContentView(R.layout.add_custom_event)
         return dialog
     }
@@ -135,7 +136,7 @@ class AddEventDialog(private val customEventPage: CustomEventPage) : DialogFragm
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 dialog?.window?.statusBarColor =
-                    ContextCompat.getColor(context!!, R.color.colorPrimaryDark)
+                    ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark)
             }
         }
     }

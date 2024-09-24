@@ -70,7 +70,9 @@ class AddTaskDialog(private val taskPage: TaskPage) : DialogFragment(), KodeinAw
         deviceData?.let {
 
             for (data in it) {
-                listItem.addAll(data.items)
+                if(data.items?.isNotEmpty() == true) {
+                    listItem.addAll(data.items!!)
+                }
             }
 
             setDevices(listItem)

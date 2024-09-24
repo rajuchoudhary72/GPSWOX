@@ -187,6 +187,7 @@ class Alerts : BaseActivity(), KodeinAware {
                             }
                         }
                     }
+                    else ->{}
                 }
             })
     }
@@ -400,7 +401,9 @@ class Alerts : BaseActivity(), KodeinAware {
                     setResult(RESULT_OK, intent)
                     finish()
                 }
+                else ->{}
             }
+
         })
     }
 
@@ -538,6 +541,7 @@ class Alerts : BaseActivity(), KodeinAware {
                     Status.SUCCESS -> {
                         processEvents(resources?.data?.systemEvents)
                     }
+                    else ->{}
                 }
             })
     }

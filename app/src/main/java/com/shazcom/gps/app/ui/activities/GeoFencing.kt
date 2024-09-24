@@ -87,7 +87,7 @@ class GeoFencing : BaseActivity(), KodeinAware {
     private fun processData(data: GeoFenceResponse) {
         data.let {
 
-            if (data.items.geofences?.isNotEmpty()) {
+            if (data.items.geofences.isNotEmpty()) {
                 geoList.apply {
                     layoutManager = LinearLayoutManager(this@GeoFencing)
                     adapter =

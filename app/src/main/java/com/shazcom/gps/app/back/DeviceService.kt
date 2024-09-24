@@ -227,6 +227,8 @@ class DeviceService : LifecycleService(), KodeinAware {
                                         }
                                     }
                                 }
+
+                                else ->{}
                             }
                         })
                 }

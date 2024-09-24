@@ -1,11 +1,30 @@
 package com.shazcom.gps.app.data.repository
 
 import androidx.lifecycle.LiveData
-import com.shazcom.gps.app.data.response.*
+import com.shazcom.gps.app.data.response.AddAlertDataResponsee
+import com.shazcom.gps.app.data.response.AlertResponse
+import com.shazcom.gps.app.data.response.BaseResponse
+import com.shazcom.gps.app.data.response.CustomEventResponse
+import com.shazcom.gps.app.data.response.DeviceCommandResponse
+import com.shazcom.gps.app.data.response.EditAlertResponse
+import com.shazcom.gps.app.data.response.GeoFenceResponse
+import com.shazcom.gps.app.data.response.GetCustomEventResponse
+import com.shazcom.gps.app.data.response.PoiIconsResponse
+import com.shazcom.gps.app.data.response.ProtocolResponse
+import com.shazcom.gps.app.data.response.ReportResponse
+import com.shazcom.gps.app.data.response.SendCommandDataResponse
+import com.shazcom.gps.app.data.response.TaskListResponse
+import com.shazcom.gps.app.data.response.UserDriverResponse
+import com.shazcom.gps.app.data.response.UserPoiResponse
 import com.shazcom.gps.app.network.GPSWoxAPI
 import com.shazcom.gps.app.network.internal.ApiRequest
 import com.shazcom.gps.app.network.internal.Resource
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableJob
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.RequestBody
 
 class ToolsRepository(val gpsWoxAPI: GPSWoxAPI) : ApiRequest() {
@@ -124,8 +143,10 @@ class ToolsRepository(val gpsWoxAPI: GPSWoxAPI) : ApiRequest() {
         userHash: String,
         name: RequestBody,
         polygonColor: RequestBody,
-        type : RequestBody,
-        polygon: RequestBody
+        type: RequestBody,
+        polygon: RequestBody?,
+        center: RequestBody?,
+        radius: RequestBody?,
     ): LiveData<Resource<BaseResponse>> {
         job = Job()
         return object : LiveData<Resource<BaseResponse>>() {
@@ -142,7 +163,9 @@ class ToolsRepository(val gpsWoxAPI: GPSWoxAPI) : ApiRequest() {
                                 name,
                                 type,
                                 polygonColor,
-                                polygon
+                                polygon,
+                                center,
+                                radius
                             )
                         }
                         withContext(Dispatchers.Main) {
@@ -420,7 +443,8 @@ class ToolsRepository(val gpsWoxAPI: GPSWoxAPI) : ApiRequest() {
                     if (theJob.isCompleted) return
                     value = Resource.loading(null)
                     CoroutineScope(Dispatchers.IO + theJob).launch {
-                        val response = apiRequest { gpsWoxAPI.getDeviceCommand(lang, userHash, deviceId) }
+                        val response =
+                            apiRequest { gpsWoxAPI.getDeviceCommand(lang, userHash, deviceId) }
                         withContext(Dispatchers.Main) {
                             value = response
                             theJob.complete()
@@ -738,7 +762,7 @@ class ToolsRepository(val gpsWoxAPI: GPSWoxAPI) : ApiRequest() {
     fun deleteGeoFence(
         lang: String,
         userHash: String,
-        geoFenceId : Int
+        geoFenceId: Int
     ): LiveData<Resource<BaseResponse>> {
         job = Job()
         return object : LiveData<Resource<BaseResponse>>() {
@@ -766,11 +790,10 @@ class ToolsRepository(val gpsWoxAPI: GPSWoxAPI) : ApiRequest() {
     }
 
 
-
     fun deletePoiMarker(
         lang: String,
         userHash: String,
-        poiMarkerId : Int
+        poiMarkerId: Int
     ): LiveData<Resource<BaseResponse>> {
         job = Job()
         return object : LiveData<Resource<BaseResponse>>() {
@@ -804,7 +827,7 @@ class ToolsRepository(val gpsWoxAPI: GPSWoxAPI) : ApiRequest() {
         id: RequestBody,
         name: RequestBody,
         polygonColor: RequestBody,
-        type : RequestBody,
+        type: RequestBody,
         polygon: RequestBody
     ): LiveData<Resource<BaseResponse>> {
         job = Job()
