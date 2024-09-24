@@ -31,12 +31,12 @@ class Maintenance : BaseFragment() {
 
         var app = requireActivity().application as GPSWoxApp
         app?.getDeviceList()?.forEach { deviceData ->
-            deviceData.items.forEach { items ->
+            deviceData.items?.forEach { items ->
                 items?.device_data?.services?.forEach { service ->
                     service.deviceName = items.name
                     serviceList.add(service)
                 }
-             }
+            }
         }.also {
             loadMaintenance()
         } ?: kotlin.run {

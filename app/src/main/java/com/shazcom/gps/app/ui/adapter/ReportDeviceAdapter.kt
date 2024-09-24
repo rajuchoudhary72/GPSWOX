@@ -63,7 +63,7 @@ class ReportDeviceAdapter(
             }
         }
 
-        for (value in item.items) {
+        for (value in item?.items!!) {
             if (value.isChecked != null) {
                 if (!value.isChecked!!) {
                     holder.title.isChecked = false
@@ -79,7 +79,7 @@ class ReportDeviceAdapter(
 
     fun selectAll() {
         deviceList?.forEach {
-            it.items.forEach {
+            it.items?.forEach {
                 it.isChecked = true
                 onDeviceChangeListener(it)
             }
@@ -89,7 +89,7 @@ class ReportDeviceAdapter(
 
     fun deSelectAll() {
         deviceList?.forEach {
-            it.items.forEach {
+            it.items?.forEach {
                 it.isChecked = false
                 onDeviceChangeListener(it)
             }
@@ -99,7 +99,7 @@ class ReportDeviceAdapter(
 
     fun setCheckItem(ids : List<Int>) {
         deviceList?.forEach {
-            it.items.forEach { item ->
+            it.items?.forEach { item ->
                 if(ids.contains(item.id)) {
                     item.isChecked = true
                     onDeviceChangeListener(item)

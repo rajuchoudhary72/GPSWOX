@@ -108,7 +108,7 @@ data class Services(
 @Parcelize
 data class Device_data(
 
-    val services: List<Services>
+    val services: List<Services>?
 //    val id: Int?,
 //    val user_id: Int?,
 //    val current_driver_id: String?,
@@ -241,9 +241,9 @@ data class Items(
     val protocol: String?,
     val driver: String?,
     val driver_data: Driver_data,
-    val sensors: List<SensorMain>,
-    val services: List<Services>,
-    val tail: List<Tail>,
+    val sensors: List<SensorMain>?,
+    val services: List<Services>?,
+    val tail: List<Tail>?,
     val distance_unit_hour: String?,
     val unit_of_distance: String?,
     val unit_of_altitude: String?,
@@ -266,5 +266,5 @@ data class DeviceData(
     val isChecked: Boolean? = false,
     val id: Int?,
     val title: String?,
-    var items: List<Items>
+    var items: List<Items>?
 ) : Parcelable

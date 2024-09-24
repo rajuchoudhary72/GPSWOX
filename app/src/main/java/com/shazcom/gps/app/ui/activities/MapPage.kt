@@ -146,12 +146,12 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
             "${item.total_distance} ${item.unit_of_distance}"
         )
 
-      /*  item.sensors.forEach { sensor ->
+        item.sensors?.forEach { sensor ->
             inflateSensorView(
                 sensor.type.toString(),
                 sensor.value.toString()
             )
-        }*/
+        }
 
         if (item.lat != null && item.lng != null) {
             if (checkNewLocation(item)) {
@@ -583,13 +583,18 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
         }
 
         binding.inc.incPlay.serviceBtn.setOnClickListener {
-            Intent(this@MapPage, ServicePage::class.java).apply {
-                putExtra("deviceId", deviceItem?.id!!)
-                putExtra("deviceName", deviceItem?.name!!)
-                putExtra("odometer", odometerValue)
-                putExtra("engineLoad", engineLoadValue)
+             Intent(this@MapPage, ServicePage::class.java).apply {
+                  putExtra("deviceId", deviceItem?.id!!)
+                  putExtra("deviceName", deviceItem?.name!!)
+                  putExtra("odometer", odometerValue)
+                  putExtra("engineLoad", engineLoadValue)
+                  startActivity(this)
+              }
+
+          /*  Intent(this@MapPage,MoreActivity::class.java).apply {
+                putExtra("item", deviceItem)
                 startActivity(this)
-            }
+            }*/
         }
 
         binding.  zoomIn.setOnClickListener {

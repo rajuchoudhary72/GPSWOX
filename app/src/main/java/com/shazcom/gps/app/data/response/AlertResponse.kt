@@ -17,16 +17,24 @@ data class AlertNotification(
 ) : Parcelable
 
 @Parcelize
+data class Command(
+    val active : String?
+) : Parcelable
+
+@Parcelize
 data class AlertData(
     val id: Int?,
     val user_id: Int?,
     val active: Int?,
+    val overspeed: Int?,
+    val idle_duration: Int?,
     val name: String?,
     val type: String?,
     val devices: List<Int>,
     val events_custom: List<Int>,
     val geofences: List<Int>,
     val drivers: List<Int>,
+    val command : Command,
     val notifications: AlertNotification?
 ) : Parcelable
 

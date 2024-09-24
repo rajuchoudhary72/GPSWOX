@@ -50,7 +50,9 @@ class AddDriverDialog(private val driverPage: DriverPage) : DialogFragment(), Ko
         deviceData?.let {
 
             for (data in it) {
-                listItem.addAll(data.items)
+                if(data.items?.isNotEmpty() == true) {
+                    listItem.addAll(data.items!!)
+                }
             }
 
             setDevices(listItem)
@@ -112,7 +114,7 @@ class AddDriverDialog(private val driverPage: DriverPage) : DialogFragment(), Ko
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = Dialog(activity!!, R.style.customDialogTheme)
+        val dialog = Dialog(requireActivity(), R.style.customDialogTheme)
          binding=AddDriverBinding.inflate(layoutInflater)
         dialog.setContentView(binding.root)
         return dialog
@@ -127,7 +129,7 @@ class AddDriverDialog(private val driverPage: DriverPage) : DialogFragment(), Ko
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 dialog?.window?.statusBarColor =
-                    ContextCompat.getColor(context!!, R.color.colorPrimaryDark)
+                    ContextCompat.getColor(requireContext()!!, R.color.colorPrimaryDark)
             }
         }
     }

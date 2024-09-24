@@ -133,7 +133,7 @@ class DeviceAdapter(deviceList: List<DeviceData>) :
                     tempList?.forEach { it ->
                         val itemList = ArrayList<Items>()
                         val deviceItem = it.copy()
-                        deviceItem.items.forEach { mItem ->
+                        deviceItem.items?.forEach { mItem ->
                             if (mItem.name?.contains(
                                     charString,
                                     true
@@ -143,7 +143,7 @@ class DeviceAdapter(deviceList: List<DeviceData>) :
                             }
                         }
 
-                        if (itemList.size > 0) {
+                        if(itemList.size > 0) {
                             deviceItem.items = itemList
                             resultList.add(deviceItem)
                         }

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        style="@style/Widget.MaterialComponents.AppBarLayout.Surface"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:contentInsetStartWithNavigation="0dp"
+            app:navigationIcon="@drawable/ic_back_arrow"
+            app:subtitleTextAppearance="@style/ToolbarSubTitle"
+            app:title="Geo Fence">
+
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/btn_fencing_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="20dp"
+                app:checkedButton="@id/btn_circle"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_circle"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Circle"
+                    android:textAllCaps="false" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_polygon"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Polygon"
+                    android:textAllCaps="false" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        </androidx.appcompat.widget.Toolbar>
+
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.libraries.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="FragmentTagUsage" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_clear_polygon"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_margin="16dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Clear Polygon"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            android:visibility="gone"
+            app:cornerRadius="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/white"
+            app:cardElevation=".5dp"
+            app:contentPadding="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:shapeAppearanceOverlay="@style/topRoundCorner">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:id="@+id/textCaption"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:text="Click map to adjust fence center, drag control bar to adjust size"
+                    android:textSize="13sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/labelRadius"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:text="Radius of Circle"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textCaption" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/seekbar_radius"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:progressBackgroundTint="@color/black"
+                    android:stepSize="50"
+                    android:valueFrom="100"
+                    android:valueTo="1000"
+                    app:layout_constraintBottom_toBottomOf="@+id/labelRadius"
+                    app:layout_constraintEnd_toStartOf="@+id/labelSize"
+                    app:layout_constraintStart_toEndOf="@+id/labelRadius"
+                    app:layout_constraintTop_toTopOf="@+id/labelRadius" />
+
+
+                <TextView
+                    android:id="@+id/labelSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:text="200m"
+                    android:textColor="@color/black"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/labelRadius"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/bg_edit_text"
+                    android:hint="Enter name..."
+                    android:paddingHorizontal="10dp"
+                    android:singleLine="true"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@+id/labelSize" />
+
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:layout_marginTop="15dp"
+                    android:background="#173E3E3E"
+                    app:layout_constraintTop_toBottomOf="@+id/name" />
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_view_all"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:text="View all fence"
+                    android:textAllCaps="false"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_save"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_save"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:text="Save"
+                    android:textAllCaps="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/btn_view_all"
+                    app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/group_circle_geo_fence_views"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="labelSize,seekbar_radius,labelRadius" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/progressBar"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -223,7 +223,7 @@ class DeviceMapCluster : BaseActivity(), OnMapReadyCallback, KodeinAware,
         var lng = 0.0
         val devices = app?.getDeviceList()
         devices?.forEach { deviceData ->
-            deviceData.items.forEachIndexed { index, items ->
+            deviceData.items?.forEachIndexed { index, items ->
                 when {
 
                     items.icon_color.equals(type, true) && type != "all" -> {

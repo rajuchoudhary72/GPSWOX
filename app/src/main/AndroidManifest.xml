@@ -154,6 +154,23 @@
             android:windowSoftInputMode="stateHidden"
             android:screenOrientation="locked" />
 
+        <activity
+            android:exported="false"
+            android:name=".ui.activities.MoreActivity"
+            android:configChanges="locale"
+            android:screenOrientation="locked" />
+        <activity
+            android:exported="false"
+            android:name=".ui.activities.GeoFenceActivity"
+            android:configChanges="locale"
+            android:screenOrientation="locked" />
+        <activity
+            android:exported="false"
+            android:name=".ui.activities.AlertActivity"
+            android:configChanges="locale"
+            android:screenOrientation="locked" />
+
+
         <service
             android:name=".utils.FetchAddressIntentService"
             android:exported="false" />

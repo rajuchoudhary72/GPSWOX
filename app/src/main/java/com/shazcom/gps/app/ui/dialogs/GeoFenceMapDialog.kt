@@ -107,7 +107,9 @@ class GeoFenceMapDialog(private val color: String, private val geoFenceDialog: G
             deviceData?.let {
 
                 for (data in it) {
-                    listItem.addAll(data.items)
+                    if(data.items?.isNotEmpty() == true) {
+                        listItem.addAll(data.items!!)
+                    }
                 }
 
                 setDevices(listItem)
@@ -224,6 +226,8 @@ class GeoFenceMapDialog(private val color: String, private val geoFenceDialog: G
                         polygonList
                     )
             )
+
+
 
             makePolygonLocationString()
             binding.clearPolygons.visibility = View.VISIBLE

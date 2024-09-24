@@ -205,7 +205,9 @@ interface GPSWoxAPI {
         @Part("name") name: RequestBody?,
         @Part("type") type: RequestBody?,
         @Part("polygon_color") polygon_color: RequestBody?,
-        @Part("polygon") polygon_array: RequestBody?
+        @Part("polygon") polygon_array: RequestBody?,
+        @Part("center") center: RequestBody?,
+        @Part("radius") radius: RequestBody?
     ): Response<BaseResponse>
 
 

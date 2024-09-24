@@ -49,7 +49,9 @@ class Rulers : BaseActivity(), OnMapReadyCallback {
         deviceData?.let {
 
             for (data in it) {
-                listItem.addAll(data.items)
+                if(data.items?.isNotEmpty() == true) {
+                    listItem.addAll(data.items!!)
+                }
             }
 
             setDevices(listItem)

@@ -48,15 +48,20 @@ class ToolsViewModel : ViewModel() {
     fun saveGeofence(
         lang: String, userHash: String, name: String,
         polygonColor: String,
-        polygon: String
+        polygon: String?,
+        type: String = "polygon",
+        center: String? = null,
+        radius: String? = null,
     ): LiveData<Resource<BaseResponse>> {
 
         val nameBody = name.toRequestBody("text/plain".toMediaTypeOrNull())
         val colorBody =  polygonColor.toRequestBody("text/plain".toMediaTypeOrNull())
-        val geoBody =  polygon.toRequestBody("text/plain".toMediaTypeOrNull())
-        val typeBody =  "polygon".toRequestBody("text/plain".toMediaTypeOrNull())
+        val geoBody =  polygon?.toRequestBody("text/plain".toMediaTypeOrNull())
+        val typeBody =  type.toRequestBody("text/plain".toMediaTypeOrNull())
+        val centerBody =  center?.toRequestBody("text/plain".toMediaTypeOrNull())
+        val radiusBody =  radius?.toRequestBody("text/plain".toMediaTypeOrNull())
 
-        return toolsRepository.saveGeoFence(lang, userHash, nameBody, colorBody, typeBody, geoBody)
+        return toolsRepository.saveGeoFence(lang, userHash, nameBody, colorBody, typeBody, geoBody,centerBody,radiusBody)
     }
 
     fun updateGeofence(

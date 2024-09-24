@@ -124,8 +124,10 @@ class ToolsRepository(val gpsWoxAPI: GPSWoxAPI) : ApiRequest() {
         userHash: String,
         name: RequestBody,
         polygonColor: RequestBody,
-        type : RequestBody,
-        polygon: RequestBody
+        type: RequestBody,
+        polygon: RequestBody?,
+        center: RequestBody?,
+        radius: RequestBody?,
     ): LiveData<Resource<BaseResponse>> {
         job = Job()
         return object : LiveData<Resource<BaseResponse>>() {
@@ -142,7 +144,9 @@ class ToolsRepository(val gpsWoxAPI: GPSWoxAPI) : ApiRequest() {
                                 name,
                                 type,
                                 polygonColor,
-                                polygon
+                                polygon,
+                                center,
+                                radius
                             )
                         }
                         withContext(Dispatchers.Main) {
@@ -420,7 +424,8 @@ class ToolsRepository(val gpsWoxAPI: GPSWoxAPI) : ApiRequest() {
                     if (theJob.isCompleted) return
                     value = Resource.loading(null)
                     CoroutineScope(Dispatchers.IO + theJob).launch {
-                        val response = apiRequest { gpsWoxAPI.getDeviceCommand(lang, userHash, deviceId) }
+                        val response =
+                            apiRequest { gpsWoxAPI.getDeviceCommand(lang, userHash, deviceId) }
                         withContext(Dispatchers.Main) {
                             value = response
                             theJob.complete()
@@ -738,7 +743,7 @@ class ToolsRepository(val gpsWoxAPI: GPSWoxAPI) : ApiRequest() {
     fun deleteGeoFence(
         lang: String,
         userHash: String,
-        geoFenceId : Int
+        geoFenceId: Int
     ): LiveData<Resource<BaseResponse>> {
         job = Job()
         return object : LiveData<Resource<BaseResponse>>() {
@@ -766,11 +771,10 @@ class ToolsRepository(val gpsWoxAPI: GPSWoxAPI) : ApiRequest() {
     }
 
 
-
     fun deletePoiMarker(
         lang: String,
         userHash: String,
-        poiMarkerId : Int
+        poiMarkerId: Int
     ): LiveData<Resource<BaseResponse>> {
         job = Job()
         return object : LiveData<Resource<BaseResponse>>() {
@@ -804,7 +808,7 @@ class ToolsRepository(val gpsWoxAPI: GPSWoxAPI) : ApiRequest() {
         id: RequestBody,
         name: RequestBody,
         polygonColor: RequestBody,
-        type : RequestBody,
+        type: RequestBody,
         polygon: RequestBody
     ): LiveData<Resource<BaseResponse>> {
         job = Job()
