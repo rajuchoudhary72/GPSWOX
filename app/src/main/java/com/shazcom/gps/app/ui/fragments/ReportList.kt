@@ -87,7 +87,7 @@ class ReportList : BaseFragment(), KodeinAware {
                 layoutManager = LinearLayoutManager(requireContext())
                 adapter =
                     ReportListAdapter(
-                        items?.reports?.data,
+                        items?.reports?.data?: emptyList(),
                         { reportData -> editItem(reportData) },
                         { reportData ->
                             deleteItem(reportData)

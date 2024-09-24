@@ -13,14 +13,27 @@ import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.ToolsRepository
 import com.shazcom.gps.app.data.response.DeviceCommandResponse
 import com.shazcom.gps.app.data.response.DeviceGprs
+import com.shazcom.gps.app.data.response.Items
 import com.shazcom.gps.app.data.response.SendCommandDataResponse
 import com.shazcom.gps.app.data.response.TemplateData
 import com.shazcom.gps.app.network.GPSWoxAPI
 import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseActivity
 import com.shazcom.gps.app.ui.viewmodal.ToolsViewModel
-import com.shazcom.gps.app.utils.getCommandList
-import kotlinx.android.synthetic.main.activity_gprs_command.*
+import kotlinx.android.synthetic.main.activity_gprs_command.commandSpinner
+import kotlinx.android.synthetic.main.activity_gprs_command.deviceSpinner
+import kotlinx.android.synthetic.main.activity_gprs_command.deviceSpinnerSMS
+import kotlinx.android.synthetic.main.activity_gprs_command.gprsBtn
+import kotlinx.android.synthetic.main.activity_gprs_command.messageTxt
+import kotlinx.android.synthetic.main.activity_gprs_command.messageTxtSMS
+import kotlinx.android.synthetic.main.activity_gprs_command.progressBar
+import kotlinx.android.synthetic.main.activity_gprs_command.progressBarSMS
+import kotlinx.android.synthetic.main.activity_gprs_command.sendCommandBtn
+import kotlinx.android.synthetic.main.activity_gprs_command.sendCommandBtnSMS
+import kotlinx.android.synthetic.main.activity_gprs_command.smsBtn
+import kotlinx.android.synthetic.main.activity_gprs_command.templateSpinner
+import kotlinx.android.synthetic.main.activity_gprs_command.toolBar
+import kotlinx.android.synthetic.main.activity_gprs_command.viewSwitcher
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
@@ -37,11 +50,12 @@ class GprsCommand : BaseActivity(), KodeinAware {
     private var deviceSMS = 0
     private var templateId = 0
     private var viewSwitch: Boolean = false
+    private var deviceItem: Items? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gprs_command)
-
+        deviceItem = intent.getParcelableExtra("item")
         toolBar.setNavigationOnClickListener { finish() }
 
         toolsViewModel = ViewModelProvider(this).get(ToolsViewModel::class.java)
@@ -94,6 +108,13 @@ class GprsCommand : BaseActivity(), KodeinAware {
 
             }
         }
+
+        gprsBtn.isChecked = false
+        smsBtn.isChecked = true
+        if (!viewSwitch) {
+            viewSwitcher.showPrevious()
+            viewSwitch = true
+        }
     }
 
     private fun loadCommandData() {
@@ -104,10 +125,12 @@ class GprsCommand : BaseActivity(), KodeinAware {
                         progressBar.visibility = View.VISIBLE
                         sendCommandBtn.visibility = View.INVISIBLE
                     }
+
                     Status.ERROR -> {
                         progressBar.visibility = View.INVISIBLE
                         sendCommandBtn.visibility = View.VISIBLE
                     }
+
                     Status.SUCCESS -> {
                         processData(resources?.data)
                         progressBar.visibility = View.INVISIBLE
@@ -133,6 +156,9 @@ class GprsCommand : BaseActivity(), KodeinAware {
             deviceSpinner.adapter = deviceAdapter
             deviceSpinnerSMS.adapter = deviceAdapter
 
+            deviceSpinner.setSelection(data.devices_gprs.indexOfFirst { it.id == deviceItem?.id })
+            deviceSpinnerSMS.setSelection(data.devices_gprs.indexOfFirst { it.id == deviceItem?.id })
+
 
 
             deviceSpinnerSMS.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -151,7 +177,7 @@ class GprsCommand : BaseActivity(), KodeinAware {
 
             }
 
-            setSmsTemplate(data?.sms_templates)
+            setSmsTemplate(data?.sms_templates ?: emptyList())
         }
     }
 
@@ -163,10 +189,12 @@ class GprsCommand : BaseActivity(), KodeinAware {
                         progressBar.visibility = View.VISIBLE
                         sendCommandBtn.visibility = View.INVISIBLE
                     }
+
                     Status.ERROR -> {
                         progressBar.visibility = View.INVISIBLE
                         sendCommandBtn.visibility = View.VISIBLE
                     }
+
                     Status.SUCCESS -> {
                         processDeviceData(resources?.data)
                         progressBar.visibility = View.INVISIBLE
@@ -206,7 +234,7 @@ class GprsCommand : BaseActivity(), KodeinAware {
                 type = gprsVal.type
                 gprsVal?.attributes?.let {
                     if (it.isNotEmpty()) {
-                        if(!it[0].default.isNullOrEmpty()) {
+                        if (!it[0].default.isNullOrEmpty()) {
                             messageTxt.setText("${it[0].default}")
                             messageTxt.setSelection(messageTxt.length())
                         }
@@ -262,19 +290,25 @@ class GprsCommand : BaseActivity(), KodeinAware {
                         progressBar.visibility = View.VISIBLE
                         sendCommandBtn.visibility = View.INVISIBLE
                     }
+
                     Status.ERROR -> {
                         progressBar.visibility = View.INVISIBLE
                         sendCommandBtn.visibility = View.VISIBLE
                         Toast.makeText(this, getString(R.string.whoops_no_gprs), Toast.LENGTH_SHORT)
                             .show()
                     }
+
                     Status.SUCCESS -> {
                         progressBar.visibility = View.INVISIBLE
                         sendCommandBtn.visibility = View.VISIBLE
-                        if(resources?.data?.error != null) {
-                            Toast.makeText(this, getString(R.string.whoops_no_gprs), Toast.LENGTH_SHORT)
+                        if (resources?.data?.error != null) {
+                            Toast.makeText(
+                                this,
+                                getString(R.string.whoops_no_gprs),
+                                Toast.LENGTH_SHORT
+                            )
                                 .show()
-                        }else {
+                        } else {
                             Toast.makeText(
                                 this,
                                 getString(R.string.command_send_success),
@@ -303,6 +337,7 @@ class GprsCommand : BaseActivity(), KodeinAware {
                         progressBarSMS.visibility = View.VISIBLE
                         sendCommandBtnSMS.visibility = View.INVISIBLE
                     }
+
                     Status.ERROR -> {
                         progressBarSMS.visibility = View.INVISIBLE
                         sendCommandBtnSMS.visibility = View.VISIBLE
@@ -313,6 +348,7 @@ class GprsCommand : BaseActivity(), KodeinAware {
                         )
                             .show()
                     }
+
                     Status.SUCCESS -> {
                         progressBarSMS.visibility = View.INVISIBLE
                         sendCommandBtnSMS.visibility = View.VISIBLE

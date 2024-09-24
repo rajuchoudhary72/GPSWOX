@@ -132,7 +132,7 @@ class AlertPage : BaseFragment(), KodeinAware {
                 layoutManager = LinearLayoutManager(this@AlertPage.context)
                 adapter =
                     AlertListAdapter(
-                        data?.items?.alerts,
+                        data?.items?.alerts?: emptyList(),
                         { alertData -> editItem(alertData) },
                         { alertData -> deleteItem(alertData) })
             }

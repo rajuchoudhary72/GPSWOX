@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import com.shazcom.gps.app.ui.BaseActivity
 import com.shazcom.gps.app.ui.activities.LoginActivity
 import com.google.firebase.FirebaseApp
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.shazcom.gps.app.data.vo.NotificationItem
@@ -84,7 +84,7 @@ class LocalDB(private val context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             try{
                 FirebaseApp.initializeApp(context)
-                FirebaseInstanceId.getInstance().deleteInstanceId()
+                FirebaseMessaging.getInstance().deleteToken()
             }catch (ex: Exception) {
                 ex.printStackTrace()
             }finally {

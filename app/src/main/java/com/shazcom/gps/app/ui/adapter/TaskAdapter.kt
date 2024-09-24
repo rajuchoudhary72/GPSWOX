@@ -37,12 +37,12 @@ class TaskAdapter(private val tasks: List<TaskData>) :
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val item = tasks?.get(position)
-        holder.titleTxt.text = item.title
-        holder.invoiceNo.text = item.invoice_number
-        holder.comment.text = item.comment
-        holder.pickupTime.text = "${item.pickup_time_from}\n${item.pickup_time_to}"
-        holder.delTime.text = "${item.delivery_time_from}\n${item.delivery_time_to}"
-        holder.pickLocation.text = item.pickup_address
-        holder.delLocation.text = item.delivery_address
+        holder.titleTxt.text = item?.title
+        holder.invoiceNo.text = item?.invoice_number
+        holder.comment.text = item?.comment
+        holder.pickupTime.text = "${item?.pickup_time_from}\n${item?.pickup_time_to}"
+        holder.delTime.text = "${item?.delivery_time_from}\n${item?.delivery_time_to}"
+        holder.pickLocation.text = item?.pickup_address
+        holder.delLocation.text = item?.delivery_address
     }
 }

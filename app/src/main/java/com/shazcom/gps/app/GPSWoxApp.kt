@@ -16,7 +16,7 @@ import com.shazcom.gps.app.network.internal.Client
 import com.shazcom.gps.app.network.internal.NetworkInterceptor
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseApp
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import com.shazcom.gps.app.data.vo.NotificationItem
 import kotlinx.coroutines.CoroutineScope
@@ -62,7 +62,7 @@ class GPSWoxApp : Application(), KodeinAware {
         bind() from this.singleton { ToolsRepository(this.instance()) }
 
         FirebaseApp.initializeApp(this@GPSWoxApp)
-        FirebaseInstanceId.getInstance().instanceId
+        FirebaseMessaging.getInstance().token
             .addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     Log.w("TrackProGps", "getInstanceId failed", task.exception)
@@ -70,7 +70,7 @@ class GPSWoxApp : Application(), KodeinAware {
                 }
 
                 // Get new Instance ID token
-                val token = task.result?.token
+                val token = task.result
                 localDB.saveFcmToken(token!!)
 
                 // Log and toast
@@ -94,7 +94,7 @@ class GPSWoxApp : Application(), KodeinAware {
         CoroutineScope(Dispatchers.IO).launch {
             val notificationList = ArrayList<NotificationItem>()
             deviceList.forEach { deviceData ->
-                deviceData.items.forEach { item ->
+                deviceData.items?.forEach { item ->
                     item?.id?.let {
                         notificationList.add(NotificationItem(item.id.toString(), item.name.toString()))
                     }

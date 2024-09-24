@@ -3,6 +3,7 @@ package com.shazcom.gps.app.ui.adapter
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,8 +60,11 @@ class DeviceChildAdapter(private val itemList: List<Items>) :
 
         holder.rootView.setOnClickListener {
             Intent(holder.childTitle.context, MapPage::class.java).apply {
-                putExtra("deviceItem", itemList[position])
-                holder.childTitle.context.startActivity(this)
+                if(itemList.isNotEmpty()) {
+                    Log.e("Item List Size", "${itemList?.size}")
+                    putExtra("deviceItem", itemList[position])
+                    holder.childTitle.context.startActivity(this)
+                }
             }
         }
     }

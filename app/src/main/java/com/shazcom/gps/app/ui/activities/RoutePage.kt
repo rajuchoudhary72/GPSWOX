@@ -124,7 +124,7 @@ class RoutePage : BaseActivity(), KodeinAware {
 
         DatePickerDialog(
             this,
-            DatePickerDialog.OnDateSetListener { _, year, month, day ->
+            { _, year, month, day ->
                 val pickedDateTime = Calendar.getInstance()
                 pickedDateTime.set(year, month, day)
                 val df = SimpleDateFormat("yyyy-MM-dd")
@@ -134,7 +134,8 @@ class RoutePage : BaseActivity(), KodeinAware {
             startYear,
             startMonth,
             startDay
-        ).show()
+        )
+            .show()
     }
 
     private fun pickEndDate() {

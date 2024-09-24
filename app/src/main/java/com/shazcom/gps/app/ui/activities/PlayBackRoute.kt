@@ -2,8 +2,6 @@ package com.shazcom.gps.app.ui.activities
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
@@ -18,6 +16,17 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.github.gzuliyujiang.wheelpicker.DatimePicker
+import com.github.gzuliyujiang.wheelpicker.annotation.DateMode
+import com.github.gzuliyujiang.wheelpicker.annotation.TimeMode
+import com.github.gzuliyujiang.wheelpicker.contract.DateFormatter
+import com.github.gzuliyujiang.wheelpicker.entity.DatimeEntity
+import com.github.gzuliyujiang.wheelpicker.widget.DatimeWheelLayout
+import com.google.android.libraries.maps.CameraUpdateFactory
+import com.google.android.libraries.maps.GoogleMap
+import com.google.android.libraries.maps.OnMapReadyCallback
+import com.google.android.libraries.maps.SupportMapFragment
+import com.google.android.libraries.maps.model.*
 import com.shazcom.gps.app.R
 import com.shazcom.gps.app.data.LocalDB
 import com.shazcom.gps.app.data.repository.CommonViewRepository
@@ -27,23 +36,15 @@ import com.shazcom.gps.app.network.internal.Status
 import com.shazcom.gps.app.ui.BaseActivity
 import com.shazcom.gps.app.ui.viewmodal.CommonViewModel
 import com.shazcom.gps.app.utils.getCurrentDay
-import com.shazcom.gps.app.utils.nextDay
-import com.google.android.libraries.maps.CameraUpdateFactory
-import com.google.android.libraries.maps.GoogleMap
-import com.google.android.libraries.maps.OnMapReadyCallback
-import com.google.android.libraries.maps.SupportMapFragment
-import com.google.android.libraries.maps.model.*
-import com.google.android.libraries.maps.model.CameraPosition
 import com.shazcom.gps.app.utils.getMapTypes
 import com.shazcom.gps.app.utils.getNewTimeFormat
+import com.shazcom.gps.app.utils.nextDay
 import kotlinx.android.synthetic.main.activity_playback.*
-import kotlinx.android.synthetic.main.activity_playback.playBtn
 import kotlinx.android.synthetic.main.bottom_sheet_buttons.progressBar
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 import java.text.DecimalFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -121,13 +122,13 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
 
         startDateTime.setOnClickListener {
             if (startDateTime.isPressed) {
-                pickDate1()
+                pickStartDate()
             }
         }
 
         endDateTime.setOnClickListener {
             if (endDateTime.isPressed) {
-                pickDate2()
+                pickEndDate()
             }
         }
 
@@ -213,6 +214,7 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
                         processData(resources.data!!)
                         progressBar.visibility = View.INVISIBLE
                     }
+
                     Status.LOADING -> {
                         progressBar.visibility = View.VISIBLE
                         itemList.clear()
@@ -221,6 +223,7 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
                             it?.clear()
                         }
                     }
+
                     Status.ERROR -> {
                         progressBar.visibility = View.INVISIBLE
                         Toast.makeText(
@@ -244,7 +247,7 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
         if (data.items.isNotEmpty()) {
             data.items.forEach { itemInner ->
                 itemInner.items.forEach { routeItem ->
-                    if(routeItem.id != null) {
+                    if (routeItem.id != null) {
                         itemList.add(routeItem)
                     }
 
@@ -305,18 +308,23 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
             0 -> {
                 playBackSpeed = 1500L
             }
+
             1 -> {
                 playBackSpeed = 1300L
             }
+
             2 -> {
                 playBackSpeed = 1100L
             }
+
             3 -> {
                 playBackSpeed = 900L
             }
+
             4 -> {
                 playBackSpeed = 700L
             }
+
             5 -> {
                 playBackSpeed = 500L
             }
@@ -455,69 +463,85 @@ class PlayBackRoute : BaseActivity(), KodeinAware, AdapterView.OnItemSelectedLis
         }
     }
 
-    private fun pickDate1() {
-        val currentDateTime = Calendar.getInstance()
-        val startYear = currentDateTime.get(Calendar.YEAR)
-        val startMonth = currentDateTime.get(Calendar.MONTH)
-        val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
-        val startHour = currentDateTime.get(Calendar.HOUR_OF_DAY)
-        val startMinute = currentDateTime.get(Calendar.MINUTE)
+    private fun pickStartDate() {
+       /* val currentDateTime = Calendar.getInstance()
+        currentDateTime.add(Calendar.YEAR,-1)
+        val dateTimeSelectedListener = object : OnDateTimeSelectedListener {
+            override fun onDateTimeSelected(selectedDateTime: Calendar) {
+                val df = SimpleDateFormat("yyyy-MM-dd\nhh:mm a")
+                startDateTime.text =
+                    df.format(selectedDateTime.timeInMillis).replace("PG", "AM")
+                        .replace("PTG", "PM")
+            }
+        }
 
-        DatePickerDialog(
-            this@PlayBackRoute,
-            DatePickerDialog.OnDateSetListener { _, year, month, day ->
-                TimePickerDialog(
-                    this@PlayBackRoute,
-                    TimePickerDialog.OnTimeSetListener { _, hour, minute ->
-                        val pickedDateTime = Calendar.getInstance()
-                        pickedDateTime.set(year, month, day, hour, minute)
-                        val df = SimpleDateFormat("yyyy-MM-dd\nhh:mm a")
-                        startDateTime.text =
-                            df.format(pickedDateTime.timeInMillis).replace("PG", "AM")
-                                .replace("PTG", "PM")
-                    },
-                    startHour,
-                    startMinute,
-                    false
-                ).show()
-            },
-            startYear,
-            startMonth,
-            startDay
-        ).show()
+        val dateTimePickerDialog = DialogDateTimePicker(
+            this, //context
+            currentDateTime, //start date of calendar
+            12, //No. of future months to shown in calendar
+            dateTimeSelectedListener,
+            "Select start date and time"
+        )
+
+        dateTimePickerDialog.show()*/
+
+
+        val formatter = DecimalFormat("00")
+        val picker = DatimePicker(this)
+        val wheelLayout: DatimeWheelLayout = picker.getWheelLayout()
+        picker.setOnDatimePickedListener { year, month, day, hour, minute, second ->
+            var text = "$year-${formatter.format(month)}-${formatter.format(day)}\n${formatter.format(hour)}:${formatter.format(minute)}"
+            text += if (wheelLayout.timeWheelLayout.isAnteMeridiem) " AM" else " PM"
+            startDateTime.text = text
+        }
+        wheelLayout.setDateMode(DateMode.YEAR_MONTH_DAY)
+        wheelLayout.setTimeMode(TimeMode.HOUR_12_NO_SECOND)
+        wheelLayout.setRange(DatimeEntity.yearOnFuture(-5), DatimeEntity.now(), DatimeEntity.now())
+
+        wheelLayout.setDateLabel("Yr", "M", "D")
+        wheelLayout.setTimeLabel("hr", "min", "sec")
+        picker.show()
+
     }
 
-    private fun pickDate2() {
-        val currentDateTime = Calendar.getInstance()
-        val startYear = currentDateTime.get(Calendar.YEAR)
-        val startMonth = currentDateTime.get(Calendar.MONTH)
-        val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
-        val startHour = currentDateTime.get(Calendar.HOUR_OF_DAY)
-        val startMinute = currentDateTime.get(Calendar.MINUTE)
+    private fun pickEndDate() {
+     /*   val currentDateTime = Calendar.getInstance()
 
-        DatePickerDialog(
-            this@PlayBackRoute,
-            DatePickerDialog.OnDateSetListener { _, year, month, day ->
-                TimePickerDialog(
-                    this@PlayBackRoute,
-                    TimePickerDialog.OnTimeSetListener { _, hour, minute ->
-                        val pickedDateTime = Calendar.getInstance()
-                        pickedDateTime.set(year, month, day, hour, minute)
-                        val df = SimpleDateFormat("yyyy-MM-dd\nhh:mm a")
-                        endDateTime.setText(
-                            df.format(pickedDateTime.timeInMillis).replace("PG", "AM")
-                                .replace("PTG", "PM")
-                        )
-                    },
-                    startHour,
-                    startMinute,
-                    false
-                ).show()
-            },
-            startYear,
-            startMonth,
-            startDay
-        ).show()
+        currentDateTime.add(Calendar.YEAR,-1)
+        val dateTimeSelectedListener = object : OnDateTimeSelectedListener {
+            override fun onDateTimeSelected(selectedDateTime: Calendar) {
+                val df = SimpleDateFormat("yyyy-MM-dd\nhh:mm a")
+                endDateTime.text =
+                    df.format(selectedDateTime.timeInMillis).replace("PG", "AM")
+                        .replace("PTG", "PM")
+            }
+        }
+
+        val dateTimePickerDialog = DialogDateTimePicker(
+            this, //context
+            currentDateTime, //start date of calendar
+            12, // // No. of future months to shown in calendar
+            dateTimeSelectedListener,
+            "Select end date and time",
+
+        )
+        dateTimePickerDialog.show()*/
+
+        val formatter = DecimalFormat("00")
+
+        val picker = DatimePicker(this)
+        val wheelLayout: DatimeWheelLayout = picker.getWheelLayout()
+        picker.setOnDatimePickedListener { year, month, day, hour, minute, second ->
+            var text = "$year-${formatter.format(month)}-${formatter.format(day)}\n${formatter.format(hour)}:${formatter.format(minute)}"
+            text += if (wheelLayout.timeWheelLayout.isAnteMeridiem) " AM" else " PM"
+            endDateTime.text = text
+        }
+        wheelLayout.setDateMode(DateMode.YEAR_MONTH_DAY)
+        wheelLayout.setTimeMode(TimeMode.HOUR_12_NO_SECOND)
+        wheelLayout.setRange(DatimeEntity.yearOnFuture(-5), DatimeEntity.now(), DatimeEntity.now())
+        wheelLayout.setDateLabel("Yr", "M", "D")
+        wheelLayout.setTimeLabel("hr", "min", "sec")
+        picker.show()
     }
 
     override fun onCameraMove() {

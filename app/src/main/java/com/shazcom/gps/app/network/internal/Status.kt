@@ -10,5 +10,5 @@ package com.shazcom.gps.app.network.internal
 enum class Status {
     SUCCESS,
     ERROR,
-    LOADING
+    LOADING;
 }

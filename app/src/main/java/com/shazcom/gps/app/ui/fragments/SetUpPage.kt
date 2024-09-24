@@ -61,7 +61,7 @@ class SetUpPage : BaseFragment(), KodeinAware {
 
         saveBtn.setOnClickListener {
             timezoneId =
-                setupData?.timezones?.find { timezones -> timezones.value == timeZone.selectedItem.toString() }?.id!!?.let { it }
+                setupData?.timezones?.find { timezones -> timezones.value == timeZone.selectedItem.toString() }?.id!!?.let { it }!!
 
             val distanceUnitStr =
                 setupData?.units_of_distance?.find { unitsOfDistance -> unitsOfDistance.value == distanceUnit.selectedItem.toString() }?.id?.let { it }
@@ -117,6 +117,7 @@ class SetUpPage : BaseFragment(), KodeinAware {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+                    else ->{}
                 }
             })
     }
@@ -124,12 +125,12 @@ class SetUpPage : BaseFragment(), KodeinAware {
     private fun processData(data: EditUserDataResponse) {
         if (isVisible) {
             data?.let {
-                populateDistanceUnit(data?.units_of_distance, data?.item?.unit_of_distance)
-                populateCapacityUnit(data?.units_of_capacity, data?.item?.unit_of_capacity)
-                populateAltitudeUnit(data?.units_of_altitude, data?.item?.unit_of_altitude)
-                populateWeekDays(data?.weekdays)
-                populateTimeZone(data?.timezones, data?.item?.timezone_id)
-                (activity as Dashboard).saveGroups(data?.groups)
+                populateDistanceUnit(data?.units_of_distance!!, data?.item?.unit_of_distance!!)
+                populateCapacityUnit(data?.units_of_capacity!!, data?.item?.unit_of_capacity!!)
+                populateAltitudeUnit(data?.units_of_altitude!!, data?.item?.unit_of_altitude!!)
+                populateWeekDays(data?.weekdays!!)
+                populateTimeZone(data?.timezones!!, data?.item?.timezone_id!!)
+                (activity as Dashboard).saveGroups(data?.groups!!)
                 setupData = data
             }
         }
