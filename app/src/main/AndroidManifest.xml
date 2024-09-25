@@ -194,7 +194,7 @@
         <receiver
             android:name=".back.RestartService"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="RestartService" />
             </intent-filter>

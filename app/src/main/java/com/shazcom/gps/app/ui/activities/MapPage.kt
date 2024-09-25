@@ -583,18 +583,18 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
         }
 
         binding.inc.incPlay.serviceBtn.setOnClickListener {
-             Intent(this@MapPage, ServicePage::class.java).apply {
+           /*  Intent(this@MapPage, ServicePage::class.java).apply {
                   putExtra("deviceId", deviceItem?.id!!)
                   putExtra("deviceName", deviceItem?.name!!)
                   putExtra("odometer", odometerValue)
                   putExtra("engineLoad", engineLoadValue)
                   startActivity(this)
-              }
+              }*/
 
-          /*  Intent(this@MapPage,MoreActivity::class.java).apply {
+            Intent(this@MapPage,MoreActivity::class.java).apply {
                 putExtra("item", deviceItem)
                 startActivity(this)
-            }*/
+            }
         }
 
         binding.  zoomIn.setOnClickListener {

@@ -1,20 +1,29 @@
 package com.shazcom.gps.app.ui
 
+import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.location.Location
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.ResultReceiver
+import android.provider.Settings
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.Snackbar.LENGTH_SHORT
 import com.shazcom.gps.app.R
@@ -38,17 +47,18 @@ open class BaseActivity : AppCompatActivity(), KodeinAware {
     private val localDB: LocalDB by instance<LocalDB>()
     val TAG = BaseActivity::class.java.simpleName
 
-   override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initConfiguration()
         //adjustDisplayDensity()
         //adjustFontScale()
+        askNotificationPermission()
     }
 
     private fun adjustDisplayDensity() {
         val displayMetrics = resources.displayMetrics
         val snap = 20
-        val exactDpi = (displayMetrics.xdpi + displayMetrics.ydpi) /0.4
+        val exactDpi = (displayMetrics.xdpi + displayMetrics.ydpi) / 0.4
         val dpi = displayMetrics.densityDpi.toFloat()
         if (dpi - exactDpi > snap) {
             val targetDpi = (Math.ceil((exactDpi / snap)) * snap).toInt()
@@ -68,7 +78,8 @@ open class BaseActivity : AppCompatActivity(), KodeinAware {
         val fontScale = configuration.fontScale
         val targetFontScale = 1.0f
         if (fontScale > targetFontScale) {
-            val log = String.format("Changing font scale from %.2f to %.2f", fontScale, targetFontScale)
+            val log =
+                String.format("Changing font scale from %.2f to %.2f", fontScale, targetFontScale)
             Log.w(TAG, log)
             configuration.fontScale = targetFontScale
             val metrics = resources.displayMetrics
@@ -79,8 +90,6 @@ open class BaseActivity : AppCompatActivity(), KodeinAware {
             baseContext.resources.updateConfiguration(configuration, metrics)
         }
     }
-
-
 
 
     private fun initConfiguration() {
@@ -152,15 +161,19 @@ open class BaseActivity : AppCompatActivity(), KodeinAware {
                     "PARK_START" -> {
                         popUpAddressWithKeyWord(addressOutput!!, keyword)
                     }
+
                     "PARK_STOP" -> {
                         popUpAddressWithKeyWord(addressOutput!!, keyword)
                     }
+
                     "DRIVE_START" -> {
                         popUpAddressWithKeyWord(addressOutput!!, keyword)
                     }
+
                     "DRIVE_STOP" -> {
                         popUpAddressWithKeyWord(addressOutput!!, keyword)
                     }
+
                     else -> {
                         popUpAddress(addressOutput!!)
                     }
@@ -233,6 +246,70 @@ open class BaseActivity : AppCompatActivity(), KodeinAware {
             startActivity(emailIntent)
         } catch (ex: ActivityNotFoundException) {
 
+        }
+    }
+
+    private fun askNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+                        PackageManager.PERMISSION_GRANTED -> {
+                    // Permission is already granted
+                }
+
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) -> {
+                    // Show rationale to explain why the permission is needed
+                    showPermissionRationale()
+                }
+
+                else -> {
+                    // Request permission for the first time
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        }
+    }
+
+    private fun handlePermissionDenial() {
+        // Show Snackbar to take the user to settings if permission was denied
+        Snackbar.make(
+            findViewById(android.R.id.content),
+            getString(R.string.txt_error_post_notification, getString(R.string.app_name)),
+            Snackbar.LENGTH_INDEFINITE
+        ).setAction(getString(R.string.goto_settings)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val settingsIntent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    .putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                startActivity(settingsIntent)
+            }
+        }.show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun showPermissionRationale() {
+        // Show an explanation to the user why the permission is needed and ask again
+        Snackbar.make(
+            findViewById(android.R.id.content),
+            "We need notification permission to send you updates. Please allow it.",
+            Snackbar.LENGTH_INDEFINITE
+        ).setAction("OK") {
+            // Request permission again after showing the rationale
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }.show()
+    }
+
+   private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+           // Toast.makeText(this, "Notifications permission granted", Toast.LENGTH_SHORT).show()
+        } else {
+            // Handle permission denial and show rationale or direct user to settings
+            handlePermissionDenial()
         }
     }
 }

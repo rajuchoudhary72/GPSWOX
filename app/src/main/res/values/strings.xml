@@ -239,4 +239,8 @@
     <string name="no_data_found">No data found</string>
     <string name="for_multiple_emails_separate">For multiple emails separate them via semicolon ex.: user@example.com;user1@example.com</string>
     <string name="clear_polygon">Clear Polygon</string>
+    <string name="txt_error_post_notification">Please enable notifications for %1$s in your settings to receive updates.</string>
+
+    <!-- "Go to Settings" button text -->
+    <string name="goto_settings">Go to Settings</string>
 </resources>

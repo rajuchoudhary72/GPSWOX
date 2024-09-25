@@ -237,5 +237,6 @@
     <string name="no_data_found">进行中</string>
     <string name="for_multiple_emails_separate">对于多封电子邮件，请通过分号将它们分开：例如：user@example.com; user1@example.com警报和报告</string>
     <string name="clear_polygon">透明多边形</string>
+    <string name="goto_settings">Go to settings</string>
 
 </resources>
