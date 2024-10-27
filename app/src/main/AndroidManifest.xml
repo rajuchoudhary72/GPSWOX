@@ -17,11 +17,11 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:requestLegacyExternalStorage="true"
-        android:networkSecurityConfig="@xml/network_security_config"
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute">
 
@@ -48,8 +48,8 @@
         <activity
             android:name=".ui.activities.LoginActivity"
             android:configChanges="locale"
-            android:screenOrientation="locked"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="locked">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -59,115 +59,115 @@
         </activity>
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.Dashboard"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.MapPage"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.PlayBackRoute"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.RoutePage"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.SummaryPage"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.HistoryDetailPage"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.EventPage"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.ServicePage"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.AddServicePage"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.ForgotPassword"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.EventDetail"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.ShowPoint"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.Rulers"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.POI"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.GeoFencing"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.TaskPage"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.DeviceMapCluster"
+            android:configChanges="locale"
             android:screenOrientation="locked" />
 
         <activity
-            android:configChanges="locale"
             android:name=".ui.activities.GprsCommand"
-            android:screenOrientation="locked" />
-
-        <activity
             android:configChanges="locale"
-            android:name=".ui.activities.Alerts"
-            android:windowSoftInputMode="stateHidden"
             android:screenOrientation="locked" />
 
         <activity
-            android:exported="false"
+            android:name=".ui.activities.Alerts"
+            android:configChanges="locale"
+            android:screenOrientation="locked"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
             android:name=".ui.activities.MoreActivity"
             android:configChanges="locale"
+            android:exported="false"
             android:screenOrientation="locked" />
         <activity
-            android:exported="false"
             android:name=".ui.activities.GeoFenceActivity"
             android:configChanges="locale"
+            android:exported="false"
             android:screenOrientation="locked" />
         <activity
-            android:exported="false"
             android:name=".ui.activities.AlertActivity"
             android:configChanges="locale"
+            android:exported="false"
             android:screenOrientation="locked" />
 
 
@@ -187,9 +187,8 @@
 
         <service
             android:name=".back.DeviceService"
-            android:stopWithTask="false"
             android:foregroundServiceType="location"
-            android:enabled="true"/>
+            android:exported="false"  />
 
         <receiver
             android:name=".back.RestartService"

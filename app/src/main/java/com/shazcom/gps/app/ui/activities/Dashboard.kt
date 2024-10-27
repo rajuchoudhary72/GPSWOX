@@ -1,12 +1,18 @@
 package com.shazcom.gps.app.ui.activities
 
+import android.Manifest
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -41,7 +47,7 @@ import org.kodein.di.generic.instance
 
 @Suppress("DEPRECATION")
 class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChangedListener {
-
+    private val REQUEST_CODE_LOCATION_PERMISSION = 100
     private lateinit var binding: ActivityDashboardBinding
     override val kodein by kodein()
     private val localDB: LocalDB by instance<LocalDB>()
@@ -62,14 +68,9 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        checkAndRequestPermissions()
 
 
-        deviceService = DeviceService()
-        mServiceIntent = Intent(this, DeviceService::class.java)
-        if (!isMyServiceRunning(DeviceService::class.java)) {
-            mServiceIntent?.action = DeviceServiceConstants.ACTION_START_SERVICE
-            startService(mServiceIntent)
-        }
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -210,6 +211,21 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CODE_LOCATION_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                // Permissions are granted, start the service
+                startDeviceService()
+            }
+        }
+    }
+
+    private fun startDeviceService() {
+        deviceService = DeviceService()
+        mServiceIntent = Intent(this, DeviceService::class.java)
+        if (!isMyServiceRunning(DeviceService::class.java)) {
+            mServiceIntent?.action = DeviceServiceConstants.ACTION_START_SERVICE
+            startService(mServiceIntent)
+        }
     }
 
 
@@ -313,5 +329,28 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
             startService(mServiceIntent)
         }
     }
+
+    private fun checkAndRequestPermissions() {
+        val permissionsNeeded = mutableListOf<String>()
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsNeeded.add(Manifest.permission.FOREGROUND_SERVICE_LOCATION)
+        }
+
+        if (permissionsNeeded.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                this,
+                permissionsNeeded.toTypedArray(),
+                REQUEST_CODE_LOCATION_PERMISSION
+            )
+        } else {
+            startDeviceService()
+        }
+    }
+
 
 }
