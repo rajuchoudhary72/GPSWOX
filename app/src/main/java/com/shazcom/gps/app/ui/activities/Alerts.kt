@@ -549,8 +549,14 @@ class Alerts : BaseActivity(), KodeinAware {
                         processEvents(resources?.data?.systemEvents)
                     }
 
-                    Status.ERROR -> TODO()
-                    Status.LOADING -> TODO()
+                    Status.ERROR -> {
+
+
+                    }
+                    Status.LOADING -> {
+
+
+                    }
                 }
             })
     }

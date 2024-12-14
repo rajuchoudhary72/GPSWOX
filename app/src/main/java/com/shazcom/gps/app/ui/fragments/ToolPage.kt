@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.shazcom.gps.app.R
-import com.shazcom.gps.app.databinding.ActivityAlertsBinding
 import com.shazcom.gps.app.databinding.FragmentToolPageBinding
 import com.shazcom.gps.app.ui.BaseFragment
 import com.shazcom.gps.app.ui.activities.*

@@ -19,6 +19,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseApp
@@ -98,7 +100,13 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
             doLogout()
             return@setOnMenuItemClickListener true
         }
-
+        binding.navView.menu.findItem(R.id.geoList).setOnMenuItemClickListener {
+            Intent(this, GeoFencing::class.java).apply {
+                startActivity(this)
+            }
+            binding.drawerLayout.closeDrawers()
+            return@setOnMenuItemClickListener true
+        }
 
         binding.navView.menu.findItem(R.id.customerCall).setOnMenuItemClickListener {
             openDialer()
@@ -321,12 +329,20 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
 
     override fun onDestroy() {
         super.onDestroy()
-        val app = application as GPSWoxApp
-        app.appKilled = false
+        try {
+            val app = application as GPSWoxApp
+            app.appKilled = false
 
-        if (isMyServiceRunning(DeviceService::class.java)) {
-            mServiceIntent?.action = DeviceServiceConstants.ACTION_STOP_SERVICE
-            startService(mServiceIntent)
+            try {
+                if (isMyServiceRunning(DeviceService::class.java)) {
+                    mServiceIntent?.action = DeviceServiceConstants.ACTION_STOP_SERVICE
+                    startService(mServiceIntent)
+                }
+            }catch (e:NullPointerException){
+                e.printStackTrace()
+            }
+        }catch (e:NullPointerException){
+            e.printStackTrace()
         }
     }
 

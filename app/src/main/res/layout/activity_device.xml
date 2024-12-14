@@ -190,11 +190,11 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="@dimen/device_top_Image_size"
-                    android:layout_height="@dimen/device_top_Image_size"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:src="@android:drawable/presence_online"
-                    android:tint="@color/black" />
+                   />
 
                 <TextView
                     android:id="@+id/totalTxt"
@@ -219,8 +219,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="@dimen/device_top_Image_size"
-                    android:layout_height="@dimen/device_top_Image_size"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/map_default_running" />
 
@@ -246,8 +246,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="@dimen/device_top_Image_size"
-                    android:layout_height="@dimen/device_top_Image_size"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/map_default_idle" />
 
@@ -273,8 +273,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="@dimen/device_top_Image_size"
-                    android:layout_height="@dimen/device_top_Image_size"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/map_default_inactive" />
 
@@ -300,8 +300,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="@dimen/device_top_Image_size"
-                    android:layout_height="@dimen/device_top_Image_size"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/map_default_stop" />
 

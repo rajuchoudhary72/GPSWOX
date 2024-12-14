@@ -43,7 +43,11 @@
             app:destination="@id/alerts" />
 
     </fragment>
-
+    <fragment
+        android:id="@+id/alertsList"
+        android:name="com.shazcom.gps.app.ui.fragments.AlertPage"
+        android:label="@string/alerts"
+        tools:layout="@layout/fragment_alert_page" />
     <fragment
         android:id="@+id/alerts"
         android:name="com.shazcom.gps.app.ui.fragments.AlertPage"

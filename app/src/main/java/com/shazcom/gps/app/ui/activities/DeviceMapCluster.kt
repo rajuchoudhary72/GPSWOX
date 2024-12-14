@@ -46,12 +46,15 @@ class DeviceMapCluster : BaseActivity(), OnMapReadyCallback, KodeinAware,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
        binding= ActivityMapClusterBinding.inflate(layoutInflater)
-        setContentView(R.layout.activity_map_cluster)
+        setContentView(binding.root)
+     //   setContentView(R.layout.activity_map_cluster)
         app = application as GPSWoxApp
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(this)
-
+        try {
+            val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+            mapFragment?.getMapAsync(this)
+        }catch (e:RuntimeException){
+            e.message
+        }
         binding.closeBtn.setOnClickListener { finish() }
     }
 

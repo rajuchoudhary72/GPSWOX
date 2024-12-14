@@ -84,7 +84,8 @@ class GetDevice : BaseFragment(), KodeinAware, TextWatcher {
                 loadData()
             }
 
-            requireActivity().findViewById<ImageView>(R.id.search_icon)?.setOnClickListener {
+            (requireActivity() as Dashboard).findViewById<ImageView>(R.id.search_icon)?.setOnClickListener {
+                //activity?.search_icon?.setOnClickListener {
                 if (searchEdt.isVisible) {
                     searchEdt.setText("")
                     searchEdt.visibility = View.GONE

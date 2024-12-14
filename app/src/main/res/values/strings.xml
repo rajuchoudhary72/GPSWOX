@@ -243,4 +243,5 @@
 
     <!-- "Go to Settings" button text -->
     <string name="goto_settings">Go to Settings</string>
+    <string name="geofencing">Geofencing</string>
 </resources>
