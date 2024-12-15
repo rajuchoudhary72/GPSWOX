@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -47,13 +48,19 @@ class GetDevice : BaseFragment(), KodeinAware, TextWatcher {
     private val deviceHandler = Handler()
 
     private var app: GPSWoxApp? = null
-
+    val dataList = mutableListOf<DeviceData>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = ActivityDeviceBinding.inflate(inflater, container, false)
+        deviceAdapter = DeviceAdapter(dataList)
+
+        binding.deviceList.apply {
+            layoutManager = LinearLayoutManager(this@GetDevice.context)
+            adapter = deviceAdapter
+        }
         return binding.root
     }
 
@@ -83,23 +90,24 @@ class GetDevice : BaseFragment(), KodeinAware, TextWatcher {
             swipeRefreshLayout.setOnRefreshListener {
                 loadData()
             }
-
-            (requireActivity() as Dashboard).findViewById<ImageView>(R.id.search_icon)?.setOnClickListener {
-                //activity?.search_icon?.setOnClickListener {
-                if (searchEdt.isVisible) {
-                    searchEdt.setText("")
-                    searchEdt.visibility = View.GONE
-                    topIndication.visibility = View.VISIBLE
-                    radioGroup.visibility = View.VISIBLE
-                    topTxtLayout.visibility = View.VISIBLE
-                } else {
-                    searchEdt.setText("")
-                    searchEdt.visibility = View.VISIBLE
-                    topIndication.visibility = View.GONE
-                    radioGroup.visibility = View.GONE
-                    topTxtLayout.visibility = View.GONE
+            Handler(Looper.getMainLooper()).postDelayed({
+                requireActivity().findViewById<ImageView>(R.id.search_icon)?.setOnClickListener {
+                    if (searchEdt.isVisible) {
+                        searchEdt.setText("")
+                        searchEdt.visibility = View.GONE
+                        topIndication.visibility = View.VISIBLE
+                        radioGroup.visibility = View.VISIBLE
+                        topTxtLayout.visibility = View.VISIBLE
+                    } else {
+                        searchEdt.setText("")
+                        searchEdt.visibility = View.VISIBLE
+                        topIndication.visibility = View.GONE
+                        radioGroup.visibility = View.GONE
+                        topTxtLayout.visibility = View.GONE
+                    }
                 }
-            }
+
+            }, 500)
 
             searchEdt.addTextChangedListener(this@GetDevice)
             loadData()
@@ -188,41 +196,41 @@ class GetDevice : BaseFragment(), KodeinAware, TextWatcher {
     }
 
     private fun loadData() {
-        activity?.let {
-            commonViewModel?.getDeviceInfo("en", localDB.getToken()!!)
-                ?.observe(it, Observer { resources ->
 
-                    if (isVisible) {
-                        when (resources.status) {
-                            Status.SUCCESS -> {
-                                binding.swipeRefreshLayout.isRefreshing = false
-                                binding.progressBar.visibility = View.GONE
-                                processData(resources.data!!)
-                                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                            }
+        commonViewModel?.getDeviceInfo("en", localDB.getToken()!!)
+            ?.observe(requireActivity(), Observer { resources ->
 
-                            Status.LOADING -> {
-                                binding.progressBar.visibility = View.VISIBLE
-                            }
+                if (isVisible) {
+                    when (resources.status) {
+                        Status.SUCCESS -> {
+                            binding.swipeRefreshLayout.isRefreshing = false
+                            binding.progressBar.visibility = View.GONE
+                            processData(resources.data!!)
+                            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                        }
 
-                            Status.ERROR -> {
-                                binding.swipeRefreshLayout.isRefreshing = false
-                                binding.progressBar.visibility = View.GONE
-                                Toast.makeText(
-                                    requireContext(),
-                                    "${resources.message}",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                        Status.LOADING -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                        }
 
-                            }
+                        Status.ERROR -> {
+                            binding.swipeRefreshLayout.isRefreshing = false
+                            binding.progressBar.visibility = View.GONE
+                            Toast.makeText(
+                                requireContext(),
+                                "${resources.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
                         }
                     }
-                })
-        }
+                }
+            })
     }
 
     private fun processData(data: List<DeviceData>) {
+        dataList.clear()
         if (data.isNotEmpty()) {
 
             var redCount = 0
@@ -261,32 +269,32 @@ class GetDevice : BaseFragment(), KodeinAware, TextWatcher {
                 (activity as Dashboard).saveDevices(routeItemList)
             }
 
-
-            deviceAdapter?.let {
+            dataList.addAll(data)
+            deviceAdapter?.notifyDataSetChanged()
+            val filterTxt =
+                binding.radioController.findViewById<RadioButton>(binding.radioController.checkedRadioButtonId).tag.toString()
+            binding.deviceList?.postDelayed({ deviceAdapter?.filter?.filter(filterTxt) }, 100)
+            /*deviceAdapter?.let {
                 deviceAdapter?.updateItems(data)
                 val filterTxt =
                     binding.radioController.findViewById<RadioButton>(binding.radioController.checkedRadioButtonId).tag.toString()
                 binding.deviceList?.postDelayed({ deviceAdapter?.filter?.filter(filterTxt) }, 100)
 
             } ?: kotlin.run {
-                deviceAdapter = DeviceAdapter(data)
 
-                binding.deviceList.apply {
-                    layoutManager = LinearLayoutManager(this@GetDevice.context)
-                    adapter = deviceAdapter
-                }
 
-                (binding.deviceList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-            }
+                (binding.deviceList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations =
+                    false
+            }*/
 
             binding.inc.emptyText.visibility = View.GONE
             binding.runningTxt.text = "$greenCount"
             binding.idleTxt.text = "$yellowCount"
             binding.inActiveTxt.text = "$blueCount"
-            binding. stopTxt.text = "$redCount"
+            binding.stopTxt.text = "$redCount"
 
             binding.totalTxt.text = (greenCount + yellowCount + blueCount + redCount).toString()
-            binding. deviceList.visibility = View.VISIBLE
+            binding.deviceList.visibility = View.VISIBLE
 
         } else {
             binding.inc.emptyText.visibility = View.VISIBLE
