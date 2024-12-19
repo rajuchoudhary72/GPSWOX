@@ -165,11 +165,20 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
             startTimeCard.setOnClickListener { pickStartTime() }
             endDateCard.setOnClickListener { pickEndDate() }
             endTimeCard.setOnClickListener { pickEndTime() }
+            try {
+                try {
+                    activity?.registerReceiver(
+                        onComplete,
+                        IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+                    )
+                } catch (e: SecurityException) {
 
-            activity?.registerReceiver(
-                onComplete,
-                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-            )
+                }
+            } catch (e: NullPointerException) {
+
+            }
+
+
 
             reportType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -299,7 +308,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
     }
 
 
-    private fun proceedScheduleReport()= with(binding) {
+    private fun proceedScheduleReport() = with(binding) {
 
         if (listItems.size == 0) {
             Toast.makeText(
@@ -630,7 +639,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
         super.onDestroy()
     }
 
-    private fun updateDate(position: Int)= with(binding) {
+    private fun updateDate(position: Int) = with(binding) {
         when (position) {
             0 -> { // today
                 startDateTxt.text = getPreviousTime("today")
@@ -753,7 +762,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
                 val pickedDateTime = Calendar.getInstance()
                 pickedDateTime.set(year, month, day)
                 val df = SimpleDateFormat("yyyy-MM-dd")
-                binding. endDateTxt.text = df.format(pickedDateTime.timeInMillis)
+                binding.endDateTxt.text = df.format(pickedDateTime.timeInMillis)
             },
             startYear,
             startMonth,
@@ -798,7 +807,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
                 pickedDateTime.set(Calendar.HOUR_OF_DAY, selectedHour)
                 pickedDateTime.set(Calendar.MINUTE, selectedMinute)
                 val df = SimpleDateFormat("hh:mm a")
-                binding. endTimeTxt.text =
+                binding.endTimeTxt.text =
                     df.format(pickedDateTime.timeInMillis).replace("PG", "AM").replace("PTG", "PM")
             },
             startHour,
@@ -828,7 +837,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
     private fun populateDeviceView() {
         binding.reportDevices.setText("")
         listItems.forEach {
-            binding. reportDevices.text.append("${it.name}, ")
+            binding.reportDevices.text.append("${it.name}, ")
         }
 
         if (listItems.size == 0) {
@@ -837,7 +846,8 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
     }
 
     override fun afterTextChanged(s: Editable?) {
-        binding.scheduleReport.isEnabled = Patterns.EMAIL_ADDRESS.matcher(binding.email.text.toString()).matches()
+        binding.scheduleReport.isEnabled =
+            Patterns.EMAIL_ADDRESS.matcher(binding.email.text.toString()).matches()
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -848,7 +858,7 @@ class Reports : BaseFragment(), KodeinAware, TextWatcher {
 
     }
 
-    private fun enableEditMode(reportData: ReportData)= with(binding) {
+    private fun enableEditMode(reportData: ReportData) = with(binding) {
 
         reportDeviceAdapter?.setCheckItem(reportData.devices)
 

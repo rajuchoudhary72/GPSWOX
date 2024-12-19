@@ -159,9 +159,13 @@ class DeviceAdapter(deviceList: List<DeviceData>) :
                 charSequence: CharSequence,
                 filterResults: FilterResults
             ) {
-                dataItems = filterResults.values as MutableList<DeviceData>?
-                Log.e("size", "${dataItems?.size!!}")
-                notifyDataSetChanged()
+                try {
+                    dataItems = filterResults.values as MutableList<DeviceData>?
+                    // Log.e("size", "${dataItems?.size!!}")
+                    notifyDataSetChanged()
+                }catch (e:NullPointerException){
+                    e.printStackTrace()
+                }
             }
         }
     }

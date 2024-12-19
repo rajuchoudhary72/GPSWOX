@@ -330,20 +330,25 @@ class Dashboard : BaseActivity(), KodeinAware, NavController.OnDestinationChange
     override fun onDestroy() {
         super.onDestroy()
         try {
-            val app = application as GPSWoxApp
-            app.appKilled = false
-
             try {
-                if (isMyServiceRunning(DeviceService::class.java)) {
-                    mServiceIntent?.action = DeviceServiceConstants.ACTION_STOP_SERVICE
-                    startService(mServiceIntent)
+                val app = application as GPSWoxApp
+                app.appKilled = false
+
+                try {
+                    if (isMyServiceRunning(DeviceService::class.java)) {
+                        mServiceIntent?.action = DeviceServiceConstants.ACTION_STOP_SERVICE
+                        startService(mServiceIntent)
+                    }
+                }catch (e:NullPointerException){
+                    e.printStackTrace()
                 }
             }catch (e:NullPointerException){
                 e.printStackTrace()
             }
-        }catch (e:NullPointerException){
-            e.printStackTrace()
+        }catch (e:RuntimeException){
+
         }
+
     }
 
     private fun checkAndRequestPermissions() {

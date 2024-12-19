@@ -415,24 +415,29 @@ class Alerts : BaseActivity(), KodeinAware {
     }
 
     private fun loadAlertData() {
-        toolsViewModel?.loadAlertData("en", localDB.getToken()!!)
-            ?.observe(this, Observer { resources ->
-                when (resources.status) {
-                    Status.ERROR -> {
-                        binding.deviceList.visibility = View.VISIBLE
-                        binding.progressView.visibility = View.INVISIBLE
+        try {
+            toolsViewModel?.loadAlertData("en", localDB.getToken()!!)
+                ?.observe(this, Observer { resources ->
+                    when (resources.status) {
+                        Status.ERROR -> {
+                            binding.deviceList.visibility = View.VISIBLE
+                            binding.progressView.visibility = View.INVISIBLE
+                        }
+                        Status.LOADING -> {
+                            binding.deviceList.visibility = View.INVISIBLE
+                            binding.progressView.visibility = View.VISIBLE
+                        }
+                        Status.SUCCESS -> {
+                            binding.deviceList.visibility = View.VISIBLE
+                            binding.progressView.visibility = View.INVISIBLE
+                            processData(resources?.data)
+                        }
                     }
-                    Status.LOADING -> {
-                        binding.deviceList.visibility = View.INVISIBLE
-                        binding.progressView.visibility = View.VISIBLE
-                    }
-                    Status.SUCCESS -> {
-                        binding.deviceList.visibility = View.VISIBLE
-                        binding.progressView.visibility = View.INVISIBLE
-                        processData(resources?.data)
-                    }
-                }
-            })
+                })
+        }catch (e:NotImplementedError){
+            e.printStackTrace()
+        }
+
     }
 
     private fun processData(data: AddAlertDataResponsee?) {
