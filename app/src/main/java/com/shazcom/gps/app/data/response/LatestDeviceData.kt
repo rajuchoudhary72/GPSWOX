@@ -17,7 +17,7 @@ data class LatestItem(
     @SerializedName("lat") val lat: Double,
     @SerializedName("lng") val lng: Double,
     @SerializedName("course") val course: Int,
-    @SerializedName("speed") val speed: Int,
+    @SerializedName("speed") val speed: Double,
     @SerializedName("altitude") val altitude: Int,
     @SerializedName("icon_type") val icon_type: String,
     @SerializedName("icon_color") val icon_color: String,

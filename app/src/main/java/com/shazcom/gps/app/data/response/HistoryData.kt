@@ -14,7 +14,7 @@ data class ItemMain(
     @SerializedName("longitude") val longitude: Double?,
     @SerializedName("other") val other: String?,
     @SerializedName("power") val power: String?,
-    @SerializedName("speed") val speed: Int?,
+    @SerializedName("speed") val speed: Double?,
     @SerializedName("time") val time: String?,
     @SerializedName("device_time") val device_time: String?,
     @SerializedName("server_time") val server_time: String?,

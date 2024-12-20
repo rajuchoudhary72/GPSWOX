@@ -134,13 +134,13 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
     @SuppressLint("SetTextI18n", "WrongConstant")
     private fun upadateUI(item: Items) {
 
-        binding.speedTool.text = "${item.speed} ${item.distance_unit_hour}"
+        binding.speedTool.text = "${item.speed?.toInt()} ${item.distance_unit_hour}"
 
         if (binding.inc.sensorLayout.childCount > 0) {
             binding.inc.sensorLayout.removeAllViews()
         }
 
-        inflateSensorView(getString(R.string.speed), "${item.speed} ${item.distance_unit_hour}")
+        inflateSensorView(getString(R.string.speed), "${item.speed?.toInt()} ${item.distance_unit_hour}")
         inflateSensorView(
             getString(R.string.distance),
             "${item.total_distance} ${item.unit_of_distance}"
@@ -493,14 +493,14 @@ class MapPage : BaseActivity(), OnMapReadyCallback, KodeinAware {
     private fun upadateLatestUI(item: LatestItem) {
 
 
-        binding.speedTool.text = "${item.speed} ${item.distance_unit_hour}"
+        binding.speedTool.text = "${item.speed.toInt()} ${item.distance_unit_hour}"
         binding. toolBar.subtitle = item?.time
 
         if (binding.inc.sensorLayout.childCount > 0) {
             binding.inc.sensorLayout.removeAllViews()
         }
 
-        inflateSensorView(getString(R.string.speed), "${item.speed} ${item.distance_unit_hour}")
+        inflateSensorView(getString(R.string.speed), "${item.speed.toInt()} ${item.distance_unit_hour}")
         inflateSensorView(
             getString(R.string.distance),
             "${item.total_distance} ${item.unit_of_distance}"

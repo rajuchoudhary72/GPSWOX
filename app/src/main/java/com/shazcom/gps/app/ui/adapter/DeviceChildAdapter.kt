@@ -49,7 +49,7 @@ class DeviceChildAdapter(private val itemList: List<Items>) :
     override fun onBindViewHolder(holder: DeviceChildAdapterViewHolder, position: Int) {
         holder.childTitle.text = itemList[position].name
         holder.dateTxt.text = itemList[position].time
-        holder.speed.text = "${itemList[position].speed} ${itemList[position].distance_unit_hour}"
+        holder.speed.text = "${itemList[position].speed?.toInt()} ${itemList[position].distance_unit_hour}"
 
         holder.duration.text = "Stop Duration : ${itemList[position].stop_duration}"
 

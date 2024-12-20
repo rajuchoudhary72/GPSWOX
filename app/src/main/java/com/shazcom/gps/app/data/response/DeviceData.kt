@@ -230,7 +230,7 @@ data class Items(
     val lat: Double?,
     val lng: Double?,
     val course: Int?,
-    val speed: Int?,
+    val speed: Double?,
     val altitude: Int?,
     val icon_type: String?,
     val icon_color: String?,

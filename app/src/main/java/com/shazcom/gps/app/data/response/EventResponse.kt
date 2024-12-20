@@ -21,7 +21,7 @@ data class EventData(
     @SerializedName("latitude") val latitude: Double?,
     @SerializedName("longitude") val longitude: Double?,
     @SerializedName("power") val power: String?,
-    @SerializedName("speed") val speed: Int?,
+    @SerializedName("speed") val speed: Double?,
     @SerializedName("time") val time: String?,
     @SerializedName("deleted") val deleted: Int?,
     @SerializedName("created_at") val created_at: String?,
